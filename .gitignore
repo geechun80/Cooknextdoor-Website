@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Environment variables (NEVER commit secrets)
+.env
+.env.local
+.env.*
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temp / generated
+.tmp/
+screenshots/
+
+# Claude Code internal
+.claude/settings.local.json
+
+# Chatbot source (has its own repo — only keep the built dist)
+chatbot/node_modules/
+chatbot/src/
+chatbot/public/
+chatbot/.git/

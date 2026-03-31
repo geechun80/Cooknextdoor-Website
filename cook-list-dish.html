@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>List a Dish – CookNextDoor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;background:#2D6444;min-height:100vh;}
+
+    :root{
+      --orange:#F87B31;--green:#5BAD6F;--dark:#2D2A26;--muted:#7A7067;
+      --bg:#2D6444;--bg-deep:#1A3D28;--shadow:0 8px 32px rgba(0,0,0,0.20);
+    }
+
+    /* ── Top bar ── */
+    .topbar{background:rgba(26,61,40,0.95);backdrop-filter:blur(16px);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:100;}
+    .topbar__logo img{height:54px;display:block;}
+    .topbar__back{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.7);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
+    .topbar__back:hover{color:var(--orange);}
+
+    /* ── Page ── */
+    .page{max-width:760px;margin:0 auto;padding:48px 24px 100px;}
+
+    /* ── Progress ── */
+    .progress-header{text-align:center;margin-bottom:40px;}
+    .progress-header h1{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.4rem,3vw,2rem);color:#fff;margin-bottom:6px;}
+    .progress-header p{color:rgba(255,255,255,0.60);font-size:0.88rem;}
+    .progress-bar{display:flex;align-items:center;justify-content:center;gap:0;margin-top:20px;}
+    .prog-step{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;}
+    .prog-step:not(:last-child)::after{content:'';position:absolute;top:18px;left:calc(50% + 18px);width:calc(100% - 36px);height:2px;background:rgba(255,255,255,0.15);z-index:0;min-width:48px;}
+    .prog-step.done::after{background:var(--green);}
+    .prog-dot{width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:0.95rem;font-family:'Poppins',sans-serif;font-weight:700;color:rgba(255,255,255,0.4);z-index:1;transition:all 0.3s;}
+    .prog-step.done   .prog-dot{background:var(--green);border-color:var(--green);color:#fff;}
+    .prog-step.active .prog-dot{background:var(--orange);border-color:var(--orange);color:#fff;box-shadow:0 0 0 4px rgba(248,123,49,0.25);}
+    .prog-label{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.62rem;color:rgba(255,255,255,0.40);letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;}
+    .prog-step.active .prog-label{color:var(--orange);}
+    .prog-step.done   .prog-label{color:rgba(255,255,255,0.60);}
+
+    /* ── Card ── */
+    .card{background:#fff;border-radius:24px;padding:36px;margin-bottom:0;box-shadow:var(--shadow);}
+    .card.hidden{display:none;}
+    .card h2{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.35rem;color:var(--dark);margin-bottom:4px;}
+    .card h2 span{color:var(--orange);}
+    .card .subtitle{font-size:0.87rem;color:var(--muted);margin-bottom:28px;line-height:1.65;}
+
+    /* ── Form ── */
+    .form-group{margin-bottom:22px;}
+    .form-group label{display:block;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.82rem;color:var(--dark);margin-bottom:7px;}
+    .form-group label .opt{font-weight:400;color:var(--muted);font-size:0.75rem;}
+    .form-control{width:100%;padding:13px 16px;border:2px solid #E8E8E8;border-radius:12px;font-family:'Inter',sans-serif;font-size:0.92rem;color:var(--dark);outline:none;transition:border 0.2s,box-shadow 0.2s;background:#fff;}
+    .form-control:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(248,123,49,0.10);}
+    .form-control::placeholder{color:#B0B0B0;}
+    textarea.form-control{resize:vertical;min-height:100px;line-height:1.6;}
+    select.form-control{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237A7067' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    @media(max-width:540px){.form-row{grid-template-columns:1fr;}}
+    .helper{font-size:0.76rem;color:var(--muted);margin-top:5px;}
+
+    /* ── Dish name search ── */
+    .dish-name-wrap{position:relative;}
+    .dish-name-wrap input{padding-right:44px;}
+    .dish-name-wrap .search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:1.1rem;pointer-events:none;}
+    .suggestions{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:2px solid #E8E8E8;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:50;overflow:hidden;display:none;}
+    .suggestions.visible{display:block;}
+    .sugg-item{display:flex;align-items:center;gap:12px;padding:10px 14px;cursor:pointer;transition:background 0.15s;}
+    .sugg-item:hover{background:#FFF8F3;}
+    .sugg-img{width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0;}
+    .sugg-text{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.84rem;color:var(--dark);}
+    .sugg-tag{font-size:0.70rem;color:var(--muted);}
+
+    /* ── Photo source tabs ── */
+    .photo-tabs{display:flex;gap:10px;margin-bottom:16px;}
+    .photo-tab{flex:1;padding:11px;border:2px solid #E8E8E8;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.82rem;color:var(--muted);background:#fff;cursor:pointer;transition:all 0.2s;text-align:center;}
+    .photo-tab.active{border-color:var(--orange);background:#FFF8F3;color:var(--orange);}
+
+    /* ── Library picker ── */
+    #libraryPanel{display:block;}
+    #uploadPanel{display:none;}
+    .library-filter{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+    .lib-tag{padding:5px 12px;border-radius:100px;border:1.5px solid #E8E8E8;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.72rem;color:var(--muted);cursor:pointer;transition:all 0.2s;}
+    .lib-tag.active{background:var(--orange);border-color:var(--orange);color:#fff;}
+    .library-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-height:420px;overflow-y:auto;padding-right:4px;}
+    @media(max-width:500px){.library-grid{grid-template-columns:repeat(2,1fr);}}
+    .lib-item{border:2.5px solid #E8E8E8;border-radius:14px;overflow:hidden;cursor:pointer;transition:all 0.22s;position:relative;}
+    .lib-item:hover{border-color:var(--orange);transform:translateY(-2px);box-shadow:0 6px 18px rgba(248,123,49,0.15);}
+    .lib-item.selected{border-color:var(--orange);box-shadow:0 0 0 3px rgba(248,123,49,0.25);}
+    .lib-item img{width:100%;height:90px;object-fit:cover;display:block;}
+    .lib-item__name{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.70rem;color:var(--dark);padding:7px 8px 5px;line-height:1.3;}
+    .lib-item__tag{font-size:0.63rem;color:var(--muted);padding:0 8px 7px;}
+    .lib-item .check{position:absolute;top:6px;right:6px;width:22px;height:22px;background:var(--orange);border-radius:50%;display:none;align-items:center;justify-content:center;color:#fff;font-size:0.75rem;font-weight:900;}
+    .lib-item.selected .check{display:flex;}
+
+    /* ── Upload panel ── */
+    .photo-upload{border:2px dashed #E0E0E0;border-radius:16px;padding:28px 20px;text-align:center;cursor:pointer;transition:border 0.2s,background 0.2s;position:relative;}
+    .photo-upload:hover{border-color:var(--orange);background:#FFF8F3;}
+    .photo-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:1;}
+    .photo-upload__icon{font-size:2rem;margin-bottom:8px;}
+    .photo-upload__title{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.88rem;color:var(--dark);margin-bottom:3px;}
+    .photo-upload__sub{font-size:0.74rem;color:var(--muted);}
+    .photo-previews{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+    .photo-thumb{width:80px;height:80px;border-radius:10px;object-fit:cover;border:2.5px solid var(--green);}
+
+    /* ── Selected photo preview ── */
+    .selected-preview{display:none;border:2px solid var(--green);border-radius:14px;overflow:hidden;margin-top:14px;}
+    .selected-preview.visible{display:flex;align-items:center;gap:14px;padding:12px;}
+    .selected-preview img{width:64px;height:64px;border-radius:10px;object-fit:cover;flex-shrink:0;}
+    .selected-preview__info{flex:1;}
+    .selected-preview__name{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.88rem;color:var(--dark);}
+    .selected-preview__tag{font-size:0.75rem;color:var(--muted);margin-top:2px;}
+    .selected-preview__change{font-size:0.75rem;color:var(--orange);font-weight:600;cursor:pointer;text-decoration:underline;margin-top:6px;display:inline-block;}
+
+    /* ── Chips ── */
+    .chip-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+    .chip{padding:7px 14px;border-radius:100px;border:2px solid #E8E8E8;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.78rem;cursor:pointer;transition:all 0.2s;color:var(--muted);background:#fff;display:flex;align-items:center;gap:5px;}
+    .chip.selected{background:var(--orange);border-color:var(--orange);color:#fff;}
+    .chip:hover:not(.selected){border-color:var(--orange);color:var(--orange);}
+
+    /* ── Price options ── */
+    .price-options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+    .price-opt{border:2px solid #E8E8E8;border-radius:14px;padding:14px;cursor:pointer;transition:all 0.2s;text-align:center;}
+    .price-opt.selected{border-color:var(--orange);background:#FFF8F3;}
+    .price-opt:hover:not(.selected){border-color:var(--orange);}
+    .price-opt__range{font-family:'Poppins',sans-serif;font-weight:800;font-size:1rem;color:var(--dark);margin-bottom:2px;}
+    .price-opt__label{font-size:0.73rem;color:var(--muted);}
+
+    /* ── YouTube input ── */
+    .yt-input-wrap{position:relative;}
+    .yt-input-wrap .yt-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:22px;height:22px;}
+    .yt-input-wrap input{padding-left:46px;}
+
+    /* ── Recipe visibility toggle ── */
+    .visibility-toggle{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;}
+    .vis-opt{border:2px solid #E8E8E8;border-radius:16px;padding:18px 16px;cursor:pointer;transition:all 0.2s;text-align:center;}
+    .vis-opt.selected{border-color:var(--orange);background:#FFF8F3;}
+    .vis-opt:hover:not(.selected){border-color:var(--orange);}
+    .vis-opt__icon{font-size:1.8rem;margin-bottom:8px;}
+    .vis-opt__title{font-family:'Poppins',sans-serif;font-weight:800;font-size:0.88rem;color:var(--dark);margin-bottom:4px;}
+    .vis-opt__desc{font-size:0.72rem;color:var(--muted);line-height:1.45;}
+    .vis-opt.selected .vis-opt__title{color:var(--orange);}
+
+    /* ── Paid recipe box ── */
+    #paidBox{display:none;background:#FFF8F3;border:1.5px solid rgba(248,123,49,0.25);border-radius:14px;padding:18px;margin-top:14px;}
+    #paidBox.visible{display:block;}
+    #paidBox .paid-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.84rem;color:var(--dark);margin-bottom:12px;}
+    .negotiate-toggle{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+    .toggle-switch{position:relative;width:44px;height:24px;flex-shrink:0;}
+    .toggle-switch input{opacity:0;width:0;height:0;}
+    .toggle-slider{position:absolute;inset:0;background:#E0E0E0;border-radius:100px;cursor:pointer;transition:background 0.2s;}
+    .toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.15);}
+    .toggle-switch input:checked + .toggle-slider{background:var(--orange);}
+    .toggle-switch input:checked + .toggle-slider::before{transform:translateX(20px);}
+    .negotiate-label{font-size:0.83rem;color:var(--dark);}
+    .negotiate-label span{font-weight:600;}
+    .payment-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px;}
+    .pay-chip{padding:6px 12px;border-radius:100px;border:1.5px solid #E8E8E8;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.74rem;cursor:pointer;transition:all 0.2s;color:var(--muted);background:#fff;}
+    .pay-chip.selected{background:var(--green);border-color:var(--green);color:#fff;}
+    .pay-chip:hover:not(.selected){border-color:var(--green);color:var(--green);}
+
+    /* ── Info + encourage boxes ── */
+    .info-box{background:#F0FAF3;border:1px solid #C3E6CB;border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:0.82rem;color:#2D6444;display:flex;gap:10px;align-items:flex-start;line-height:1.55;}
+    .info-box .icon{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
+    .encourage-box{background:linear-gradient(135deg,#FFF4EE,#FFF8F3);border:1.5px solid rgba(248,123,49,0.25);border-radius:16px;padding:20px;margin-bottom:22px;}
+    .encourage-box h4{font-family:'Poppins',sans-serif;font-weight:800;font-size:0.92rem;color:var(--dark);margin-bottom:6px;}
+    .encourage-box p{font-size:0.80rem;color:var(--muted);line-height:1.6;}
+    .encourage-box .why-list{margin-top:10px;display:flex;flex-direction:column;gap:7px;}
+    .why-item{display:flex;align-items:flex-start;gap:9px;font-size:0.79rem;color:var(--dark);}
+    .why-item span:first-child{flex-shrink:0;margin-top:1px;}
+
+    /* ── Buttons ── */
+    .btn-primary{width:100%;padding:15px;background:var(--orange);color:#fff;border:none;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 4px 16px rgba(248,123,49,0.28);}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(248,123,49,0.35);}
+    .btn-secondary{width:100%;padding:13px;background:transparent;color:var(--dark);border:2px solid #E8E8E8;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.92rem;cursor:pointer;transition:border 0.2s;margin-top:10px;}
+    .btn-secondary:hover{border-color:var(--dark);}
+    .btn-actions{display:flex;flex-direction:column;gap:10px;margin-top:8px;}
+    .terms{font-size:0.74rem;color:var(--muted);text-align:center;margin-top:14px;line-height:1.6;}
+    .terms a{color:var(--orange);text-decoration:none;}
+
+    /* ── Review ── */
+    .review-photo{width:100%;height:180px;object-fit:cover;border-radius:14px;margin-bottom:20px;}
+    .review-item{display:flex;justify-content:space-between;align-items:flex-start;padding:13px 0;border-bottom:1px solid #F0F0F0;}
+    .review-item:last-child{border-bottom:none;}
+    .review-label{font-size:0.80rem;color:var(--muted);}
+    .review-value{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.87rem;color:var(--dark);text-align:right;max-width:58%;}
+    .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.72rem;}
+    .badge-free{background:#EAF7EC;color:#2D6444;}
+    .badge-paid{background:#FFF4EE;color:var(--orange);}
+    .badge-yt{background:#FFE9E9;color:#CC0000;}
+
+    /* ── Success ── */
+    .success-card{text-align:center;}
+    .success-icon{width:88px;height:88px;border-radius:50%;background:#EAF7EC;display:flex;align-items:center;justify-content:center;font-size:2.4rem;margin:0 auto 20px;}
+    .success-title{font-family:'Poppins',sans-serif;font-weight:900;font-size:1.45rem;color:var(--dark);margin-bottom:8px;}
+    .success-sub{font-size:0.88rem;color:var(--muted);margin-bottom:28px;line-height:1.7;}
+    .next-steps{display:flex;flex-direction:column;gap:11px;margin-bottom:28px;}
+    .next-step{display:flex;align-items:center;gap:14px;background:#F9F9F9;border-radius:12px;padding:13px 15px;text-align:left;}
+    .next-step__icon{font-size:1.3rem;flex-shrink:0;}
+    .next-step__title{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.86rem;color:var(--dark);}
+    .next-step__sub{font-size:0.76rem;color:var(--muted);}
+    .action-links{display:flex;flex-direction:column;gap:10px;}
+    .action-links a.btn-primary{display:block;text-align:center;text-decoration:none;}
+    .action-links a.link-plain{text-align:center;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.86rem;color:var(--orange);text-decoration:none;display:block;padding:12px;}
+  </style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+  <a class="topbar__logo" href="index.html"><img src="brand_assets/logo.png" alt="CookNextDoor"/></a>
+  <a class="topbar__back" href="cook-register.html">← Cook profile</a>
+</div>
+
+<div class="page">
+
+  <!-- Header & progress -->
+  <div class="progress-header">
+    <h1>🍽️ List a <span style="color:var(--orange)">Dish</span></h1>
+    <p>Add a dish to your profile — with photo, recipe, and cooking video.</p>
+    <div class="progress-bar" id="progressBar">
+      <div class="prog-step active" data-step="1"><div class="prog-dot">1</div><div class="prog-label">Dish</div></div>
+      <div class="prog-step" data-step="2"><div class="prog-dot">2</div><div class="prog-label">Recipe & Video</div></div>
+      <div class="prog-step" data-step="3"><div class="prog-dot">3</div><div class="prog-label">Review</div></div>
+    </div>
+  </div>
+
+  <!-- ─────────────── STEP 1 — Dish Details ─────────────── -->
+  <div class="card" id="step-1">
+    <h2>Step 1: <span>Dish Details</span></h2>
+    <p class="subtitle">Tell neighbors what you're cooking today — name, photo, price, and portions available.</p>
+
+    <!-- Dish name with suggestions -->
+    <div class="form-group">
+      <label>Dish name</label>
+      <div class="dish-name-wrap">
+        <input class="form-control" type="text" id="dishNameInput" placeholder="e.g. Chicken Biryani, Nasi Lemak..." oninput="handleDishInput(this.value)" autocomplete="off"/>
+        <span class="search-icon">🔍</span>
+        <div class="suggestions" id="suggBox"></div>
+      </div>
+      <div class="helper">Start typing to search our food library, or type your own dish name.</div>
+    </div>
+
+    <!-- Photo source -->
+    <div class="form-group">
+      <label>Dish photo</label>
+      <div class="photo-tabs">
+        <button class="photo-tab active" id="tabLibrary" onclick="switchTab('library')">📚 Use platform photo</button>
+        <button class="photo-tab" id="tabUpload" onclick="switchTab('upload')">📷 Upload my own</button>
+      </div>
+
+      <!-- Library picker -->
+      <div id="libraryPanel">
+        <div class="library-filter" id="libFilter">
+          <div class="lib-tag active" onclick="filterLib(this,'All')">All</div>
+          <div class="lib-tag" onclick="filterLib(this,'Malay')">Malay</div>
+          <div class="lib-tag" onclick="filterLib(this,'Chinese')">Chinese</div>
+          <div class="lib-tag" onclick="filterLib(this,'Indian')">Indian</div>
+          <div class="lib-tag" onclick="filterLib(this,'Thai')">Thai</div>
+          <div class="lib-tag" onclick="filterLib(this,'Japanese')">Japanese</div>
+          <div class="lib-tag" onclick="filterLib(this,'Western')">Western</div>
+          <div class="lib-tag" onclick="filterLib(this,'Middle Eastern')">Middle Eastern</div>
+          <div class="lib-tag" onclick="filterLib(this,'Healthy')">Healthy</div>
+          <div class="lib-tag" onclick="filterLib(this,'Dessert')">Desserts</div>
+        </div>
+        <div class="library-grid" id="libGrid"></div>
+        <div class="selected-preview" id="selectedPreview">
+          <img src="" id="previewImg" alt="Selected food"/>
+          <div class="selected-preview__info">
+            <div class="selected-preview__name" id="previewName"></div>
+            <div class="selected-preview__tag" id="previewTag"></div>
+            <span class="selected-preview__change" onclick="clearSelection()">Change photo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload panel -->
+      <div id="uploadPanel">
+        <label class="photo-upload">
+          <input type="file" accept="image/*" multiple onchange="addThumb(this,'foodThumbs')"/>
+          <div class="photo-upload__icon">🍽️</div>
+          <div class="photo-upload__title">Upload your food photo</div>
+          <div class="photo-upload__sub">Use natural light for best results · JPG or PNG · Max 5 MB</div>
+        </label>
+        <div class="photo-previews" id="foodThumbs"></div>
+        <div style="background:#F9F9F9;border-radius:12px;padding:14px;margin-top:12px;display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:0.78rem;color:var(--muted);display:flex;gap:8px;"><span>☀️</span><span>Take photos in natural daylight — avoid flash or harsh shadows</span></div>
+          <div style="font-size:0.78rem;color:var(--muted);display:flex;gap:8px;"><span>📐</span><span>Shoot from directly above or at a slight angle for best results</span></div>
+          <div style="font-size:0.78rem;color:var(--muted);display:flex;gap:8px;"><span>🍽️</span><span>Use a clean plate or bowl and a neutral background</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Price & portions -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Price per portion</label>
+        <select class="form-control">
+          <option value="">Select...</option>
+          <option>$3</option><option>$4</option><option>$5</option><option>$6</option>
+          <option>$7</option><option>$8</option><option>$10</option><option>$12</option>
+          <option>$15</option><option>Negotiate with buyer</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Portions available today</label>
+        <select class="form-control">
+          <option value="">Select...</option>
+          <option>1 portion</option>
+          <option>2 portions</option>
+          <option>3 portions</option>
+          <option>4 portions</option>
+          <option>5 portions</option>
+          <option>More than 5</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Pickup time -->
+    <div class="form-group">
+      <label>Ready for pickup by</label>
+      <input class="form-control" type="time" value="12:00"/>
+      <div class="helper">Buyers within 1 km will see this time on your listing.</div>
+    </div>
+
+    <!-- Dietary -->
+    <div class="form-group">
+      <label>Dietary info <span class="opt">tick all that apply</span></label>
+      <div class="chip-grid">
+        <div class="chip" onclick="toggleChip(this)">✅ Halal</div>
+        <div class="chip" onclick="toggleChip(this)">🐷 Contains pork</div>
+        <div class="chip" onclick="toggleChip(this)">🌿 Vegetarian</div>
+        <div class="chip" onclick="toggleChip(this)">🌱 Vegan</div>
+        <div class="chip" onclick="toggleChip(this)">🥚 Contains egg</div>
+        <div class="chip" onclick="toggleChip(this)">🥜 Contains nuts</div>
+        <div class="chip" onclick="toggleChip(this)">🐟 Contains seafood</div>
+        <div class="chip" onclick="toggleChip(this)">🐄 Contains dairy</div>
+        <div class="chip" onclick="toggleChip(this)">🌾 Contains gluten</div>
+      </div>
+    </div>
+
+    <!-- Short description -->
+    <div class="form-group">
+      <label>Short description <span class="opt">what makes your version special?</span></label>
+      <textarea class="form-control" placeholder="e.g. My grandmother's secret sambal recipe — slow-cooked for 2 hours with fresh lemongrass and coconut milk. Spicy but not overwhelming!"></textarea>
+    </div>
+
+    <div class="btn-actions">
+      <button class="btn-primary" onclick="nextStep(1)">Continue → Recipe & Video</button>
+    </div>
+  </div>
+
+  <!-- ─────────────── STEP 2 — Recipe & Video ─────────────── -->
+  <div class="card hidden" id="step-2">
+    <h2>Step 2: <span>Recipe & Cooking Video</span></h2>
+    <p class="subtitle">Share your recipe and cooking video with neighbors. This builds trust, earns you followers — and you can even earn from it.</p>
+
+    <!-- YouTube encourage -->
+    <div class="encourage-box">
+      <h4>📺 Share your cooking on YouTube</h4>
+      <p>Cooks who share YouTube videos get up to 4× more profile visits. Paste your cooking video link below — it shows on your listing and builds your reputation in the community.</p>
+      <div class="why-list">
+        <div class="why-item"><span>🌟</span><span>Builds trust — neighbors see how you cook before buying</span></div>
+        <div class="why-item"><span>📈</span><span>More views on your listing = more reservations</span></div>
+        <div class="why-item"><span>🎓</span><span>Grow a following right in your neighborhood</span></div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Your cooking video <span class="opt">optional</span></label>
+      <div class="yt-input-wrap">
+        <svg class="yt-icon" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="5" fill="#FF0000"/><path d="M9.5 7.5l7 4.5-7 4.5V7.5z" fill="#fff"/></svg>
+        <input class="form-control" type="url" id="ytInput" placeholder="https://www.youtube.com/watch?v=..." oninput="updateYtPreview()"/>
+      </div>
+      <div class="helper">Paste any YouTube or YouTube Shorts link. No account needed — just copy from your YouTube app.</div>
+      <div id="ytPreview" style="display:none;margin-top:12px;background:#111;border-radius:12px;overflow:hidden;aspect-ratio:16/9;"></div>
+    </div>
+
+    <!-- Recipe encourage -->
+    <div class="encourage-box" style="background:linear-gradient(135deg,#F0FAF3,#E8F5ED);border-color:rgba(91,173,111,0.30);">
+      <h4>📋 Share your recipe</h4>
+      <p>Your recipe is yours — you choose who sees it. Share it free to attract more buyers, or keep it exclusive and earn from curious neighbors who want to learn your secrets.</p>
+      <div class="why-list">
+        <div class="why-item"><span>🆓</span><span><strong>Free recipe</strong> — your listing appears in search results more often and builds community reputation</span></div>
+        <div class="why-item"><span>💰</span><span><strong>Paid recipe</strong> — interested neighbors message you, you agree on a price, and they pay via PayNow / PayLah / GrabPay</span></div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Recipe visibility</label>
+      <div class="visibility-toggle">
+        <div class="vis-opt selected" id="visFree" onclick="selectVisibility('free')">
+          <div class="vis-opt__icon">🆓</div>
+          <div class="vis-opt__title">Free for everyone</div>
+          <div class="vis-opt__desc">Anyone on CookNextDoor can read your full recipe. Great for building your following.</div>
+        </div>
+        <div class="vis-opt" id="visPaid" onclick="selectVisibility('paid')">
+          <div class="vis-opt__icon">🔒</div>
+          <div class="vis-opt__title">Paid on request</div>
+          <div class="vis-opt__desc">Recipe is hidden. Interested buyers message you and you agree on a price privately.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paid config box -->
+    <div id="paidBox">
+      <div class="paid-title">Paid recipe settings</div>
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>Suggested recipe price <span class="opt">or leave blank to negotiate</span></label>
+        <input class="form-control" type="text" placeholder="e.g. $5, $10 — or leave blank to negotiate with buyer"/>
+      </div>
+      <div class="negotiate-toggle">
+        <label class="toggle-switch">
+          <input type="checkbox" id="negotiateToggle" checked/>
+          <span class="toggle-slider"></span>
+        </label>
+        <div class="negotiate-label"><span>Open to negotiation</span> — buyer can propose a different price</div>
+      </div>
+      <div class="form-group" style="margin-bottom:10px;">
+        <label>Payment methods you accept for recipes</label>
+        <div class="payment-chips">
+          <div class="pay-chip selected" onclick="togglePayChip(this)">PayNow</div>
+          <div class="pay-chip selected" onclick="togglePayChip(this)">PayLah!</div>
+          <div class="pay-chip" onclick="togglePayChip(this)">GrabPay</div>
+          <div class="pay-chip" onclick="togglePayChip(this)">Google Pay</div>
+          <div class="pay-chip" onclick="togglePayChip(this)">Apple Pay</div>
+          <div class="pay-chip" onclick="togglePayChip(this)">Cash</div>
+        </div>
+      </div>
+      <div class="info-box" style="margin-bottom:0;">
+        <span class="icon">💬</span>
+        <span>When a neighbor is interested in your recipe, they'll message you directly. You agree on the price, they pay via your chosen method, and you share the recipe link or file privately — all within the community. No platform cut taken.</span>
+      </div>
+    </div>
+
+    <!-- Recipe text -->
+    <div class="form-group" style="margin-top:22px;">
+      <label>Your recipe <span class="opt">optional but highly recommended</span></label>
+      <textarea class="form-control" style="min-height:200px;" placeholder="Ingredients:
+• 500g chicken thighs
+• 2 cups basmati rice
+• 1 cup coconut milk
+• 3 pandan leaves
+• 2 lemongrass stalks
+• ...
+
+Method:
+1. Marinate chicken with turmeric, salt and lime juice for 30 minutes.
+2. In a pot, sauté onion, garlic and ginger until fragrant...
+3. ...
+
+Tips:
+• Always use pandan leaves for fragrance — it makes a huge difference!
+• Best served with sambal belacan and fried anchovies."></textarea>
+      <div class="helper">The more detail you share, the more neighbors will love your listing. If you set paid visibility, they'll only see a preview teaser.</div>
+    </div>
+
+    <div class="btn-actions">
+      <button class="btn-primary" onclick="nextStep(2)">Continue → Review</button>
+      <button class="btn-secondary" onclick="prevStep(2)">← Back</button>
+    </div>
+  </div>
+
+  <!-- ─────────────── STEP 3 — Review ─────────────── -->
+  <div class="card hidden" id="step-3">
+    <h2>Step 3: <span>Review your listing</span> ✅</h2>
+    <p class="subtitle">Check everything looks right before publishing to your neighborhood.</p>
+
+    <img id="reviewPhoto" src="https://upload.wikimedia.org/wikipedia/commons/7/71/Hainanese_Chicken_Rice.jpg" alt="Dish photo" class="review-photo"/>
+
+    <div>
+      <div class="review-item"><span class="review-label">Dish name</span><span class="review-value" id="reviewName">Hainanese Chicken Rice</span></div>
+      <div class="review-item"><span class="review-label">Photo</span><span class="review-value" id="reviewPhotoType">Platform photo</span></div>
+      <div class="review-item"><span class="review-label">Price per portion</span><span class="review-value">$5</span></div>
+      <div class="review-item"><span class="review-label">Portions available</span><span class="review-value">3 portions</span></div>
+      <div class="review-item"><span class="review-label">Pickup ready by</span><span class="review-value">12:00</span></div>
+      <div class="review-item"><span class="review-label">Dietary</span><span class="review-value">Halal · Contains egg</span></div>
+      <div class="review-item">
+        <span class="review-label">Cooking video</span>
+        <span class="review-value" id="reviewYT"><span class="badge badge-yt">YouTube linked ✓</span></span>
+      </div>
+      <div class="review-item">
+        <span class="review-label">Recipe</span>
+        <span class="review-value" id="reviewRecipe"><span class="badge badge-free">Free for everyone</span></span>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top:20px;">
+      <span class="icon">📍</span>
+      <span>This listing will be visible to neighbors within <strong>1 km</strong> of your registered address. Your exact address is never shown — only your neighborhood name.</span>
+    </div>
+
+    <div class="btn-actions" style="margin-top:8px;">
+      <button class="btn-primary" onclick="nextStep(3)">Publish listing 🚀</button>
+      <button class="btn-secondary" onclick="prevStep(3)">← Edit details</button>
+    </div>
+    <p class="terms">By publishing you confirm this food is freshly prepared and safe. You agree to our <a href="#">Cook Guidelines</a> and <a href="#">Community Standards</a>.</p>
+  </div>
+
+  <!-- ─────────────── STEP 4 — Success ─────────────── -->
+  <div class="card hidden" id="step-4">
+    <div class="success-card">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">Dish is live!</div>
+      <div class="success-sub">Your listing is now visible to neighbors within 1 km. Here's what happens next:</div>
+      <div class="next-steps">
+        <div class="next-step">
+          <div class="next-step__icon">📱</div>
+          <div>
+            <div class="next-step__title">You'll get notified when someone reserves</div>
+            <div class="next-step__sub">We'll SMS and email you with the buyer's name and pickup time</div>
+          </div>
+        </div>
+        <div class="next-step">
+          <div class="next-step__icon">💬</div>
+          <div>
+            <div class="next-step__title">Chat to confirm pickup spot &amp; time</div>
+            <div class="next-step__sub">You coordinate directly — no middleman, no delay</div>
+          </div>
+        </div>
+        <div class="next-step">
+          <div class="next-step__icon">💰</div>
+          <div>
+            <div class="next-step__title">They pick up, you get paid 100%</div>
+            <div class="next-step__sub">PayNow, PayLah, GrabPay, or cash — your choice, zero commission</div>
+          </div>
+        </div>
+        <div class="next-step">
+          <div class="next-step__icon">📋</div>
+          <div>
+            <div class="next-step__title">Recipe requests come in separately</div>
+            <div class="next-step__sub">If you chose paid recipe, interested neighbors will message you to negotiate. You set the price — we don't take a cut.</div>
+          </div>
+        </div>
+      </div>
+      <div class="action-links">
+        <a href="cook-list-dish.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;">+ List another dish</a>
+        <a href="meetup-guide.html" class="link-plain">📋 Read the pickup guide</a>
+        <a href="index.html" class="link-plain" style="color:rgba(0,0,0,0.35);">← Back to home</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ── Food library ── */
+const FOOD_LIBRARY = [
+  {name:'Chicken Biryani',     img:'https://upload.wikimedia.org/wikipedia/commons/5/5a/%22Hyderabadi_Dum_Biryani%22.jpg',                                                                                                                                                                  tag:'Indian'},
+  {name:'Hainanese Chicken Rice', img:'https://upload.wikimedia.org/wikipedia/commons/7/71/Hainanese_Chicken_Rice.jpg',                                                                                                                                                                    tag:'Chinese'},
+  {name:'Nasi Lemak',          img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Nasi_Lemak_dengan_Chili_Nasi_Lemak_dan_Sotong_Pedas%2C_di_Penang_Summer_Restaurant.jpg/800px-Nasi_Lemak_dengan_Chili_Nasi_Lemak_dan_Sotong_Pedas%2C_di_Penang_Summer_Restaurant.jpg',       tag:'Malay'},
+  {name:'Beef Rendang',        img:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Rendang_daging_sapi_asli_Padang.JPG/800px-Rendang_daging_sapi_asli_Padang.JPG',                                                                                                              tag:'Malay'},
+  {name:'Nyonya Laksa',        img:'https://upload.wikimedia.org/wikipedia/commons/1/1c/Nyonya_Laksa.jpg',                                                                                                                                                                               tag:'Chinese'},
+  {name:'Bak Kut Teh',         img:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Song_Fa_Bak_Kut_Teh%2C_New_Bridge_Rd%2C_Singapore_%282023%29_06.jpg/800px-Song_Fa_Bak_Kut_Teh%2C_New_Bridge_Rd%2C_Singapore_%282023%29_06.jpg',                                              tag:'Chinese'},
+  {name:'Char Kway Teow',      img:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Char_kway_teow.jpg/800px-Char_kway_teow.jpg',                                                                                                                                                tag:'Chinese'},
+  {name:'Fish Head Curry',     img:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Fisheadcurry.JPG/800px-Fisheadcurry.JPG',                                                                                                                                                    tag:'Indian'},
+  {name:'Yong Tau Foo',        img:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Hakka_yong_tau_foo_with_noodles.jpg/800px-Hakka_yong_tau_foo_with_noodles.jpg',                                                                                                              tag:'Chinese'},
+  {name:'Roti John',           img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Roti_John_-_served.jpg/800px-Roti_John_-_served.jpg',                                                                                                                                        tag:'Malay'},
+  {name:'Kaya Toast',          img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Kaya_toast_on_a_plate.jpg/800px-Kaya_toast_on_a_plate.jpg',                                                                                                                                  tag:'Chinese'},
+  {name:'Sayur Lodeh',         img:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Lodeh.jpg/800px-Lodeh.jpg',                                                                                                                                                                  tag:'Malay'},
+  {name:'Prawn Mee Soup',      img:'https://upload.wikimedia.org/wikipedia/commons/7/75/Newton_HokkienMee.JPG',                                                                                                                                                                           tag:'Chinese'},
+  {name:'Butter Prawns',       img:'https://upload.wikimedia.org/wikipedia/commons/b/bd/Butter_prawn.jpg',                                                                                                                                                                                 tag:'Chinese'},
+  {name:'Congee / Bubur Ayam', img:'https://upload.wikimedia.org/wikipedia/commons/5/58/Chinese_rice_congee.jpg',                                                                                                                                                                          tag:'Chinese'},
+  {name:'Tom Yum Noodles',     img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Tom_yam_kung_maenam.jpg/800px-Tom_yam_kung_maenam.jpg',                                                                                                                                      tag:'Thai'},
+  {name:'Thai Papaya Salad',   img:'https://upload.wikimedia.org/wikipedia/commons/3/34/2013_Tam_Lao.jpg',                                                                                                                                                                                 tag:'Thai'},
+  {name:'Japanese Bento',      img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Bento_box_from_a_grocery_store.jpg/800px-Bento_box_from_a_grocery_store.jpg',                                                                                                                tag:'Japanese'},
+  {name:'Temaki Sushi',        img:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Sushi_platter.jpg/800px-Sushi_platter.jpg',                                                                                                                                                  tag:'Japanese'},
+  {name:'Homemade Carbonara',  img:'https://upload.wikimedia.org/wikipedia/commons/3/33/Espaguetis_carbonara.jpg',                                                                                                                                                                         tag:'Western'},
+  {name:'Portuguese Egg Tart', img:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Pasteis_de_belem1.jpg/800px-Pasteis_de_belem1.jpg',                                                                                                                                         tag:'Dessert'},
+  {name:'Falafel Bowl',        img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Falafels_2.jpg/800px-Falafels_2.jpg',                                                                                                                                                        tag:'Middle Eastern'},
+  {name:'Nonya Kueh',          img:'https://upload.wikimedia.org/wikipedia/commons/7/79/Nonya_kueh_4.jpg',                                                                                                                                                                                 tag:'Dessert'},
+  {name:'Pandan Chiffon Cake', img:'https://upload.wikimedia.org/wikipedia/commons/b/b7/Sifon_pandan.JPG',                                                                                                                                                                                tag:'Dessert'},
+  {name:'Ondeh-Ondeh',         img:'https://upload.wikimedia.org/wikipedia/commons/5/50/Klepon_Khas_Tulungagung.jpg',                                                                                                                                                               tag:'Dessert'},
+  {name:'Kueh Lapis',          img:'https://upload.wikimedia.org/wikipedia/commons/9/98/Kue_Lapis.jpg',                                                                                                                                                                                    tag:'Dessert'},
+  {name:'Chocolate Lava Cake', img:'https://upload.wikimedia.org/wikipedia/commons/6/6b/Chocolate_Fondant.jpg',                                                                                                                                                                            tag:'Dessert'},
+  {name:'Quinoa Power Bowl',   img:'https://upload.wikimedia.org/wikipedia/commons/e/ed/Vegan_Quinoa_Bowl_%2844040185371%29.jpg',                                                                                                                                                    tag:'Healthy'},
+];
+
+let selectedLibItem = null;
+let currentFilter   = 'All';
+
+/* ── Build library grid ── */
+function buildLibGrid(filter) {
+  const grid = document.getElementById('libGrid');
+  grid.innerHTML = '';
+  const items = filter === 'All' ? FOOD_LIBRARY : FOOD_LIBRARY.filter(f => f.tag === filter);
+  items.forEach((food, idx) => {
+    const div = document.createElement('div');
+    div.className = 'lib-item' + (selectedLibItem && selectedLibItem.name === food.name ? ' selected' : '');
+    div.dataset.idx = FOOD_LIBRARY.indexOf(food);
+    div.innerHTML = `<img src="${food.img}" alt="${food.name}" loading="lazy"/><div class="lib-item__name">${food.name}</div><div class="lib-item__tag">${food.tag}</div><div class="check">✓</div>`;
+    div.onclick = () => selectLibItem(food, div);
+    grid.appendChild(div);
+  });
+}
+
+function filterLib(tagEl, tag) {
+  document.querySelectorAll('.lib-tag').forEach(t => t.classList.remove('active'));
+  tagEl.classList.add('active');
+  currentFilter = tag;
+  buildLibGrid(tag);
+}
+
+function selectLibItem(food, el) {
+  document.querySelectorAll('.lib-item').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedLibItem = food;
+  document.getElementById('previewImg').src    = food.img;
+  document.getElementById('previewName').textContent = food.name;
+  document.getElementById('previewTag').textContent  = food.tag;
+  document.getElementById('selectedPreview').classList.add('visible');
+  // Auto-fill dish name if empty
+  const nameInput = document.getElementById('dishNameInput');
+  if (!nameInput.value.trim()) nameInput.value = food.name;
+}
+
+function clearSelection() {
+  selectedLibItem = null;
+  document.getElementById('selectedPreview').classList.remove('visible');
+  document.querySelectorAll('.lib-item').forEach(i => i.classList.remove('selected'));
+}
+
+/* ── Tab switch ── */
+function switchTab(tab) {
+  document.getElementById('tabLibrary').classList.toggle('active', tab === 'library');
+  document.getElementById('tabUpload').classList.toggle('active', tab === 'upload');
+  document.getElementById('libraryPanel').style.display = tab === 'library' ? 'block' : 'none';
+  document.getElementById('uploadPanel').style.display  = tab === 'upload'  ? 'block' : 'none';
+}
+
+/* ── Dish name suggestions ── */
+function handleDishInput(val) {
+  const box = document.getElementById('suggBox');
+  if (!val.trim()) { box.classList.remove('visible'); return; }
+  const matches = FOOD_LIBRARY.filter(f => f.name.toLowerCase().includes(val.toLowerCase())).slice(0, 6);
+  if (!matches.length) { box.classList.remove('visible'); return; }
+  box.innerHTML = matches.map(f =>
+    `<div class="sugg-item" onclick="pickSuggestion('${f.name}',${FOOD_LIBRARY.indexOf(f)})">
+      <img class="sugg-img" src="${f.img}" alt="${f.name}" loading="lazy"/>
+      <div><div class="sugg-text">${f.name}</div><div class="sugg-tag">${f.tag}</div></div>
+    </div>`
+  ).join('');
+  box.classList.add('visible');
+}
+
+function pickSuggestion(name, idx) {
+  document.getElementById('dishNameInput').value = name;
+  document.getElementById('suggBox').classList.remove('visible');
+  // Auto-select in library
+  selectLibItem(FOOD_LIBRARY[idx], { classList: { add:()=>{}, remove:()=>{} } });
+  // Re-render grid with item selected
+  buildLibGrid(currentFilter);
+  // Make sure library tab is active
+  switchTab('library');
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.dish-name-wrap')) document.getElementById('suggBox').classList.remove('visible');
+});
+
+/* ── Recipe visibility ── */
+function selectVisibility(type) {
+  document.getElementById('visFree').classList.toggle('selected', type === 'free');
+  document.getElementById('visPaid').classList.toggle('selected', type === 'paid');
+  document.getElementById('paidBox').classList.toggle('visible', type === 'paid');
+  document.getElementById('reviewRecipe').innerHTML = type === 'free'
+    ? '<span class="badge badge-free">Free for everyone</span>'
+    : '<span class="badge badge-paid">Paid on request 🔒</span>';
+}
+
+/* ── YouTube preview ── */
+function updateYtPreview() {
+  const val = document.getElementById('ytInput').value.trim();
+  const preview = document.getElementById('ytPreview');
+  const match = val.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  if (match) {
+    preview.style.display = 'block';
+    preview.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${match[1]}" frameborder="0" allowfullscreen style="display:block;border-radius:12px;"></iframe>`;
+    document.getElementById('reviewYT').innerHTML = '<span class="badge badge-yt">YouTube linked ✓</span>';
+  } else {
+    preview.style.display = 'none';
+    document.getElementById('reviewYT').innerHTML = '<span style="color:#B0B0B0">Not added</span>';
+  }
+}
+
+/* ── Chips & utils ── */
+function toggleChip(el)    { el.classList.toggle('selected'); }
+function togglePayChip(el) { el.classList.toggle('selected'); }
+
+function addThumb(input, containerId) {
+  const container = document.getElementById(containerId);
+  Array.from(input.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.className = 'photo-thumb';
+      container.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ── Step navigation ── */
+let currentStep = 1;
+
+function nextStep(from) {
+  // Sync review data from step 1
+  if (from === 2) {
+    const name = document.getElementById('dishNameInput').value || 'Hainanese Chicken Rice';
+    document.getElementById('reviewName').textContent = name;
+    if (selectedLibItem) {
+      document.getElementById('reviewPhoto').src = selectedLibItem.img;
+      document.getElementById('reviewPhotoType').textContent = 'Platform photo';
+    }
+  }
+  const next = from + 1;
+  document.getElementById('step-' + from).classList.add('hidden');
+  document.getElementById('step-' + next).classList.remove('hidden');
+  document.getElementById('step-' + next).scrollIntoView({behavior:'smooth',block:'start'});
+  updateProgress(next);
+  currentStep = next;
+}
+
+function prevStep(from) {
+  const prev = from - 1;
+  document.getElementById('step-' + from).classList.add('hidden');
+  document.getElementById('step-' + prev).classList.remove('hidden');
+  document.getElementById('step-' + prev).scrollIntoView({behavior:'smooth',block:'start'});
+  updateProgress(prev);
+  currentStep = prev;
+}
+
+function updateProgress(step) {
+  document.querySelectorAll('.prog-step').forEach((el, i) => {
+    const s = i + 1;
+    el.classList.remove('active','done');
+    if (s < step) el.classList.add('done');
+    else if (s === step) el.classList.add('active');
+  });
+}
+
+/* ── Init ── */
+buildLibGrid('All');
+</script>
+  <div id="cnd-chatbot"></div>
+  <script src="chatbot/dist/chatbot.js"></script>
+</body>
+</html>

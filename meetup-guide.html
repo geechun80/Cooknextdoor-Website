@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>How Pickup & Payment Works – CookNextDoor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;background:#2D6444;color:#fff;}
+
+    :root{
+      --orange:#F87B31;--green:#5BAD6F;--dark:#2D2A26;--muted:#7A7067;
+      --bg:#2D6444;--bg-deep:#1A3D28;--shadow:0 8px 32px rgba(0,0,0,0.20);
+    }
+
+    /* ── Top bar ── */
+    .topbar{background:rgba(26,61,40,0.92);backdrop-filter:blur(16px);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:100;}
+    .topbar__logo img{height:54px;display:block;}
+    .topbar__back{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.7);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
+    .topbar__back:hover{color:var(--orange);}
+
+    /* ── Hero ── */
+    .guide-hero{
+      background:radial-gradient(ellipse at 20% 30%, rgba(255,255,255,0.07) 0%, transparent 50%),
+                 linear-gradient(150deg,#3D7A5A 0%,#2D6444 50%,#1E4A30 100%);
+      padding:72px 24px 60px;text-align:center;
+    }
+    .guide-hero .tag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.18);color:#fff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;padding:6px 14px;border-radius:100px;margin-bottom:20px;}
+    .guide-hero h1{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.8rem,4vw,3rem);color:#fff;margin-bottom:14px;line-height:1.2;}
+    .guide-hero h1 em{font-style:italic;color:var(--orange);}
+    .guide-hero p{color:rgba(255,255,255,0.65);font-size:1rem;max-width:560px;margin:0 auto 36px;line-height:1.7;}
+    .hero-badges{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
+    .hero-badge{background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.15);border-radius:100px;padding:8px 16px;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.8rem;color:#fff;display:flex;align-items:center;gap:6px;}
+
+    /* ── Section ── */
+    .section{padding:72px 24px;max-width:900px;margin:0 auto;}
+    .section-label{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.8);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;padding:5px 12px;border-radius:100px;margin-bottom:16px;}
+    .section h2{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.4rem,3vw,2rem);color:#fff;margin-bottom:10px;}
+    .section h2 em{font-style:italic;color:var(--orange);}
+    .section > p{color:rgba(255,255,255,0.65);font-size:0.95rem;max-width:620px;margin-bottom:40px;line-height:1.7;}
+
+    /* ── Role tabs ── */
+    .role-tabs{display:flex;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:6px;gap:6px;margin-bottom:36px;max-width:400px;}
+    .role-tab{flex:1;text-align:center;padding:11px;border-radius:10px;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;cursor:pointer;color:rgba(255,255,255,0.5);transition:all 0.2s;border:none;background:transparent;}
+    .role-tab.active{background:var(--orange);color:#fff;}
+
+    /* ── Timeline flow ── */
+    .flow{display:flex;flex-direction:column;gap:0;}
+    .flow-item{display:flex;gap:24px;padding-bottom:32px;position:relative;}
+    .flow-item:not(:last-child)::after{content:'';position:absolute;left:20px;top:44px;bottom:0;width:2px;background:rgba(255,255,255,0.10);}
+    .flow-left{flex-shrink:0;display:flex;flex-direction:column;align-items:center;}
+    .flow-num{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-weight:800;font-size:0.9rem;color:#fff;z-index:1;}
+    .flow-num--orange{background:var(--orange);box-shadow:0 4px 16px rgba(248,123,49,0.35);}
+    .flow-num--green {background:var(--green); box-shadow:0 4px 16px rgba(91,173,111,0.30);}
+    .flow-content{flex:1;padding-top:6px;}
+    .flow-content h3{font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#fff;margin-bottom:5px;}
+    .flow-content p{font-size:0.88rem;color:rgba(255,255,255,0.60);line-height:1.65;}
+    .flow-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.10);border-radius:14px;padding:16px 18px;margin-top:12px;}
+    .flow-card__title{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.85rem;color:#fff;margin-bottom:8px;}
+    .flow-card ul{list-style:none;display:flex;flex-direction:column;gap:6px;}
+    .flow-card ul li{font-size:0.82rem;color:rgba(255,255,255,0.60);display:flex;gap:8px;}
+    .flow-card ul li::before{content:'→';color:var(--orange);flex-shrink:0;}
+
+    /* ── Payment section ── */
+    .payment-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:12px;}
+    @media(max-width:860px){.payment-grid{grid-template-columns:repeat(3,1fr);}}
+    @media(max-width:600px){.payment-grid{grid-template-columns:1fr 1fr;}}
+    .payment-card{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:22px 16px;text-align:center;transition:background 0.25s,transform 0.25s,box-shadow 0.25s;cursor:default;}
+    .payment-card:hover{background:rgba(255,255,255,0.13);transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,0.25);}
+    .payment-card__icon{height:52px;display:flex;align-items:center;justify-content:center;margin-bottom:13px;}
+    .payment-card__icon svg{height:42px;width:auto;max-width:110px;transition:transform 0.25s;}
+    .payment-card:hover .payment-card__icon svg{transform:scale(1.07);}
+    .payment-card__name{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.9rem;color:#fff;margin-bottom:4px;}
+    .payment-card__desc{font-size:0.75rem;color:rgba(255,255,255,0.55);line-height:1.5;}
+    .payment-card__badge{display:inline-block;background:var(--green);color:#fff;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.65rem;padding:3px 8px;border-radius:100px;margin-top:8px;}
+
+    /* ── Safety rules ── */
+    .rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .rule-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:22px 20px;}
+    .rule-card__icon{font-size:1.6rem;margin-bottom:10px;}
+    .rule-card__title{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.9rem;color:#fff;margin-bottom:5px;}
+    .rule-card__desc{font-size:0.8rem;color:rgba(255,255,255,0.55);line-height:1.6;}
+    @media(max-width:560px){.rules-grid{grid-template-columns:1fr;}}
+
+    /* ── Rating ── */
+    .rating-section{background:var(--bg-deep);border-radius:24px;padding:40px;text-align:center;}
+    .rating-section h3{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.2rem;color:#fff;margin-bottom:8px;}
+    .rating-section p{color:rgba(255,255,255,0.60);font-size:0.88rem;margin-bottom:28px;}
+    .rating-demo{display:flex;justify-content:center;gap:8px;font-size:2rem;margin-bottom:20px;}
+    .rating-flow{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;}
+    .r-step{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.10);border-radius:14px;padding:16px;text-align:center;min-width:120px;}
+    .r-step__icon{font-size:1.4rem;margin-bottom:6px;}
+    .r-step__label{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.78rem;color:#fff;}
+    .r-step__sub{font-size:0.72rem;color:rgba(255,255,255,0.50);}
+
+    /* ── FAQ ── */
+    .faq{display:flex;flex-direction:column;gap:12px;}
+    .faq-item{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.10);border-radius:14px;overflow:hidden;}
+    .faq-q{padding:18px 20px;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.92rem;color:#fff;cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
+    .faq-q .arrow{transition:transform 0.3s;font-size:0.9rem;color:rgba(255,255,255,0.50);}
+    .faq-q.open .arrow{transform:rotate(180deg);}
+    .faq-a{padding:0 20px;max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s;}
+    .faq-a.open{padding:0 20px 18px;max-height:200px;}
+    .faq-a p{font-size:0.85rem;color:rgba(255,255,255,0.60);line-height:1.7;}
+
+    /* ── CTA bottom ── */
+    .guide-cta{background:var(--orange);padding:72px 24px;text-align:center;position:relative;overflow:hidden;}
+    .guide-cta::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:rgba(255,255,255,0.06);top:-200px;left:-100px;}
+    .guide-cta__inner{position:relative;z-index:1;max-width:600px;margin:0 auto;}
+    .guide-cta h2{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.6rem,3vw,2.2rem);color:#fff;margin-bottom:12px;}
+    .guide-cta p{color:rgba(255,255,255,0.85);margin-bottom:32px;}
+    .cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+    .btn{display:inline-flex;align-items:center;gap:8px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;padding:15px 28px;border-radius:100px;border:none;cursor:pointer;text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.15);}
+    .btn--white{background:#fff;color:var(--orange);}
+    .btn--dark{background:rgba(0,0,0,0.2);color:#fff;border:2px solid rgba(255,255,255,0.3);}
+
+    /* Divider */
+    .page-divider{height:1px;background:rgba(255,255,255,0.08);max-width:900px;margin:0 auto;}
+  </style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+  <a class="topbar__logo" href="index.html"><img src="brand_assets/logo.png" alt="CookNextDoor"/></a>
+  <a class="topbar__back" href="index.html">← Back to home</a>
+</div>
+
+<!-- Hero -->
+<div class="guide-hero">
+  <div class="tag">📋 Complete guide</div>
+  <h1>How pickup &amp; payment<br/><em>actually works.</em></h1>
+  <p>No delivery. No platform. Just two neighbors arranging a simple food handoff — here's exactly how it goes from reservation to payment.</p>
+  <div class="hero-badges">
+    <div class="hero-badge">🏃 Self pickup only</div>
+    <div class="hero-badge">💸 Pay direct to cook</div>
+    <div class="hero-badge">✅ Verified members only</div>
+    <div class="hero-badge">⭐ Rate after pickup</div>
+  </div>
+</div>
+
+<!-- Flow Section -->
+<div class="section">
+  <div class="section-label">Step by step</div>
+  <h2>The complete <em>transaction flow</em></h2>
+  <p>Here's exactly what happens from the moment a buyer discovers food to the moment the cook gets paid.</p>
+
+  <div class="role-tabs">
+    <button class="role-tab active" onclick="showRole('both')">Full flow</button>
+    <button class="role-tab" onclick="showRole('buyer')">🛒 Buyer view</button>
+    <button class="role-tab" onclick="showRole('cook')">🍳 Cook view</button>
+  </div>
+
+  <div class="flow" id="flow-both">
+    <div class="flow-item">
+      <div class="flow-left"><div class="flow-num flow-num--orange">1</div></div>
+      <div class="flow-content">
+        <h3>🛒 Buyer finds a listing</h3>
+        <p>The buyer opens CookNextDoor and sees nearby food listed within 1 km. They can filter by food type, dietary needs, and price range.</p>
+        <div class="flow-card">
+          <div class="flow-card__title">What buyers see on a listing:</div>
+          <ul>
+            <li>Cook's first name + neighborhood (e.g. "Auntie Siti · Tampines")</li>
+            <li>Food name, photo, price per portion, portions available</li>
+            <li>Dietary tags (Halal, Vegetarian, etc.) and cook's rating</li>
+            <li>Estimated pickup window (e.g. "Ready by 12:00 PM today")</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-item">
+      <div class="flow-left"><div class="flow-num flow-num--orange">2</div></div>
+      <div class="flow-content">
+        <h3>🙋 Buyer reserves a portion</h3>
+        <p>The buyer taps "Reserve" and selects how many portions they want. The portion count is immediately deducted from the listing.</p>
+        <div class="flow-card">
+          <div class="flow-card__title">At reservation, the buyer provides:</div>
+          <ul>
+            <li>Number of portions (max = what cook listed)</li>
+            <li>Preferred pickup time window</li>
+            <li>Their verified name and contact number (shared only with cook)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-item">
+      <div class="flow-left"><div class="flow-num flow-num--green">3</div></div>
+      <div class="flow-content">
+        <h3>🔔 Cook gets notified instantly</h3>
+        <p>The cook receives an SMS + app notification with the buyer's name, number of portions, and requested pickup time.</p>
+        <div class="flow-card">
+          <div class="flow-card__title">The cook then:</div>
+          <ul>
+            <li>Accepts or declines the reservation (within 30 minutes)</li>
+            <li>If accepted: confirms the pickup time and exact pickup spot via chat</li>
+            <li>If declined: portions are released back and buyer is notified</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-item">
+      <div class="flow-left"><div class="flow-num flow-num--orange">4</div></div>
+      <div class="flow-content">
+        <h3>💬 Coordinate the meetup via chat</h3>
+        <p>Both parties use the in-app chat (or WhatsApp-style link) to confirm the exact pickup time and location. The cook's full address is only revealed at this point.</p>
+        <div class="flow-card">
+          <div class="flow-card__title">Typical chat messages:</div>
+          <ul>
+            <li>"Hi, I've accepted your reservation for 2 portions of Biryani."</li>
+            <li>"Pickup at Blk 123, void deck, near the letterboxes. 12:30 PM works?"</li>
+            <li>"Great! I'll be there. Paying by PayNow, is that OK?"</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-item">
+      <div class="flow-left"><div class="flow-num flow-num--orange">5</div></div>
+      <div class="flow-content">
+        <h3>🚶 Buyer walks to the pickup spot</h3>
+        <p>The buyer arrives at the agreed time. No delivery, no waiting for a driver — just a quick walk to a neighbor's block.</p>
+        <div class="flow-card">
+          <div class="flow-card__title">Pickup tips for buyers:</div>
+          <ul>
+            <li>Arrive on time — cooks have schedules too</li>
+            <li>Bring your own container if the cook mentioned it</li>
+            <li>Have payment ready (PayNow, PayLah, or exact cash)</li>
+            <li>Your reservation ID confirms you're the right person</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-item">
+      <div class="flow-left"><div class="flow-num flow-num--green">6</div></div>
+      <div class="flow-content">
+        <h3>💸 Payment is made directly to the cook</h3>
+        <p>No platform takes a cut. Payment is handled directly between buyer and cook using any of the methods below.</p>
+      </div>
+    </div>
+
+    <div class="flow-item">
+      <div class="flow-left"><div class="flow-num flow-num--green">7</div></div>
+      <div class="flow-content">
+        <h3>🤝 Food is handed over</h3>
+        <p>Cook hands the food to the buyer. Both confirm the transaction is complete in the app with a tap.</p>
+        <div class="flow-card">
+          <div class="flow-card__title">Cook tips for a great handoff:</div>
+          <ul>
+            <li>Pack food securely — even for a short walk</li>
+            <li>Label the portions if multiple buyers are coming at different times</li>
+            <li>Mention reheating instructions if applicable</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-item">
+      <div class="flow-left"><div class="flow-num flow-num--orange">8</div></div>
+      <div class="flow-content">
+        <h3>⭐ Both parties leave a rating</h3>
+        <p>After pickup, both the buyer and cook are prompted to leave a quick star rating and optional comment. Ratings are public and build community trust.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-divider"></div>
+
+<!-- Payment methods -->
+<div class="section">
+  <div class="section-label">Payment</div>
+  <h2>How to <em>pay your cook</em></h2>
+  <p>All payments go directly from buyer to cook. CookNextDoor takes zero commission. Agree on your method in the chat before pickup.</p>
+  <div class="payment-grid">
+
+    <!-- PayNow -->
+    <div class="payment-card">
+      <div class="payment-card__icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 44">
+          <rect width="110" height="44" rx="9" fill="#E8192C"/>
+          <text x="55" y="16" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="400" font-size="7.5" fill="rgba(255,255,255,0.75)" text-anchor="middle" letter-spacing="1">SINGAPORE</text>
+          <line x1="14" y1="20" x2="96" y2="20" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+          <text x="55" y="34" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="16" fill="white" text-anchor="middle" letter-spacing="-0.3">PayNow</text>
+        </svg>
+      </div>
+      <div class="payment-card__name">PayNow</div>
+      <div class="payment-card__desc">Instant bank transfer via phone number or NRIC. Available on all SG banking apps.</div>
+      <div class="payment-card__badge">Most popular</div>
+    </div>
+
+    <!-- DBS PayLah! -->
+    <div class="payment-card">
+      <div class="payment-card__icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 44">
+          <defs><linearGradient id="plg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6B1FD9"/><stop offset="100%" stop-color="#A020F0"/></linearGradient></defs>
+          <rect width="110" height="44" rx="9" fill="url(#plg)"/>
+          <text x="55" y="14" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="500" font-size="7.5" fill="rgba(255,255,255,0.65)" text-anchor="middle" letter-spacing="1">DBS</text>
+          <text x="55" y="33" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="16" fill="white" text-anchor="middle" letter-spacing="0.2">PayLah!</text>
+        </svg>
+      </div>
+      <div class="payment-card__name">DBS PayLah!</div>
+      <div class="payment-card__desc">DBS digital wallet — scan or enter the cook's mobile number for instant transfer.</div>
+    </div>
+
+    <!-- GrabPay -->
+    <div class="payment-card">
+      <div class="payment-card__icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 44">
+          <rect width="110" height="44" rx="9" fill="#00B14F"/>
+          <!-- Grab "G" circle mark -->
+          <circle cx="20" cy="22" r="11" fill="rgba(255,255,255,0.18)"/>
+          <text x="20" y="27" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="14" fill="white" text-anchor="middle">G</text>
+          <text x="67" y="27" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="800" font-size="14" fill="white" text-anchor="middle" letter-spacing="0.2">GrabPay</text>
+        </svg>
+      </div>
+      <div class="payment-card__name">GrabPay</div>
+      <div class="payment-card__desc">Quick QR scan if both parties have the Grab app. Agree before pickup.</div>
+    </div>
+
+    <!-- Google Pay -->
+    <div class="payment-card">
+      <div class="payment-card__icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 44">
+          <rect width="110" height="44" rx="9" fill="#fff" stroke="#DADCE0" stroke-width="1.5"/>
+          <!-- Colorful Google G ring -->
+          <path d="M24,22 m-11,0 a11,11 0 1,1 22,0 a11,11 0 1,1 -22,0" fill="none" stroke="#E0E0E0" stroke-width="4"/>
+          <path d="M24,11 a11,11 0 0,1 7.78,3.22" fill="none" stroke="#DB4437" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M31.78,14.22 a11,11 0 0,1 3.22,7.78" fill="none" stroke="#F4B400" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M35,22 a11,11 0 0,1 -11,11" fill="none" stroke="#34A853" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M24,33 a11,11 0 0,1 -11,-11" fill="none" stroke="#4285F4" stroke-width="4.2" stroke-linecap="round"/>
+          <!-- G crossbar -->
+          <rect x="24" y="19" width="11" height="5" rx="2.5" fill="#4285F4"/>
+          <line x1="24" y1="19" x2="24" y2="24" stroke="#4285F4" stroke-width="1"/>
+          <!-- "Pay" text -->
+          <text x="76" y="28" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="700" font-size="17" fill="#3C4043" text-anchor="middle">Pay</text>
+        </svg>
+      </div>
+      <div class="payment-card__name">Google Pay</div>
+      <div class="payment-card__desc">Pay via Google Pay wallet if your cook accepts it. Confirm in chat first.</div>
+    </div>
+
+    <!-- Apple Pay -->
+    <div class="payment-card">
+      <div class="payment-card__icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 44">
+          <rect width="110" height="44" rx="9" fill="#1C1C1E"/>
+          <!-- Simplified Apple silhouette -->
+          <path d="M27,15 C28.5,12 31,10.5 34,10.8 C34.2,14.5 31.5,16 30,16 C32,16 34.5,16.5 36.5,19 C38.5,21.5 38,25.5 36,28 C34.2,30.2 32,31 29.5,31 C28,31 26,30 25,30 C24,30 22,31 20.5,31 C18,31 15.8,30.2 14,28 C12,25.5 11.5,21.5 13.5,19 C15.5,16.5 18,16 20,16 C18.5,16 15.8,14.5 16,10.8 C19,10.5 25.5,12 27,15Z" fill="white"/>
+          <text x="73" y="28" font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-weight="500" font-size="17" fill="white" text-anchor="middle" letter-spacing="0.2">Pay</text>
+        </svg>
+      </div>
+      <div class="payment-card__name">Apple Pay</div>
+      <div class="payment-card__desc">iPhone or Apple Watch tap-to-pay. Both parties need to agree before pickup.</div>
+    </div>
+
+    <!-- NETS -->
+    <div class="payment-card">
+      <div class="payment-card__icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 44">
+          <rect width="110" height="44" rx="9" fill="#002D72"/>
+          <!-- Decorative side stripe -->
+          <rect x="0" y="0" width="8" height="44" rx="9 0 0 9" fill="#E8192C"/>
+          <rect x="8" y="0" width="4" height="44" fill="#E8192C" opacity="0.4"/>
+          <text x="63" y="16" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="14" fill="white" text-anchor="middle" letter-spacing="4">NETS</text>
+          <line x1="22" y1="20" x2="104" y2="20" stroke="rgba(255,255,255,0.25)" stroke-width="0.5"/>
+          <text x="63" y="32" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="400" font-size="7.5" fill="rgba(255,255,255,0.60)" text-anchor="middle" letter-spacing="0.5">SINGAPORE INTERBANK</text>
+        </svg>
+      </div>
+      <div class="payment-card__name">NETS</div>
+      <div class="payment-card__desc">Singapore interbank network — confirm with cook if they use NETS FlashPay.</div>
+    </div>
+
+    <!-- Cash SGD -->
+    <div class="payment-card">
+      <div class="payment-card__icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 44">
+          <rect width="110" height="44" rx="9" fill="#1A7A4A"/>
+          <!-- Bill-style inner border -->
+          <rect x="5" y="5" width="100" height="34" rx="6" fill="none" stroke="rgba(255,255,255,0.20)" stroke-width="1" stroke-dasharray="3,3"/>
+          <!-- $ symbol -->
+          <text x="28" y="31" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="22" fill="rgba(255,255,255,0.90)" text-anchor="middle">$</text>
+          <line x1="44" y1="10" x2="44" y2="34" stroke="rgba(255,255,255,0.20)" stroke-width="1"/>
+          <text x="77" y="19" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="12" fill="white" text-anchor="middle" letter-spacing="2">SGD</text>
+          <text x="77" y="32" font-family="'Helvetica Neue',Arial,sans-serif" font-weight="400" font-size="8" fill="rgba(255,255,255,0.60)" text-anchor="middle">CASH</text>
+        </svg>
+      </div>
+      <div class="payment-card__name">Cash (SGD)</div>
+      <div class="payment-card__desc">Always accepted. Bring exact change or small notes for smooth handoff.</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="page-divider"></div>
+
+<!-- Safety -->
+<div class="section">
+  <div class="section-label">Safety</div>
+  <h2>Community <em>safety rules</em></h2>
+  <p>CookNextDoor is built on trust. Here's how we keep the community safe for everyone.</p>
+  <div class="rules-grid">
+    <div class="rule-card">
+      <div class="rule-card__icon">✅</div>
+      <div class="rule-card__title">Verified members only</div>
+      <div class="rule-card__desc">Every user verifies both email and phone number before they can reserve or list food. No anonymous accounts.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card__icon">📍</div>
+      <div class="rule-card__title">Address only on confirmation</div>
+      <div class="rule-card__desc">A cook's full address is only shared after a reservation is accepted — never visible on the public listing.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card__icon">🚨</div>
+      <div class="rule-card__title">Report & block</div>
+      <div class="rule-card__desc">If anything feels off, you can report and block any user instantly. Our team reviews reports within 24 hours.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card__icon">🤝</div>
+      <div class="rule-card__title">Public pickup spots encouraged</div>
+      <div class="rule-card__desc">Meet at void decks, HDB common areas, or the building lobby. You don't have to invite anyone into your home.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card__icon">⭐</div>
+      <div class="rule-card__title">Transparent ratings</div>
+      <div class="rule-card__desc">Both buyers and cooks are rated after every transaction. Low-rated accounts are reviewed and may be suspended.</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card__icon">🏠</div>
+      <div class="rule-card__title">Food safety guidelines</div>
+      <div class="rule-card__desc">Cooks agree to our food safety standards — fresh ingredients, proper storage, and honest labeling of allergens.</div>
+    </div>
+  </div>
+</div>
+
+<div class="page-divider"></div>
+
+<!-- Rating system -->
+<div class="section">
+  <div class="rating-section">
+    <h3>⭐ The Rating System</h3>
+    <p>After every completed pickup, both parties rate each other. It takes 10 seconds and keeps the community honest.</p>
+    <div class="rating-demo">⭐⭐⭐⭐⭐</div>
+    <div class="rating-flow">
+      <div class="r-step">
+        <div class="r-step__icon">🤝</div>
+        <div class="r-step__label">Pickup done</div>
+        <div class="r-step__sub">Both confirm in-app</div>
+      </div>
+      <div class="r-step">
+        <div class="r-step__icon">📩</div>
+        <div class="r-step__label">Rating prompt</div>
+        <div class="r-step__sub">You get a notification</div>
+      </div>
+      <div class="r-step">
+        <div class="r-step__icon">⭐</div>
+        <div class="r-step__label">Leave 1–5 stars</div>
+        <div class="r-step__sub">Optional comment</div>
+      </div>
+      <div class="r-step">
+        <div class="r-step__icon">📊</div>
+        <div class="r-step__label">Profile updated</div>
+        <div class="r-step__sub">Visible to community</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-divider"></div>
+
+<!-- FAQ -->
+<div class="section">
+  <div class="section-label">FAQ</div>
+  <h2>Common <em>questions</em></h2>
+  <p>Things people ask us most about how CookNextDoor works.</p>
+  <div class="faq">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What if the cook cancels after I reserve? <span class="arrow">▼</span></div>
+      <div class="faq-a"><p>If a cook cancels, your reservation is released and you'll be notified immediately. No payment was made yet (payment only happens at pickup), so there's nothing to refund. You can immediately browse other nearby listings.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What if I'm late for pickup? <span class="arrow">▼</span></div>
+      <div class="faq-a"><p>Message your cook in the app as soon as you know you'll be late. Cooks are people with schedules — being considerate goes a long way. If you're more than 30 minutes late without notice, the cook may cancel the reservation.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Do I need a container? <span class="arrow">▼</span></div>
+      <div class="faq-a"><p>Each cook sets their own packaging. Some provide containers (included in the price), others ask you to bring your own. This is usually mentioned in the listing or chat. Bringing a bag to carry the food is always a good idea.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Can I order from a cook outside my 1 km area? <span class="arrow">▼</span></div>
+      <div class="faq-a"><p>No — CookNextDoor is strictly hyperlocal (1 km radius). This ensures freshness, convenience, and that the community feel stays real. If you want more options, check back later as more cooks join near you.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Is there any fee or commission? <span class="arrow">▼</span></div>
+      <div class="faq-a"><p>Zero. CookNextDoor is completely free for both buyers and cooks. No listing fees, no commission, no subscription. The cook sets the price and keeps every cent of it.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What if the food is not what I expected? <span class="arrow">▼</span></div>
+      <div class="faq-a"><p>Since payment happens at pickup, you can choose not to pay and not to take the food if something seems seriously wrong. That said, home cooking naturally varies — minor differences are normal. Use the rating system to give feedback and help the community.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Is CookNextDoor legal in Singapore? <span class="arrow">▼</span></div>
+      <div class="faq-a"><p>Home cooks in Singapore selling food in small quantities fall under the category of cottage food businesses. We recommend checking the latest SFA (Singapore Food Agency) guidelines. CookNextDoor supports compliance and will provide resources to help cooks stay within guidelines.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="guide-cta">
+  <div class="guide-cta__inner">
+    <h2>Ready to get started?</h2>
+    <p>Join your neighborhood food community today — it's free, it's simple, and your next home-cooked meal is just next door.</p>
+    <div class="cta-btns">
+      <a href="user-auth.html" class="btn btn--white">🍜 Find food near me</a>
+      <a href="cook-register.html" class="btn btn--dark">🍳 Become a cook</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleFaq(el) {
+    el.classList.toggle('open');
+    el.nextElementSibling.classList.toggle('open');
+  }
+
+  function showRole(role) {
+    document.querySelectorAll('.role-tab').forEach((t,i) => {
+      t.classList.toggle('active', (role === 'both' && i === 0) || (role === 'buyer' && i === 1) || (role === 'cook' && i === 2));
+    });
+    // For MVP — full flow always shown; in production filter by role
+  }
+</script>
+  <div id="cnd-chatbot"></div>
+  <script src="chatbot/dist/chatbot.js"></script>
+</body>
+</html>

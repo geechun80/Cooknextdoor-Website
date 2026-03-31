@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Food Mood – CookNextDoor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;background:#0F2419;color:#fff;min-height:100vh;overflow-x:hidden;}
+
+    :root{
+      --orange:#F87B31;--green:#5BAD6F;
+      --bg:#0F2419;--mid:#1A3D28;--light:#2D6444;
+    }
+
+    /* ── Nav ── */
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(15,36,25,0.90);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,0.07);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;}
+    .nav__logo img{height:56px;display:block;}
+    .nav__links{display:flex;align-items:center;gap:20px;}
+    .nav__links a{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.70);text-decoration:none;transition:color 0.2s;}
+    .nav__links a:hover{color:var(--orange);}
+    .nav__links .active-link{color:#fff;}
+    .btn-nav{background:var(--orange);color:#fff;padding:9px 20px;border-radius:100px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.82rem;text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 4px 14px rgba(248,123,49,0.30);}
+    .btn-nav:hover{transform:translateY(-2px);}
+
+    /* ── Intro screen ── */
+    #screen-intro{
+      min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;padding:100px 24px 60px;position:relative;overflow:hidden;
+      background:radial-gradient(ellipse at 25% 30%, rgba(255,255,255,0.06) 0%, transparent 50%),
+                 linear-gradient(160deg,#1E4A30 0%,#0F2419 60%,#152F21 100%);
+    }
+
+    /* Floating food bg */
+    .bg-foods{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+    .bg-food{position:absolute;font-size:clamp(1.8rem,4vw,3.5rem);opacity:0.08;animation:drift linear infinite;}
+    @keyframes drift{0%{transform:translateY(100vh) rotate(0deg);}100%{transform:translateY(-120px) rotate(360deg);}}
+
+    .intro-tag{display:inline-flex;align-items:center;gap:7px;background:rgba(248,123,49,0.15);border:1px solid rgba(248,123,49,0.35);color:var(--orange);font-family:'Poppins',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;padding:7px 16px;border-radius:100px;margin-bottom:24px;}
+    #screen-intro h1{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(2.2rem,6vw,4.2rem);line-height:1.1;margin-bottom:18px;letter-spacing:-0.02em;}
+    #screen-intro h1 em{font-style:italic;color:var(--orange);}
+    #screen-intro p{color:rgba(255,255,255,0.60);font-size:clamp(0.95rem,2vw,1.1rem);max-width:540px;line-height:1.7;margin-bottom:40px;}
+
+    .start-btn{display:inline-flex;align-items:center;gap:10px;background:var(--orange);color:#fff;font-family:'Poppins',sans-serif;font-weight:800;font-size:1.05rem;padding:18px 36px;border-radius:100px;border:none;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 8px 28px rgba(248,123,49,0.40);}
+    .start-btn:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 14px 36px rgba(248,123,49,0.45);}
+    .start-btn .pulse{width:10px;height:10px;border-radius:50%;background:#fff;animation:pulse 1.4s ease-in-out infinite;}
+    @keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.5);opacity:0.6;}}
+
+    .google-credit{margin-top:28px;font-size:0.78rem;color:rgba(255,255,255,0.30);display:flex;align-items:center;gap:8px;}
+    .google-credit a{color:rgba(255,255,255,0.50);text-decoration:none;transition:color 0.2s;}
+    .google-credit a:hover{color:var(--orange);}
+    .scroll-hint{margin-top:60px;display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,0.25);font-size:0.75rem;}
+    .scroll-dot{width:4px;height:24px;background:rgba(255,255,255,0.15);border-radius:2px;overflow:hidden;}
+    .scroll-dot::after{content:'';display:block;width:100%;height:50%;background:rgba(255,255,255,0.5);animation:scrollAnim 1.8s ease-in-out infinite;}
+    @keyframes scrollAnim{0%{transform:translateY(-100%)}100%{transform:translateY(200%)}}
+
+    /* ── Mood screen ── */
+    #screen-mood{display:none;padding:100px 24px 60px;min-height:100vh;}
+    .mood-header{text-align:center;max-width:640px;margin:0 auto 52px;}
+    .mood-header h2{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.6rem,4vw,2.8rem);margin-bottom:10px;}
+    .mood-header h2 span{color:var(--orange);}
+    .mood-header p{color:rgba(255,255,255,0.55);font-size:0.95rem;}
+
+    .mood-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;max-width:860px;margin:0 auto;}
+    .mood-card{
+      background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.08);
+      border-radius:20px;padding:24px 12px;text-align:center;cursor:pointer;
+      transition:all 0.25s;position:relative;overflow:hidden;
+    }
+    .mood-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.25s;}
+    .mood-card:hover{transform:translateY(-6px);border-color:rgba(255,255,255,0.20);background:rgba(255,255,255,0.09);}
+    .mood-card.selected{border-color:var(--orange);background:rgba(248,123,49,0.12);}
+    .mood-card.selected::before{opacity:1;background:radial-gradient(circle at 50% 0%, rgba(248,123,49,0.12) 0%, transparent 70%);}
+    .mood-emoji{font-size:2.4rem;display:block;margin-bottom:10px;transition:transform 0.25s;}
+    .mood-card:hover .mood-emoji,.mood-card.selected .mood-emoji{transform:scale(1.2);}
+    .mood-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.82rem;color:#fff;margin-bottom:3px;}
+    .mood-desc{font-size:0.70rem;color:rgba(255,255,255,0.45);line-height:1.4;}
+    .mood-card.selected .mood-name{color:var(--orange);}
+
+    .mood-next{display:flex;justify-content:center;margin-top:36px;}
+    .btn-mood-next{background:var(--orange);color:#fff;font-family:'Poppins',sans-serif;font-weight:800;font-size:1rem;padding:15px 40px;border-radius:100px;border:none;cursor:pointer;transition:all 0.2s;opacity:0.4;pointer-events:none;box-shadow:0 6px 20px rgba(248,123,49,0.25);}
+    .btn-mood-next.ready{opacity:1;pointer-events:all;}
+    .btn-mood-next.ready:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(248,123,49,0.40);}
+
+    @media(max-width:700px){.mood-grid{grid-template-columns:repeat(3,1fr);}}
+    @media(max-width:460px){.mood-grid{grid-template-columns:repeat(2,1fr);}}
+
+    /* ── Ingredient / Craving screen ── */
+    #screen-craving{display:none;padding:100px 24px 60px;min-height:100vh;}
+    .craving-header{text-align:center;max-width:600px;margin:0 auto 44px;}
+    .craving-header h2{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.5rem,3.5vw,2.4rem);margin-bottom:10px;}
+    .craving-header .mood-recap{display:inline-flex;align-items:center;gap:8px;background:rgba(248,123,49,0.15);border:1px solid rgba(248,123,49,0.30);color:var(--orange);padding:6px 14px;border-radius:100px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.78rem;margin-bottom:16px;}
+
+    .ingredient-search{max-width:560px;margin:0 auto 36px;position:relative;}
+    .ingredient-search input{width:100%;padding:16px 56px 16px 20px;background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.12);border-radius:16px;font-family:'Inter',sans-serif;font-size:1rem;color:#fff;outline:none;transition:border 0.2s;}
+    .ingredient-search input::placeholder{color:rgba(255,255,255,0.30);}
+    .ingredient-search input:focus{border-color:var(--orange);}
+    .ingredient-search .search-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:1.2rem;pointer-events:none;}
+
+    .craving-tags{max-width:720px;margin:0 auto 40px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
+    .c-tag{padding:10px 18px;border-radius:100px;border:2px solid rgba(255,255,255,0.12);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.82rem;cursor:pointer;color:rgba(255,255,255,0.70);background:rgba(255,255,255,0.05);transition:all 0.2s;display:flex;align-items:center;gap:6px;}
+    .c-tag:hover{border-color:var(--orange);color:#fff;background:rgba(248,123,49,0.10);}
+    .c-tag.selected{background:var(--orange);border-color:var(--orange);color:#fff;}
+
+    .craving-next{display:flex;justify-content:center;gap:12px;}
+    .btn-find{background:var(--orange);color:#fff;font-family:'Poppins',sans-serif;font-weight:800;font-size:1rem;padding:15px 36px;border-radius:100px;border:none;cursor:pointer;transition:all 0.2s;box-shadow:0 6px 20px rgba(248,123,49,0.28);}
+    .btn-find:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(248,123,49,0.40);}
+    .btn-back{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.70);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.92rem;padding:15px 24px;border-radius:100px;border:2px solid rgba(255,255,255,0.12);cursor:pointer;transition:all 0.2s;}
+    .btn-back:hover{border-color:rgba(255,255,255,0.30);color:#fff;}
+
+    /* ── Loading ── */
+    #screen-loading{display:none;min-height:100vh;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:100px 24px;}
+    .loader-emoji{font-size:4rem;animation:spinBounce 1s ease-in-out infinite;}
+    @keyframes spinBounce{0%,100%{transform:scale(1) rotate(0deg);}50%{transform:scale(1.2) rotate(10deg);}}
+    .loader-text{font-family:'Poppins',sans-serif;font-weight:700;font-size:1.1rem;color:#fff;margin-top:20px;}
+    .loader-sub{font-size:0.85rem;color:rgba(255,255,255,0.50);margin-top:6px;}
+    .loader-bar{width:240px;height:4px;background:rgba(255,255,255,0.10);border-radius:2px;margin:20px auto;overflow:hidden;}
+    .loader-bar-fill{height:100%;background:var(--orange);border-radius:2px;animation:loadFill 2s ease forwards;}
+    @keyframes loadFill{from{width:0%;}to{width:100%;}}
+
+    /* ── Results screen ── */
+    #screen-results{display:none;padding:100px 24px 80px;min-height:100vh;}
+    .results-header{max-width:900px;margin:0 auto 40px;}
+    .results-tag{display:inline-flex;align-items:center;gap:7px;background:rgba(91,173,111,0.15);border:1px solid rgba(91,173,111,0.30);color:var(--green);font-family:'Poppins',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;padding:6px 14px;border-radius:100px;margin-bottom:16px;}
+    .results-header h2{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.5rem,3.5vw,2.4rem);margin-bottom:8px;}
+    .results-header h2 span{color:var(--orange);}
+    .results-header p{color:rgba(255,255,255,0.55);font-size:0.9rem;}
+
+    /* Mood summary bar */
+    .mood-bar{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:36px;max-width:900px;}
+    .mood-bar .label{font-size:0.8rem;color:rgba(255,255,255,0.45);font-family:'Poppins',sans-serif;font-weight:600;}
+    .mood-pill{background:rgba(248,123,49,0.15);border:1px solid rgba(248,123,49,0.30);color:var(--orange);padding:5px 12px;border-radius:100px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.78rem;display:flex;align-items:center;gap:5px;}
+    .mood-bar .restart-link{margin-left:auto;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.80rem;color:rgba(255,255,255,0.40);cursor:pointer;text-decoration:none;transition:color 0.2s;}
+    .mood-bar .restart-link:hover{color:var(--orange);}
+
+    /* Match score */
+    .match-hero{background:linear-gradient(135deg,rgba(248,123,49,0.15) 0%,rgba(91,173,111,0.10) 100%);border:1px solid rgba(248,123,49,0.25);border-radius:20px;padding:28px 28px;margin-bottom:32px;max-width:900px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
+    .match-emoji-big{flex-shrink:0;line-height:1;}
+    .match-text h3{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.2rem;color:#fff;margin-bottom:4px;}
+    .match-text p{font-size:0.88rem;color:rgba(255,255,255,0.60);line-height:1.6;}
+    .match-score{margin-left:auto;text-align:center;flex-shrink:0;}
+    .match-score__num{font-family:'Poppins',sans-serif;font-weight:900;font-size:2.2rem;color:var(--orange);line-height:1;}
+    .match-score__label{font-size:0.72rem;color:rgba(255,255,255,0.40);}
+
+    /* Food results grid */
+    .results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:900px;margin-bottom:40px;}
+    .result-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);border-radius:20px;overflow:hidden;transition:transform 0.3s,box-shadow 0.3s;cursor:pointer;}
+    .result-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,0.40);}
+    .result-card__img{height:160px;position:relative;overflow:hidden;background:#1A3D28;}
+    .result-card__img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s ease;}
+    .result-card:hover .result-card__img img{transform:scale(1.06);}
+    .result-card__img::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 45%,rgba(0,0,0,0.30) 100%);pointer-events:none;z-index:1;}
+    .result-card__match{position:absolute;top:10px;right:10px;z-index:2;background:var(--orange);color:#fff;font-family:'Poppins',sans-serif;font-weight:800;font-size:0.68rem;padding:4px 9px;border-radius:100px;box-shadow:0 2px 8px rgba(248,123,49,0.4);}
+    .result-card__dist{position:absolute;top:10px;left:10px;z-index:2;background:rgba(0,0,0,0.50);color:#fff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.68rem;padding:4px 9px;border-radius:100px;backdrop-filter:blur(6px);}
+    /* Match hero image */
+    .match-hero-img{width:90px;height:90px;border-radius:16px;object-fit:cover;flex-shrink:0;box-shadow:0 8px 28px rgba(0,0,0,0.35);}
+    .result-card__body{padding:16px;}
+    .result-card__name{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;color:#fff;margin-bottom:3px;}
+    .result-card__cook{font-size:0.78rem;color:rgba(255,255,255,0.50);margin-bottom:10px;}
+    .result-card__why{font-size:0.75rem;color:rgba(91,173,111,0.90);background:rgba(91,173,111,0.10);border-radius:8px;padding:6px 10px;margin-bottom:12px;line-height:1.5;}
+    .result-card__footer{display:flex;align-items:center;justify-content:space-between;}
+    .result-card__price{font-family:'Poppins',sans-serif;font-weight:800;font-size:1rem;color:var(--orange);}
+    .result-card__btn{background:var(--orange);color:#fff;border:none;border-radius:100px;padding:7px 14px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.75rem;cursor:pointer;transition:transform 0.2s;}
+    .result-card__btn:hover{transform:scale(1.05);}
+
+    @media(max-width:700px){.results-grid{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:460px){.results-grid{grid-template-columns:1fr;}}
+
+    /* Suggestion pills */
+    .also-try{max-width:900px;margin-bottom:40px;}
+    .also-try h3{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.9rem;color:rgba(255,255,255,0.60);margin-bottom:14px;}
+    .also-try-pills{display:flex;flex-wrap:wrap;gap:8px;}
+    .try-pill{padding:8px 16px;border-radius:100px;border:1px solid rgba(255,255,255,0.12);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.78rem;color:rgba(255,255,255,0.60);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px;}
+    .try-pill:hover{border-color:var(--orange);color:var(--orange);background:rgba(248,123,49,0.08);}
+
+    /* CTA again */
+    .results-cta{max-width:900px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.10);border-radius:20px;padding:28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+    .results-cta p{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.95rem;color:#fff;}
+    .results-cta span{display:block;font-size:0.80rem;color:rgba(255,255,255,0.45);font-weight:400;margin-top:2px;}
+    .btn-browse{background:var(--orange);color:#fff;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.9rem;padding:13px 24px;border-radius:100px;border:none;cursor:pointer;transition:all 0.2s;text-decoration:none;white-space:nowrap;box-shadow:0 4px 16px rgba(248,123,49,0.28);}
+    .btn-browse:hover{transform:translateY(-2px);}
+
+    /* ── Footer ── */
+    footer{background:#080F0B;padding:32px 24px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+    footer p{font-size:0.8rem;color:rgba(255,255,255,0.25);}
+    footer a{color:rgba(255,255,255,0.40);text-decoration:none;transition:color 0.2s;}
+    footer a:hover{color:var(--orange);}
+
+    /* ── Mood gradient backgrounds ── */
+    .bg-happy    {background:radial-gradient(ellipse at 30% 20%, rgba(248,210,49,0.10) 0%, transparent 55%), linear-gradient(160deg,#1E4A30 0%,#0F2419 100%);}
+    .bg-sad      {background:radial-gradient(ellipse at 70% 30%, rgba(80,130,200,0.12) 0%, transparent 55%), linear-gradient(160deg,#152040 0%,#0F2419 100%);}
+    .bg-tired    {background:radial-gradient(ellipse at 40% 50%, rgba(150,100,200,0.10) 0%, transparent 55%), linear-gradient(160deg,#20152E 0%,#0F2419 100%);}
+    .bg-excited  {background:radial-gradient(ellipse at 60% 20%, rgba(248,123,49,0.12) 0%, transparent 55%), linear-gradient(160deg,#2E1A0F 0%,#0F2419 100%);}
+    .bg-healthy  {background:radial-gradient(ellipse at 25% 40%, rgba(91,173,111,0.14) 0%, transparent 55%), linear-gradient(160deg,#0F2E1A 0%,#0F2419 100%);}
+    .bg-comfort  {background:radial-gradient(ellipse at 50% 30%, rgba(220,160,60,0.12) 0%, transparent 55%), linear-gradient(160deg,#2A1E0A 0%,#0F2419 100%);}
+    .bg-romantic {background:radial-gradient(ellipse at 70% 40%, rgba(220,80,100,0.10) 0%, transparent 55%), linear-gradient(160deg,#2A0F1A 0%,#0F2419 100%);}
+    .bg-spicy    {background:radial-gradient(ellipse at 35% 25%, rgba(220,40,40,0.12) 0%, transparent 55%), linear-gradient(160deg,#2E0A0A 0%,#0F2419 100%);}
+    .bg-sweet    {background:radial-gradient(ellipse at 65% 35%, rgba(210,100,180,0.10) 0%, transparent 55%), linear-gradient(160deg,#250A22 0%,#0F2419 100%);}
+    .bg-curious  {background:radial-gradient(ellipse at 40% 20%, rgba(49,180,200,0.10) 0%, transparent 55%), linear-gradient(160deg,#0A2030 0%,#0F2419 100%);}
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a href="index.html"><img src="brand_assets/logo.png" alt="CookNextDoor" style="height:56px;"/></a>
+  <div class="nav__links">
+    <a href="index.html">Home</a>
+    <a href="#" class="active-link">🎭 Food Mood</a>
+    <a href="meetup-guide.html">How it works</a>
+    <a href="user-auth.html" class="btn-nav">Find food →</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SCREEN 1: INTRO                                            -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="screen-intro">
+  <div class="bg-foods" id="bgFoods"></div>
+  <div class="intro-tag">✨ New feature</div>
+  <h1>What does your<br/><em>mood want to eat?</em></h1>
+  <p>Tell us how you're feeling and we'll match you with the perfect home-cooked food from your neighbors — within 1 km.</p>
+  <button class="start-btn" onclick="showScreen('mood')">
+    <span class="pulse"></span>
+    Discover my food mood
+  </button>
+  <div class="google-credit">
+    <span>Inspired by</span>
+    <a href="https://artsandculture.google.com/experiment/food-mood/HwHnGalZ3up0EA" target="_blank" rel="noopener">Google Food Mood ↗</a>
+    <span>· built for CookNextDoor</span>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-dot"></div>
+    <span>scroll to explore</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SCREEN 2: MOOD PICKER                                       -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="screen-mood">
+  <div class="mood-header">
+    <h2>How are you <span>feeling</span> right now?</h2>
+    <p>Pick the mood that matches you most. We'll find nearby food that fits perfectly.</p>
+  </div>
+  <div class="mood-grid">
+    <div class="mood-card" onclick="selectMood(this,'happy','😄','Happy','bg-happy')" data-key="happy">
+      <span class="mood-emoji">😄</span>
+      <div class="mood-name">Happy</div>
+      <div class="mood-desc">Good vibes, celebrating</div>
+    </div>
+    <div class="mood-card" onclick="selectMood(this,'comfort','🥺','Need comfort','bg-comfort')" data-key="comfort">
+      <span class="mood-emoji">🥺</span>
+      <div class="mood-name">Need Comfort</div>
+      <div class="mood-desc">Sad, stressed, rough day</div>
+    </div>
+    <div class="mood-card" onclick="selectMood(this,'tired','😴','Tired','bg-tired')" data-key="tired">
+      <span class="mood-emoji">😴</span>
+      <div class="mood-name">Tired</div>
+      <div class="mood-desc">Low energy, need fuel</div>
+    </div>
+    <div class="mood-card" onclick="selectMood(this,'excited','🤩','Excited','bg-excited')" data-key="excited">
+      <span class="mood-emoji">🤩</span>
+      <div class="mood-name">Excited</div>
+      <div class="mood-desc">Adventurous, try new things</div>
+    </div>
+    <div class="mood-card" onclick="selectMood(this,'healthy','💪','Healthy','bg-healthy')" data-key="healthy">
+      <span class="mood-emoji">💪</span>
+      <div class="mood-name">Healthy</div>
+      <div class="mood-desc">Post-workout, eating clean</div>
+    </div>
+    <div class="mood-card" onclick="selectMood(this,'romantic','🥰','Romantic','bg-romantic')" data-key="romantic">
+      <span class="mood-emoji">🥰</span>
+      <div class="mood-name">Romantic</div>
+      <div class="mood-desc">Date night, special dinner</div>
+    </div>
+    <div class="mood-card" onclick="selectMood(this,'spicy','🌶️','Spicy craving','bg-spicy')" data-key="spicy">
+      <span class="mood-emoji">🌶️</span>
+      <div class="mood-name">Spicy Craving</div>
+      <div class="mood-desc">Want heat and bold flavors</div>
+    </div>
+    <div class="mood-card" onclick="selectMood(this,'sweet','🍰','Sweet tooth','bg-sweet')" data-key="sweet">
+      <span class="mood-emoji">🍰</span>
+      <div class="mood-name">Sweet Tooth</div>
+      <div class="mood-desc">Dessert mood, treats</div>
+    </div>
+    <div class="mood-card" onclick="selectMood(this,'curious','🧐','Curious','bg-curious')" data-key="curious">
+      <span class="mood-emoji">🧐</span>
+      <div class="mood-name">Curious</div>
+      <div class="mood-desc">Open to anything new</div>
+    </div>
+    <div class="mood-card" onclick="selectMood(this,'sad','😔','Sad','bg-sad')" data-key="sad">
+      <span class="mood-emoji">😔</span>
+      <div class="mood-name">Sad</div>
+      <div class="mood-desc">Need a mood boost</div>
+    </div>
+  </div>
+  <div class="mood-next">
+    <button class="btn-mood-next" id="moodNextBtn" onclick="showScreen('craving')">Pick my cravings →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SCREEN 3: CRAVING / INGREDIENT REFINER                     -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="screen-craving">
+  <div class="craving-header">
+    <div class="mood-recap" id="moodRecap">😄 Happy mood</div>
+    <h2>What are you craving?</h2>
+    <p style="color:rgba(255,255,255,0.55);font-size:0.95rem;">Pick ingredients or food styles — or type what you're thinking.</p>
+  </div>
+  <div class="ingredient-search">
+    <input type="text" id="cravingSearch" placeholder="Type an ingredient or dish... (e.g. noodles, rice, chicken)" oninput="filterCravings(this.value)"/>
+    <span class="search-icon">🔍</span>
+  </div>
+  <div class="craving-tags" id="cravingTags">
+    <!-- populated by JS based on mood -->
+  </div>
+  <div class="craving-next">
+    <button class="btn-back" onclick="showScreen('mood')">← Change mood</button>
+    <button class="btn-find" onclick="findFood()">🍜 Find my food →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SCREEN 4: LOADING                                          -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="screen-loading" style="display:flex;">
+  <div class="loader-emoji" id="loaderEmoji">🍳</div>
+  <div class="loader-text" id="loaderText">Matching your mood...</div>
+  <div class="loader-sub">Searching nearby home cooks within 1 km</div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SCREEN 5: RESULTS                                          -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="screen-results">
+  <div class="results-header">
+    <div class="results-tag">✨ Mood matched</div>
+    <h2>Perfect food for your <span id="resultMoodName">mood</span></h2>
+    <p id="resultSubtitle">Here's what your neighbors are cooking that matches how you feel.</p>
+  </div>
+
+  <!-- Mood recap bar -->
+  <div class="mood-bar" id="resultMoodBar">
+    <span class="label">Your mood:</span>
+    <div class="mood-pill" id="resultMoodPill">😄 Happy</div>
+    <div class="mood-pill" id="resultCravingPill" style="display:none;">🍜 Noodles</div>
+    <a class="restart-link" onclick="restart()">↩ Start over</a>
+  </div>
+
+  <!-- Top match hero -->
+  <div class="match-hero" id="matchHero">
+    <div class="match-emoji-big" id="matchEmoji">🍛</div>
+    <div class="match-text">
+      <h3 id="matchTitle">Chicken Biryani</h3>
+      <p id="matchDesc">Rich, warming biryani — the ultimate happy food. Auntie Siti made a fresh batch and has 3 portions left within 0.3 km.</p>
+    </div>
+    <div class="match-score">
+      <div class="match-score__num" id="matchScore">97%</div>
+      <div class="match-score__label">mood match</div>
+    </div>
+  </div>
+
+  <!-- Results grid -->
+  <div class="results-grid" id="resultsGrid">
+    <!-- populated by JS -->
+  </div>
+
+  <!-- Also try -->
+  <div class="also-try">
+    <h3>Also nearby — slightly different vibes:</h3>
+    <div class="also-try-pills" id="alsoTryPills"></div>
+  </div>
+
+  <!-- Bottom CTA -->
+  <div class="results-cta">
+    <div>
+      <p>Want to see all food near you?</p>
+      <span>Browse every listing within 1 km — updated live</span>
+    </div>
+    <a href="user-auth.html" class="btn-browse">Browse all nearby food →</a>
+  </div>
+</div>
+
+<footer>
+  <p>
+    <a href="index.html">CookNextDoor</a> · Food Mood feature ·
+    Inspired by <a href="https://artsandculture.google.com/experiment/food-mood/HwHnGalZ3up0EA" target="_blank" rel="noopener">Google Food Mood</a> ·
+    <a href="index.html">Back to home</a>
+  </p>
+</footer>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   CONTEXT ENGINE — time of day + simulated weather
+   Drives recommendation variety so results feel fresh
+   each visit instead of always showing the same dishes.
+   ══════════════════════════════════════════════════════════ */
+
+const CTX = (function() {
+  const now  = new Date();
+  const h    = now.getHours();
+  const day  = now.getDate();
+  const min  = now.getMinutes();
+
+  // Time slot
+  let slot, slotLabel, slotIcon;
+  if      (h >= 6  && h < 11) { slot='morning';   slotLabel='morning';   slotIcon='🌤'; }
+  else if (h >= 11 && h < 15) { slot='lunch';     slotLabel='lunchtime'; slotIcon='☀️'; }
+  else if (h >= 15 && h < 18) { slot='afternoon'; slotLabel='afternoon'; slotIcon='🌤'; }
+  else if (h >= 18 && h < 22) { slot='dinner';    slotLabel='evening';   slotIcon='🌆'; }
+  else                         { slot='night';     slotLabel='late night';slotIcon='🌙'; }
+
+  // Simulated Singapore weather — rotates across 3 patterns per (day + hour segment)
+  const weatherSeed = (day + Math.floor(h / 4)) % 3;
+  let weather, weatherLabel, weatherIcon;
+  if      (weatherSeed === 0) { weather='hot';   weatherLabel='hot & sunny';   weatherIcon='☀️'; }
+  else if (weatherSeed === 1) { weather='rainy'; weatherLabel='rainy outside';  weatherIcon='🌧'; }
+  else                         { weather='comfy'; weatherLabel='breezy & nice'; weatherIcon='🌤'; }
+
+  // Per-minute seed so results rotate every ~5 min
+  const seed = (day * 1440 + h * 60 + Math.floor(min / 5)) % 997;
+
+  return { slot, slotLabel, slotIcon, weather, weatherLabel, weatherIcon, seed, h };
+})();
+
+/* Distance pool — shuffled per session for variety */
+const DIST_POOL = ['0.2 km','0.3 km','0.4 km','0.5 km','0.6 km','0.7 km','0.8 km','0.9 km','1.0 km'];
+function rndDist(i) {
+  return DIST_POOL[(CTX.seed * 7 + i * 13) % DIST_POOL.length];
+}
+
+/* ── Weighted scoring ──────────────────────────────────────
+   time   = time slots this dish shines in
+   wx     = weather moods this dish suits ('hot','rainy','comfy','any')
+   Boost is ±8 pts so a single dish never dominates by chance.
+   ──────────────────────────────────────────────────────── */
+function score(r) {
+  let s = r.match;
+  if (r.time && r.time.includes(CTX.slot))    s += 8;
+  if (r.wx   && (r.wx.includes(CTX.weather) || r.wx.includes('any'))) s += 6;
+  // Small deterministic jitter so same score ties break differently each session
+  s += ((CTX.seed + r.match * 17) % 7) - 3;
+  return s;
+}
+
+/* ── MOOD DATA ─────────────────────────────────────────────
+   All images now served locally from food_mood_images/
+   Each mood has 7 dishes; 3 are picked per session via
+   time+weather scoring so the mix changes every visit.
+   ──────────────────────────────────────────────────────── */
+const IMG = 'food_mood_images/';
+
+const MOOD_DATA = {
+  happy: {
+    emoji:'😄', label:'Happy', bg:'bg-happy',
+    headline:'The happiest food near you',
+    subtitle:'You deserve something special today — here\'s what your neighbors cooked.',
+    loaderEmoji:'🎉', loaderText:'Finding celebratory bites...',
+    cravings:['🍛 Biryani','🥳 Special dish','🍰 Treat yourself','🍜 Noodles','🥘 Rich curry','🎂 Dessert','🍗 Chicken','🥗 Fresh salad','🍚 Fragrant rice'],
+    results:[
+      {emoji:'🍛',name:'Chicken Biryani',cook:'Auntie Siti',price:'$5',match:97,why:'Rich & aromatic — perfect happy food',img:IMG+'biryani.jpg',time:['lunch','dinner'],wx:['any']},
+      {emoji:'🍰',name:'Kueh Lapis',cook:'Mdm Chen',price:'$4',match:93,why:'Sweet rainbow layers — a Peranakan classic',img:IMG+'kueh-lapis.jpg',time:['afternoon'],wx:['any']},
+      {emoji:'🍗',name:'Hainanese Chicken Rice',cook:'Uncle Ah Kow',price:'$5',match:89,why:'Classic comfort — always a crowd pleaser',img:IMG+'chicken-rice.jpg',time:['lunch','dinner'],wx:['any']},
+      {emoji:'🍢',name:'Satay with Peanut Sauce',cook:'Encik Haji',price:'$3',match:85,why:'Smoky grilled skewers — a crowd favourite',img:IMG+'satay.jpg',time:['dinner','night'],wx:['comfy','rainy']},
+      {emoji:'🍜',name:'Wonton Mee',cook:'Ah Seng',price:'$4',match:82,why:'Springy egg noodles with silky wontons',img:IMG+'wonton-mee.jpg',time:['lunch','morning'],wx:['any']},
+      {emoji:'🍱',name:'Premium Bento Box',cook:'Kenji',price:'$8',match:88,why:'Colourful, balanced — a treat for the eyes',img:IMG+'bento.jpg',time:['lunch','afternoon'],wx:['any']},
+      {emoji:'🥘',name:'Butter Garlic Prawns',cook:'Chef Jean',price:'$10',match:91,why:'Celebratory seafood — share with someone you love',img:IMG+'butter-prawns.jpg',time:['dinner'],wx:['comfy','hot']},
+    ],
+    alsoTry:['🥘 Rendang','🍜 Wonton Mee','🥗 Gado-gado','🍰 Kueh']
+  },
+  comfort: {
+    emoji:'🥺', label:'Need Comfort', bg:'bg-comfort',
+    headline:'Comfort food — just what you need',
+    subtitle:'Tough day? Your neighbors have something warm and caring ready for you.',
+    loaderEmoji:'🍲', loaderText:'Finding your comfort food...',
+    cravings:['🍜 Warm soup','🍚 Plain rice','🍲 Stew','🥣 Congee','🍝 Pasta','🍗 Roast chicken','🥞 Pancakes','🧁 Cupcakes','🍮 Pudding'],
+    results:[
+      {emoji:'🍜',name:'Prawn Mee Soup',cook:'Uncle Tan',price:'$4',match:96,why:'Warm broth — the ultimate comfort hug',img:IMG+'prawn-mee.jpg',time:['morning','lunch','dinner'],wx:['rainy','comfy']},
+      {emoji:'🥣',name:'Cantonese Congee',cook:'Mdm Lim',price:'$3',match:94,why:'Soft, gentle, and deeply comforting',img:IMG+'congee.jpg',time:['morning','night'],wx:['rainy','comfy']},
+      {emoji:'🍲',name:'Bak Kut Teh',cook:'Uncle Ah Huat',price:'$6',match:88,why:'Slow-simmered pork ribs — classic comfort',img:IMG+'bak-kut-teh.jpg',time:['morning','lunch','dinner'],wx:['rainy']},
+      {emoji:'🍝',name:'Mee Soto Ayam',cook:'Auntie Rohani',price:'$4',match:85,why:'Turmeric chicken noodle soup — Malay comfort at its best',img:IMG+'mee-soto.jpg',time:['lunch','dinner'],wx:['rainy','comfy']},
+      {emoji:'🥐',name:'Roti Bakar with Kaya',cook:'Kopi Uncle',price:'$2',match:82,why:'Old-school toast with coconut jam — pure nostalgia',img:IMG+'kaya-toast.jpg',time:['morning','afternoon'],wx:['any']},
+      {emoji:'🍜',name:'Fishball Noodle Soup',cook:'Aunty Mei',price:'$3',match:80,why:'Light, clear broth — quietly comforting',img:IMG+'fishball-noodle.jpg',time:['lunch','night'],wx:['any']},
+      {emoji:'🍜',name:'Comfort Chicken Soup',cook:'Aunty Grace',price:'$5',match:90,why:'A bowl of warmth — like a hug in food form',img:IMG+'chicken-soup.jpg',time:['dinner','night'],wx:['rainy','comfy']},
+    ],
+    alsoTry:['🥐 Kaya toast','🍵 Teh tarik','🍛 Dhal curry','🥘 Chicken stew']
+  },
+  tired: {
+    emoji:'😴', label:'Tired', bg:'bg-tired',
+    headline:'Easy fuel for low-energy days',
+    subtitle:'Something light, quick, and satisfying — no heavy lifting required.',
+    loaderEmoji:'⚡', loaderText:'Finding easy fuel...',
+    cravings:['🍱 Bento box','🥗 Light salad','🍙 Onigiri','🥪 Sandwich','🍳 Eggs','🥤 Smoothie bowl','🍞 Toast','🥜 Protein-rich','🌯 Wrap'],
+    results:[
+      {emoji:'🍱',name:'Japanese Bento Box',cook:'Kenji',price:'$7',match:95,why:'Balanced & easy to eat — no effort needed',img:IMG+'bento.jpg',time:['lunch','afternoon'],wx:['any']},
+      {emoji:'🥗',name:'Thai Papaya Salad',cook:'Khun Nit',price:'$5',match:90,why:'Light and refreshing — gives energy back',img:IMG+'papaya-salad.jpg',time:['lunch','afternoon'],wx:['hot','comfy']},
+      {emoji:'🍳',name:'Kaya Toast & Soft Boiled Egg',cook:'Kopi Uncle',price:'$3',match:85,why:'Classic Singapore breakfast — simple & satisfying',img:IMG+'kaya-toast.jpg',time:['morning'],wx:['any']},
+      {emoji:'🍚',name:'Economy Mixed Rice',cook:'Auntie Lim',price:'$3',match:83,why:'Pick your faves — simple, filling, no fuss',img:IMG+'economic-rice.jpg',time:['lunch'],wx:['any']},
+      {emoji:'🍜',name:'Fishball Noodle Soup',cook:'Aunty Mei',price:'$3',match:80,why:'Light, quick, and quietly comforting',img:IMG+'fishball-noodle.jpg',time:['morning','lunch'],wx:['any']},
+      {emoji:'🌯',name:'Fresh Popiah',cook:'Mdm Loh',price:'$2',match:78,why:'Veggie-packed roll — light and clean',img:IMG+'popiah.jpg',time:['afternoon'],wx:['hot','comfy']},
+      {emoji:'🥣',name:'Cantonese Congee',cook:'Mdm Lim',price:'$3',match:81,why:'Zero effort to eat — your stomach will thank you',img:IMG+'congee.jpg',time:['morning','night'],wx:['rainy']},
+    ],
+    alsoTry:['🥤 Teh tarik','🧃 Fresh juice','🥙 Pita wrap','🍘 Rice crackers']
+  },
+  excited: {
+    emoji:'🤩', label:'Excited', bg:'bg-excited',
+    headline:'Something bold & adventurous',
+    subtitle:'You\'re in the mood to try something new. Your neighbors have some exciting things cooking.',
+    loaderEmoji:'🚀', loaderText:'Finding bold flavors...',
+    cravings:['🌮 Fusion','🌶️ Spicy new dish','🍣 Japanese','🧆 Middle Eastern','🌯 Korean','🥘 Unknown cuisine','🍜 Unique noodles','🫕 Exotic stew','🥗 Creative salad'],
+    results:[
+      {emoji:'🍚',name:'Nasi Lemak Pedas',cook:'Mak Cik Siti',price:'$4',match:98,why:'Bold sambal heat — Singapore\'s iconic dish',img:IMG+'nasi-lemak.jpg',time:['morning','lunch'],wx:['any']},
+      {emoji:'🧆',name:'Lebanese Falafel Bowl',cook:'Nour',price:'$6',match:91,why:'Middle Eastern flavors — a neighborhood first',img:IMG+'falafel.jpg',time:['lunch','dinner'],wx:['any']},
+      {emoji:'🍣',name:'Temaki Sushi Hand Roll',cook:'Haruki',price:'$8',match:87,why:'Handmade Japanese — fresh and adventurous',img:IMG+'sushi.jpg',time:['lunch','dinner'],wx:['hot','comfy']},
+      {emoji:'🫓',name:'Murtabak',cook:'Muthu',price:'$6',match:83,why:'Indian-Muslim stuffed pancake — wildly delicious',img:IMG+'murtabak.jpg',time:['dinner','night'],wx:['any']},
+      {emoji:'🍲',name:'Korean Kimchi Jjigae',cook:'Unni Kim',price:'$7',match:80,why:'Korean stew — punchy, bubbling, and addictive',img:IMG+'kimchi-jjigae.jpg',time:['dinner'],wx:['rainy','comfy']},
+      {emoji:'🥘',name:'Beef Rendang',cook:'Auntie Zainab',price:'$6',match:86,why:'Slow-cooked Padang spices — unforgettable',img:IMG+'rendang.jpg',time:['lunch','dinner'],wx:['any']},
+      {emoji:'🌮',name:'Roti John',cook:'Encik Razali',price:'$4',match:84,why:'Uniquely Singaporean street food wonder',img:IMG+'roti-john.jpg',time:['afternoon','night'],wx:['any']},
+    ],
+    alsoTry:['🌍 Ethiopian injera','🫕 Moroccan tagine','🥟 Korean mandu','🍛 Sri Lankan curry']
+  },
+  healthy: {
+    emoji:'💪', label:'Healthy', bg:'bg-healthy',
+    headline:'Clean food from clean kitchens',
+    subtitle:'Eating right today — here\'s what your neighbors cooked that\'s fresh, light, and nourishing.',
+    loaderEmoji:'🥗', loaderText:'Finding clean eats...',
+    cravings:['🥗 Salad','🌱 Vegan','🥦 Vegetables','🍗 Lean protein','🍚 Brown rice','🥑 Avocado','🫐 Antioxidants','🧘 Low-carb','🥤 Smoothie bowl'],
+    results:[
+      {emoji:'🥗',name:'Quinoa Power Bowl',cook:'Priya',price:'$6',match:97,why:'Packed with plant protein & antioxidants',img:IMG+'quinoa-bowl.jpg',time:['lunch','afternoon'],wx:['hot','comfy']},
+      {emoji:'🍜',name:'Nyonya Laksa',cook:'Aunty Peranakan',price:'$5',match:88,why:'Rich coconut broth — a Singapore icon',img:IMG+'laksa.jpg',time:['lunch'],wx:['any']},
+      {emoji:'🥟',name:'Yong Tau Foo',cook:'Mdm Hakka',price:'$5',match:90,why:'Light, clean, customisable — zero guilt',img:IMG+'yong-tau-foo.jpg',time:['lunch','afternoon'],wx:['any']},
+      {emoji:'🫓',name:'Thosai with Sambar',cook:'Priya Amma',price:'$3',match:85,why:'Fermented rice crepe — naturally light & nutritious',img:IMG+'thosai.jpg',time:['morning','lunch'],wx:['any']},
+      {emoji:'🌯',name:'Fresh Popiah',cook:'Mdm Loh',price:'$2',match:82,why:'Veggie-packed fresh roll — light and clean',img:IMG+'popiah.jpg',time:['afternoon'],wx:['hot','comfy']},
+      {emoji:'🥗',name:'Thai Papaya Salad',cook:'Khun Nit',price:'$5',match:87,why:'Crunchy, tangy, and full of life',img:IMG+'papaya-salad.jpg',time:['lunch','afternoon'],wx:['hot']},
+      {emoji:'🍡',name:'Nonya Kueh (Light)',cook:'Mdm Peranakan',price:'$3',match:79,why:'Steamed rice kueh — guilt-free sweetness',img:IMG+'nonya-kueh.jpg',time:['afternoon'],wx:['any']},
+    ],
+    alsoTry:['🥑 Avocado toast','🌊 Poke bowl','🍵 Matcha oats','🥜 Protein smoothie']
+  },
+  romantic: {
+    emoji:'🥰', label:'Romantic', bg:'bg-romantic',
+    headline:'A special meal for a special evening',
+    subtitle:'Impress someone tonight with a thoughtful home-cooked dinner from your neighborhood.',
+    loaderEmoji:'💕', loaderText:'Finding something special...',
+    cravings:['🍝 Pasta','🥩 Steak','🦞 Seafood','🍷 Pairing food','🧀 Cheese board','🍰 Dessert for two','🌹 Special dish','🫕 Slow-cooked','🍮 Mousse or flan'],
+    results:[
+      {emoji:'🦞',name:'Butter Garlic Prawns',cook:'Chef Jean',price:'$10',match:96,why:'Elegant seafood — impressive yet effortless',img:IMG+'butter-prawns.jpg',time:['dinner'],wx:['comfy','hot']},
+      {emoji:'🍝',name:'Homemade Carbonara',cook:'Marco',price:'$8',match:92,why:'Italian classic — silky, rich, romantic',img:IMG+'carbonara.jpg',time:['dinner'],wx:['any']},
+      {emoji:'🍮',name:'Portuguese Egg Tart',cook:'Mdm Santos',price:'$3/pc',match:88,why:'Sweet ending to a perfect evening',img:IMG+'egg-tart.jpg',time:['afternoon','dinner'],wx:['any']},
+      {emoji:'🐟',name:'Steamed Soon Hock Fish',cook:'Chef Lee',price:'$12',match:85,why:'Cantonese steamed fish — delicate and elegant',img:IMG+'steamed-fish.jpg',time:['dinner'],wx:['any']},
+      {emoji:'🍱',name:'Premium Bento Set',cook:'Yuki',price:'$12',match:82,why:'Japanese-style date night meal — thoughtful and complete',img:IMG+'bento.jpg',time:['dinner'],wx:['any']},
+      {emoji:'🍛',name:'Chicken Biryani (Special)',cook:'Auntie Siti',price:'$6',match:84,why:'Fragrant rice for a fragrant evening',img:IMG+'biryani.jpg',time:['dinner'],wx:['comfy','rainy']},
+      {emoji:'🍰',name:'Kueh Lapis (Gift Box)',cook:'Mdm Chen',price:'$5',match:80,why:'Beautiful layered cake — say it with kueh',img:IMG+'kueh-lapis.jpg',time:['afternoon','dinner'],wx:['any']},
+    ],
+    alsoTry:['🍮 Crème brûlée','🥐 Croissant','🫐 Berries dessert','🧀 Cheese plate']
+  },
+  spicy: {
+    emoji:'🌶️', label:'Spicy Craving', bg:'bg-spicy',
+    headline:'Turn up the heat 🔥',
+    subtitle:'Your neighbors know how to bring the fire. Here\'s what\'s sizzling near you.',
+    loaderEmoji:'🔥', loaderText:'Finding the heat...',
+    cravings:['🌶️ Extra spicy','🍛 Spicy curry','🥘 Sambal','🍜 Spicy noodles','🫕 Rendang','🥗 Som tum','🍗 Spicy wings','🌮 Spicy tacos','🧄 Garlic chili'],
+    results:[
+      {emoji:'🥘',name:'Beef Rendang',cook:'Auntie Zainab',price:'$6',match:99,why:'Slow-cooked dry curry — maximum heat & flavor',img:IMG+'rendang.jpg',time:['lunch','dinner'],wx:['any']},
+      {emoji:'🍛',name:'Fish Head Curry',cook:'Ravi',price:'$7',match:94,why:'South Indian spicy curry — legendary heat',img:IMG+'fish-head-curry.jpg',time:['lunch','dinner'],wx:['rainy','comfy']},
+      {emoji:'🍜',name:'Spicy Tom Yum Noodles',cook:'Khun Nit',price:'$5',match:90,why:'Thai-style numbing spicy broth',img:IMG+'tom-yum.jpg',time:['lunch','dinner','night'],wx:['rainy']},
+      {emoji:'🌶️',name:'Mala Xiang Guo',cook:'Uncle Sichuan',price:'$8',match:87,why:'Numbing Sichuan spice — not for the faint-hearted',img:IMG+'mala.jpg',time:['dinner','night'],wx:['rainy','comfy']},
+      {emoji:'🫕',name:'Devil\'s Curry',cook:'Mrs D\'Silva',price:'$6',match:84,why:'Eurasian fiery curry — a true Singapore original',img:IMG+'devil-curry.jpg',time:['dinner'],wx:['any']},
+      {emoji:'🍚',name:'Nasi Lemak Pedas',cook:'Mak Cik Siti',price:'$4',match:88,why:'Sambal that hits different at lunch',img:IMG+'nasi-lemak.jpg',time:['morning','lunch'],wx:['any']},
+      {emoji:'🍲',name:'Korean Kimchi Jjigae',cook:'Unni Kim',price:'$7',match:82,why:'Korean stew — punchy, bubbling, addictive',img:IMG+'kimchi-jjigae.jpg',time:['dinner'],wx:['rainy','comfy']},
+    ],
+    alsoTry:['🫕 Sambal sotong','🌶️ Sichuan mala','🥘 Devil curry','🍗 Peri-peri chicken']
+  },
+  sweet: {
+    emoji:'🍰', label:'Sweet Tooth', bg:'bg-sweet',
+    headline:'Satisfy that sweet craving 🍭',
+    subtitle:'Life is short — eat dessert first. Here\'s what\'s sweet near you.',
+    loaderEmoji:'🍬', loaderText:'Finding the sweetness...',
+    cravings:['🍰 Cake','🧁 Cupcake','🍮 Pudding','🥮 Mooncake','🍡 Kueh','🍪 Cookies','🍫 Chocolate','🍮 Flan','🧇 Waffles'],
+    results:[
+      {emoji:'🍡',name:'Nonya Kueh Assorted',cook:'Mdm Peranakan',price:'$4',match:98,why:'Traditional Peranakan sweets — a local treasure',img:IMG+'nonya-kueh.jpg',time:['afternoon'],wx:['any']},
+      {emoji:'🍰',name:'Pandan Chiffon Cake',cook:'Aunty Rose',price:'$5',match:94,why:'Light, fluffy, quintessentially Singapore',img:IMG+'pandan-cake.jpg',time:['afternoon','dinner'],wx:['any']},
+      {emoji:'🧁',name:'Ondeh-Ondeh Balls',cook:'Mdm Tan',price:'$3',match:90,why:'Gula melaka burst — sweet perfection',img:IMG+'ondeh-ondeh.jpg',time:['afternoon'],wx:['any']},
+      {emoji:'🧊',name:'Chendol',cook:'Ah Boy',price:'$2',match:87,why:'Pandan jelly, coconut milk, gula melaka — pure Singapore',img:IMG+'chendol.jpg',time:['afternoon','lunch'],wx:['hot']},
+      {emoji:'🍮',name:'Tau Huey (Soy Bean Pudding)',cook:'Old Tofu Man',price:'$1.50',match:84,why:'Silky soy pudding — soft, sweet, and soothing',img:IMG+'tau-huey.jpg',time:['morning','afternoon'],wx:['any']},
+      {emoji:'🍫',name:'Chocolate Lava Cake',cook:'Baking by Steph',price:'$4',match:91,why:'Warm molten chocolate — pure joy in a ramekin',img:IMG+'chocolate-lava.jpg',time:['dinner','night'],wx:['rainy','comfy']},
+      {emoji:'🍮',name:'Portuguese Egg Tart',cook:'Mdm Santos',price:'$2',match:86,why:'Flaky pastry, creamy custard — afternoon perfection',img:IMG+'egg-tart.jpg',time:['afternoon'],wx:['any']},
+    ],
+    alsoTry:['🍵 Matcha dessert','🫐 Açai bowl','🍮 Chendol','🍧 Ice kachang']
+  },
+  curious: {
+    emoji:'🧐', label:'Curious', bg:'bg-curious',
+    headline:'Something you\'ve never tried before',
+    subtitle:'Open mind, open stomach. Let\'s introduce you to a dish you\'ll love.',
+    loaderEmoji:'🌍', loaderText:'Finding your next favorite...',
+    cravings:['🌍 World food','🫕 Uncommon dish','🍜 New noodles','🌮 Street food style','🥟 Dumplings','🧆 Fritters','🫕 Stew','🥐 Pastry','🌯 Wrap'],
+    results:[
+      {emoji:'🫕',name:'Sayur Lodeh (Malay Veg Stew)',cook:'Mak Long Ijah',price:'$4',match:95,why:'Traditional, underrated, and quietly delicious',img:IMG+'sayur-lodeh.jpg',time:['lunch','dinner'],wx:['rainy','comfy']},
+      {emoji:'🥟',name:'Char Kway Teow',cook:'Uncle Penang',price:'$5',match:91,why:'Wok hei flat noodles — a beloved hawker classic',img:IMG+'char-kway-teow.jpg',time:['lunch','dinner'],wx:['any']},
+      {emoji:'🌮',name:'Roti John',cook:'Encik Razali',price:'$4',match:87,why:'Uniquely Singaporean street food wonder',img:IMG+'roti-john.jpg',time:['afternoon','night'],wx:['any']},
+      {emoji:'🍝',name:'Mee Rebus',cook:'Auntie Minah',price:'$4',match:84,why:'Yellow noodles in sweet-savory potato gravy — truly unique',img:IMG+'mee-rebus.jpg',time:['lunch'],wx:['any']},
+      {emoji:'🐟',name:'Otak Otak (Fish Cake)',cook:'Tok Wan',price:'$2',match:80,why:'Spiced fish mousse grilled in banana leaf — one of a kind',img:IMG+'otak-otak.jpg',time:['afternoon','dinner'],wx:['any']},
+      {emoji:'🫓',name:'Murtabak',cook:'Muthu',price:'$6',match:86,why:'Indian-Muslim stuffed pancake — wildly delicious',img:IMG+'murtabak.jpg',time:['dinner','night'],wx:['any']},
+      {emoji:'🥘',name:'Fish Head Curry',cook:'Ravi',price:'$7',match:82,why:'South Indian — bold flavors your curiosity craves',img:IMG+'fish-head-curry.jpg',time:['lunch','dinner'],wx:['any']},
+    ],
+    alsoTry:['🍲 Laksa','🥘 Otak-otak','🍡 Ang ku kueh','🌯 Popiah']
+  },
+  sad: {
+    emoji:'😔', label:'Sad', bg:'bg-sad',
+    headline:'A little food can go a long way 💙',
+    subtitle:'Your neighbors cooked something warm today. It won\'t fix everything — but it\'ll help.',
+    loaderEmoji:'💙', loaderText:'Finding your mood booster...',
+    cravings:['🍜 Noodle soup','🍲 Hot porridge','🍫 Chocolate','🧁 Something sweet','🍵 Warm drink','🥐 Soft bread','🍳 Simple egg dish','🥛 Warm milk pudding','🍮 Something creamy'],
+    results:[
+      {emoji:'🍜',name:'Comfort Chicken Soup',cook:'Aunty Grace',price:'$5',match:97,why:'A bowl of warmth — like a hug in food form',img:IMG+'chicken-soup.jpg',time:['dinner','night'],wx:['rainy','comfy']},
+      {emoji:'🍫',name:'Chocolate Lava Cake',cook:'Baking by Steph',price:'$4',match:93,why:'Chocolate triggers serotonin — scientifically',img:IMG+'chocolate-lava.jpg',time:['afternoon','dinner','night'],wx:['rainy','comfy']},
+      {emoji:'🥣',name:'Bubur Ayam (Chicken Porridge)',cook:'Mak Cik Lina',price:'$3',match:88,why:'Simple, gentle, and honestly soothing',img:IMG+'congee.jpg',time:['morning','night'],wx:['rainy']},
+      {emoji:'🍝',name:'Wonton Mee Soup',cook:'Uncle Ah Seng',price:'$4',match:85,why:'Egg noodles in clear broth with plump wontons',img:IMG+'wonton-mee.jpg',time:['lunch','dinner'],wx:['rainy','comfy']},
+      {emoji:'🍮',name:'Tau Foo Fah with Ginger Syrup',cook:'Lao Ah Pek',price:'$1.50',match:82,why:'Silky soft tofu — gentle, warm, and healing',img:IMG+'tau-huey.jpg',time:['morning','afternoon'],wx:['any']},
+      {emoji:'🥣',name:'Cantonese Congee',cook:'Mdm Lim',price:'$3',match:86,why:'Nothing heals like a warm bowl of congee',img:IMG+'congee.jpg',time:['morning','night'],wx:['rainy']},
+      {emoji:'🥐',name:'Roti Bakar with Kaya',cook:'Kopi Uncle',price:'$2',match:80,why:'Old-school toast — simple things bring comfort',img:IMG+'kaya-toast.jpg',time:['morning','afternoon'],wx:['any']},
+    ],
+    alsoTry:['🍵 Teh tarik','🥐 Roti bakar','🧁 Banana bread','🍮 Tau foo fah']
+  }
+};
+
+let selectedMood    = null;
+let selectedCravings = [];
+
+/* ── Background floating food ── */
+(function buildBgFoods(){
+  const foods = ['🍛','🍜','🥘','🍱','🥗','🍲','🍰','🧁','🌶️','🥟','🍣','🥐','🍳','🌮','🫕'];
+  const container = document.getElementById('bgFoods');
+  foods.forEach((f,i) => {
+    const el = document.createElement('div');
+    el.className = 'bg-food';
+    el.textContent = f;
+    el.style.left   = (Math.random()*90+5) + '%';
+    el.style.bottom = '-80px';
+    el.style.animationDuration = (12+Math.random()*12) + 's';
+    el.style.animationDelay   = (Math.random()*10) + 's';
+    container.appendChild(el);
+  });
+})();
+
+/* ── Screen manager ── */
+function showScreen(name) {
+  ['intro','mood','craving','loading','results'].forEach(s => {
+    const el = document.getElementById('screen-' + s);
+    el.style.display = (s === name) ? (s === 'loading' ? 'flex' : 'block') : 'none';
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ── Mood selection ── */
+function selectMood(el, key, emoji, label, bg) {
+  document.querySelectorAll('.mood-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedMood = {key, emoji, label, bg};
+  document.getElementById('moodNextBtn').classList.add('ready');
+  document.getElementById('screen-mood').className = bg;
+  document.getElementById('screen-mood').style.padding = '100px 24px 60px';
+}
+
+/* ── Craving screen ── */
+function populateCravings(key) {
+  const data = MOOD_DATA[key];
+  const tags = document.getElementById('cravingTags');
+  tags.innerHTML = '';
+  selectedCravings = [];
+  data.cravings.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'c-tag';
+    el.textContent = c;
+    el.onclick = () => {
+      el.classList.toggle('selected');
+      if (el.classList.contains('selected')) selectedCravings.push(c);
+      else selectedCravings = selectedCravings.filter(x => x !== c);
+    };
+    tags.appendChild(el);
+  });
+  document.getElementById('moodRecap').textContent = data.emoji + ' ' + data.label + ' mood';
+  document.getElementById('screen-craving').className = data.bg;
+  document.getElementById('screen-craving').style.padding = '100px 24px 60px';
+}
+
+function filterCravings(val) {
+  document.querySelectorAll('.c-tag').forEach(t => {
+    t.style.display = t.textContent.toLowerCase().includes(val.toLowerCase()) ? '' : 'none';
+  });
+}
+
+/* ── Image error fallback ── */
+function imgError(el, emoji) {
+  el.parentElement.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:3.8rem;background:linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))">${emoji}</div>`;
+}
+
+/* ── Context badge for results screen ── */
+function buildContextBadge() {
+  const msgs = {
+    hot:   { rainy:'Rainy day? Warm dishes ranked up for you ☔', comfy:'Breezy weather — light & fresh picks 🌤', hot:'Hot outside — cool & light options first ☀️' },
+    morning:   { rainy:'Rainy morning — warming soups & congee first ☔', comfy:'Nice morning — classic breakfast picks 🌤', hot:'Hot morning — light and refreshing 🥗' },
+    lunch:     { rainy:'Rainy lunch — hearty soups and stews ☔', comfy:'Lunchtime — hearty and satisfying ☀️', hot:'Hot afternoon — lighter picks ranked up 🥗' },
+    afternoon: { rainy:'Rainy afternoon — snacks and warm teas ☔', comfy:'Afternoon snack time 🍵', hot:'Hot afternoon — cold desserts first 🧊' },
+    dinner:    { rainy:'Rainy evening — cosy dinners ranked up ☔', comfy:'Evening dinner — special picks for tonight 🌆', hot:'Warm evening — elegant light dishes 🌅' },
+    night:     { rainy:'Late-night rainy cravings? Soups & comfort ☔', comfy:'Late night eats 🌙', hot:'Late night — light bites so you can sleep 😴' },
+  };
+  const slotMsgs = msgs[CTX.slot] || msgs.lunch;
+  return slotMsgs[CTX.weather] || slotMsgs.comfy;
+}
+
+/* ── Find food → loading → results ── */
+function findFood() {
+  showScreen('loading');
+  const data = MOOD_DATA[selectedMood.key];
+  document.getElementById('loaderEmoji').textContent = data.loaderEmoji;
+  document.getElementById('loaderText').textContent  = data.loaderText;
+
+  const bar = document.querySelector('.loader-bar-fill');
+  bar.style.animation = 'none';
+  bar.offsetHeight;
+  bar.style.animation = 'loadFill 2s ease forwards';
+
+  setTimeout(() => buildResults(data), 2200);
+}
+
+function buildResults(data) {
+  // Score each dish by time + weather context, then sort
+  const scored = data.results.map((r, i) => ({
+    ...r,
+    dist: rndDist(i),        // fresh random distance each session
+    _score: score(r)
+  }));
+
+  // Sort by score (highest first), then pick top 3
+  scored.sort((a, b) => b._score - a._score);
+  const picked = scored.slice(0, 3);
+
+  // Mood bar
+  document.getElementById('resultMoodName').textContent = data.label.toLowerCase();
+  document.getElementById('resultSubtitle').textContent = data.subtitle;
+  document.getElementById('resultMoodPill').textContent = data.emoji + ' ' + data.label;
+
+  const cravPill = document.getElementById('resultCravingPill');
+  if (selectedCravings.length > 0) {
+    cravPill.textContent = selectedCravings[0];
+    cravPill.style.display = 'flex';
+  } else { cravPill.style.display = 'none'; }
+
+  // Context badge (weather + time hint)
+  const existingBadge = document.getElementById('ctxBadge');
+  if (existingBadge) existingBadge.remove();
+  const badge = document.createElement('div');
+  badge.id = 'ctxBadge';
+  badge.style.cssText = 'max-width:900px;margin-bottom:18px;font-size:0.80rem;color:rgba(255,255,255,0.50);display:flex;align-items:center;gap:7px;font-family:Poppins,sans-serif;font-weight:600;';
+  badge.innerHTML = `<span style="opacity:0.7">${CTX.weatherIcon} ${CTX.slotIcon}</span> ${buildContextBadge()}`;
+  document.getElementById('resultMoodBar').after(badge);
+
+  // Hero match
+  const hero = picked[0];
+  document.getElementById('matchEmoji').innerHTML = `<img class="match-hero-img" src="${hero.img}" alt="${hero.name}" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.insertAdjacentHTML('afterend','<div style=\\'font-size:2.8rem\\'>${hero.emoji}</div>')" />`;
+  document.getElementById('matchTitle').textContent = hero.name;
+  document.getElementById('matchDesc').textContent  = hero.why + '. ' + hero.cook + ' · ' + hero.dist;
+  document.getElementById('matchScore').textContent  = Math.min(99, hero._score) + '%';
+
+  // Results grid
+  const grid = document.getElementById('resultsGrid');
+  grid.innerHTML = '';
+  picked.forEach(r => {
+    grid.innerHTML += `
+      <div class="result-card" onclick="location.href='user-auth.html'">
+        <div class="result-card__img">
+          <img src="${r.img}" alt="${r.name}" loading="lazy" onerror="imgError(this,'${r.emoji}')" />
+          <div class="result-card__match">${Math.min(99, r._score)}% match</div>
+          <div class="result-card__dist">📍 ${r.dist}</div>
+        </div>
+        <div class="result-card__body">
+          <div class="result-card__name">${r.name}</div>
+          <div class="result-card__cook">👤 ${r.cook}</div>
+          <div class="result-card__why">✨ ${r.why}</div>
+          <div class="result-card__footer">
+            <div class="result-card__price">${r.price}<span style="font-size:0.7rem;color:rgba(255,255,255,0.40);font-weight:400;"> /portion</span></div>
+            <button class="result-card__btn">Reserve →</button>
+          </div>
+        </div>
+      </div>`;
+  });
+
+  // Also try — shuffle alsoTry so it's different each visit
+  const shuffledTry = [...data.alsoTry].sort(() => (CTX.seed % 3) - 1.2);
+  const also = document.getElementById('alsoTryPills');
+  also.innerHTML = shuffledTry.map(t =>
+    `<div class="try-pill" onclick="location.href='user-auth.html'">${t}</div>`
+  ).join('');
+
+  const rs = document.getElementById('screen-results');
+  rs.className = data.bg;
+  rs.style.display = 'block';
+  rs.style.padding = '100px 24px 80px';
+
+  showScreen('results');
+}
+
+function restart() {
+  selectedMood    = null;
+  selectedCravings = [];
+  const badge = document.getElementById('ctxBadge');
+  if (badge) badge.remove();
+  showScreen('intro');
+}
+
+// Wire up mood → craving transition
+const origShow = showScreen;
+window.showScreen = function(name) {
+  origShow(name);
+  if (name === 'craving' && selectedMood) populateCravings(selectedMood.key);
+};
+
+// Init
+showScreen('intro');
+</script>
+  <div id="cnd-chatbot"></div>
+  <script src="chatbot/dist/chatbot.js"></script>
+</body>
+</html>

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>News – CookNextDoor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;background:#0F2419;color:#fff;min-height:100vh;overflow-x:hidden;}
+    :root{--orange:#F87B31;--green:#5BAD6F;--bg:#0F2419;--mid:#1A3D28;--light:#2D6444;}
+
+    /* ── Nav ── */
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(15,36,25,0.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,0.07);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;}
+    .nav__logo img{height:56px;display:block;}
+    .nav__links{display:flex;align-items:center;gap:20px;}
+    .nav__links a{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.70);text-decoration:none;transition:color 0.2s;}
+    .nav__links a:hover{color:var(--orange);}
+    .nav__links .active-link{color:#fff;}
+    .btn-nav{background:var(--orange);color:#fff;padding:9px 20px;border-radius:100px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.82rem;text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 4px 14px rgba(248,123,49,0.30);}
+    .btn-nav:hover{transform:translateY(-2px);}
+
+    /* ── Hero ── */
+    .hero{padding:110px 24px 56px;text-align:center;background:linear-gradient(160deg,#1E4A30 0%,#0F2419 60%);position:relative;overflow:hidden;}
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(248,123,49,0.08) 0%,transparent 60%);pointer-events:none;}
+    .hero-tag{display:inline-flex;align-items:center;gap:7px;background:rgba(248,123,49,0.15);border:1px solid rgba(248,123,49,0.35);color:var(--orange);font-family:'Poppins',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;padding:7px 16px;border-radius:100px;margin-bottom:20px;}
+    .hero h1{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(2rem,5vw,3.4rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:14px;}
+    .hero h1 span{color:var(--orange);}
+    .hero p{color:rgba(255,255,255,0.60);font-size:clamp(0.95rem,2vw,1.05rem);max-width:520px;margin:0 auto 32px;line-height:1.7;}
+    .last-updated{font-size:0.78rem;color:rgba(255,255,255,0.35);font-family:'Poppins',sans-serif;}
+    .last-updated span{color:var(--green);}
+
+    /* ── Filter bar ── */
+    .filter-wrap{max-width:980px;margin:0 auto;padding:0 24px 36px;}
+    .filter-bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:32px;}
+    .f-btn{padding:9px 18px;border-radius:100px;border:2px solid rgba(255,255,255,0.12);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.80rem;cursor:pointer;color:rgba(255,255,255,0.65);background:rgba(255,255,255,0.05);transition:all 0.2s;}
+    .f-btn:hover{border-color:var(--orange);color:#fff;background:rgba(248,123,49,0.10);}
+    .f-btn.active{background:var(--orange);border-color:var(--orange);color:#fff;}
+
+    /* ── News grid ── */
+    .news-wrap{max-width:980px;margin:0 auto;padding:0 24px 80px;}
+    .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+    @media(max-width:768px){.news-grid{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:500px){.news-grid{grid-template-columns:1fr;}}
+
+    /* ── News card ── */
+    .news-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:transform 0.25s,box-shadow 0.25s;cursor:pointer;}
+    .news-card:hover{transform:translateY(-5px);box-shadow:0 18px 48px rgba(0,0,0,0.35);border-color:rgba(255,255,255,0.18);}
+    .news-card--featured{grid-column:1/-1;flex-direction:row;}
+    @media(max-width:600px){.news-card--featured{flex-direction:column;}}
+    .card-img{height:180px;background:var(--mid);overflow:hidden;position:relative;flex-shrink:0;}
+    .news-card--featured .card-img{width:340px;height:auto;min-height:200px;}
+    @media(max-width:600px){.news-card--featured .card-img{width:100%;height:200px;}}
+    .card-img-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,rgba(91,173,111,0.15),rgba(248,123,49,0.10));}
+    .card-img img{width:100%;height:100%;object-fit:cover;display:block;}
+    .card-cat{position:absolute;top:10px;left:10px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;padding:4px 10px;border-radius:100px;backdrop-filter:blur(8px);}
+    .cat-business{background:rgba(248,123,49,0.80);color:#fff;}
+    .cat-charity {background:rgba(91,173,111,0.80);color:#fff;}
+    .cat-culture  {background:rgba(80,130,200,0.80);color:#fff;}
+    .region-badge{position:absolute;top:10px;right:10px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.62rem;padding:3px 8px;border-radius:100px;background:rgba(0,0,0,0.55);color:rgba(255,255,255,0.85);backdrop-filter:blur(6px);}
+    .card-body{padding:18px;display:flex;flex-direction:column;flex:1;}
+    .card-source{font-size:0.72rem;color:rgba(255,255,255,0.40);font-family:'Poppins',sans-serif;font-weight:600;margin-bottom:7px;display:flex;align-items:center;gap:6px;}
+    .card-source .dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,0.25);}
+    .card-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;line-height:1.35;color:#fff;margin-bottom:9px;flex:1;}
+    .news-card--featured .card-title{font-size:1.2rem;}
+    .card-summary{font-size:0.78rem;color:rgba(255,255,255,0.50);line-height:1.6;margin-bottom:14px;}
+    .card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;}
+    .card-date{font-size:0.72rem;color:rgba(255,255,255,0.30);}
+    .card-link{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.75rem;color:var(--orange);text-decoration:none;display:flex;align-items:center;gap:4px;transition:gap 0.2s;}
+    .card-link:hover{gap:7px;}
+
+    /* ── Empty / loading states ── */
+    .state-msg{grid-column:1/-1;text-align:center;padding:60px 20px;color:rgba(255,255,255,0.35);}
+    .state-msg p{font-family:'Poppins',sans-serif;font-weight:600;font-size:1rem;margin-bottom:8px;}
+    .state-msg small{font-size:0.82rem;}
+
+    /* ── Newsletter CTA ── */
+    .cta-section{background:rgba(255,255,255,0.04);border-top:1px solid rgba(255,255,255,0.07);padding:56px 24px;}
+    .cta-inner{max-width:600px;margin:0 auto;text-align:center;}
+    .cta-inner h2{font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.4rem,3vw,2rem);margin-bottom:10px;}
+    .cta-inner p{color:rgba(255,255,255,0.55);font-size:0.92rem;margin-bottom:28px;line-height:1.6;}
+    .cta-form{display:flex;gap:10px;max-width:420px;margin:0 auto;}
+    .cta-form input{flex:1;padding:13px 18px;background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.12);border-radius:100px;font-family:'Inter',sans-serif;font-size:0.9rem;color:#fff;outline:none;transition:border 0.2s;}
+    .cta-form input::placeholder{color:rgba(255,255,255,0.30);}
+    .cta-form input:focus{border-color:var(--orange);}
+    .cta-form button{background:var(--orange);color:#fff;border:none;border-radius:100px;padding:13px 22px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap;transition:transform 0.2s;}
+    .cta-form button:hover{transform:scale(1.04);}
+    @media(max-width:400px){.cta-form{flex-direction:column;}.cta-form input,.cta-form button{width:100%;}}
+
+    /* ── Footer ── */
+    footer{background:#080F0B;padding:32px 24px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+    footer p{font-size:0.8rem;color:rgba(255,255,255,0.25);}
+    footer a{color:rgba(255,255,255,0.40);text-decoration:none;transition:color 0.2s;}
+    footer a:hover{color:var(--orange);}
+
+    /* ── Pagination ── */
+    .pagination{display:flex;justify-content:center;gap:8px;margin-top:36px;}
+    .pg-btn{padding:9px 18px;border-radius:100px;border:2px solid rgba(255,255,255,0.12);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.82rem;cursor:pointer;color:rgba(255,255,255,0.65);background:rgba(255,255,255,0.05);transition:all 0.2s;}
+    .pg-btn.active{background:var(--orange);border-color:var(--orange);color:#fff;}
+    .pg-btn:hover:not(.active){border-color:var(--orange);color:#fff;}
+    .pg-btn:disabled{opacity:0.3;pointer-events:none;}
+
+    /* ── Success Stories ── */
+    .stories-section{padding:60px 0 48px;background:linear-gradient(180deg,#0F2419 0%,#152F21 100%);border-bottom:1px solid rgba(255,255,255,0.06);}
+    .section-header{max-width:980px;margin:0 auto 32px;padding:0 24px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+    .section-header h2{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.4rem,3vw,2rem);line-height:1.15;}
+    .section-header h2 span{color:var(--orange);}
+    .section-header p{color:rgba(255,255,255,0.50);font-size:0.88rem;max-width:420px;line-height:1.6;}
+    .section-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(91,173,111,0.15);border:1px solid rgba(91,173,111,0.30);color:var(--green);font-family:'Poppins',sans-serif;font-weight:700;font-size:0.68rem;letter-spacing:0.10em;text-transform:uppercase;padding:5px 12px;border-radius:100px;margin-bottom:10px;}
+    .stories-scroll{max-width:980px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+    @media(max-width:768px){.stories-scroll{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:500px){.stories-scroll{grid-template-columns:1fr;}}
+    .story-card{background:rgba(255,255,255,0.06);border:1px solid rgba(91,173,111,0.20);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:14px;transition:transform 0.25s,box-shadow 0.25s;}
+    .story-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,0.30);}
+    .story-avatar{width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid rgba(91,173,111,0.40);background:var(--mid);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;}
+    .story-header{display:flex;align-items:center;gap:12px;}
+    .story-info{}
+    .story-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.92rem;color:#fff;}
+    .story-role{font-size:0.72rem;color:var(--green);font-family:'Poppins',sans-serif;font-weight:600;margin-top:2px;}
+    .story-body{font-size:0.85rem;color:rgba(255,255,255,0.65);line-height:1.65;flex:1;}
+    .story-body strong{color:#fff;font-weight:600;}
+    .story-stats{display:flex;gap:12px;flex-wrap:wrap;}
+    .stat-pill{background:rgba(91,173,111,0.12);border:1px solid rgba(91,173,111,0.22);border-radius:100px;padding:5px 12px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.72rem;color:var(--green);}
+    .story-tag{display:inline-flex;align-items:center;gap:4px;font-size:0.68rem;color:rgba(255,255,255,0.35);font-family:'Poppins',sans-serif;font-weight:600;margin-top:2px;}
+
+    /* ── Testimonials ── */
+    .testimonials-section{padding:60px 0 56px;background:#0F2419;}
+    .testimonials-track-wrap{overflow:hidden;position:relative;max-width:100%;}
+    .testimonials-track-wrap::before,.testimonials-track-wrap::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none;}
+    .testimonials-track-wrap::before{left:0;background:linear-gradient(to right,#0F2419,transparent);}
+    .testimonials-track-wrap::after{right:0;background:linear-gradient(to left,#0F2419,transparent);}
+    .testimonials-track{display:flex;gap:16px;padding:8px 40px;animation:marquee 38s linear infinite;}
+    .testimonials-track:hover{animation-play-state:paused;}
+    @keyframes marquee{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+    .t-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);border-radius:18px;padding:22px 24px;min-width:300px;max-width:300px;flex-shrink:0;transition:border-color 0.2s;}
+    .t-card:hover{border-color:rgba(248,123,49,0.35);}
+    .t-stars{color:var(--orange);font-size:0.85rem;margin-bottom:10px;letter-spacing:2px;}
+    .t-text{font-size:0.85rem;color:rgba(255,255,255,0.70);line-height:1.65;margin-bottom:14px;}
+    .t-author{display:flex;align-items:center;gap:10px;}
+    .t-avatar{width:36px;height:36px;border-radius:50%;background:var(--mid);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+    .t-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.82rem;color:#fff;}
+    .t-meta{font-size:0.70rem;color:rgba(255,255,255,0.35);margin-top:1px;}
+    .t-type{display:inline-flex;align-items:center;gap:4px;font-size:0.65rem;font-family:'Poppins',sans-serif;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:2px 8px;border-radius:100px;margin-left:auto;}
+    .t-type.buyer{background:rgba(248,123,49,0.15);color:var(--orange);}
+    .t-type.cook{background:rgba(91,173,111,0.15);color:var(--green);}
+
+    /* ── Divider ── */
+    .section-divider{max-width:980px;margin:0 auto;padding:0 24px;}
+    .section-divider hr{border:none;border-top:1px solid rgba(255,255,255,0.07);margin:0;}
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a href="index.html"><img src="brand_assets/logo.png" alt="CookNextDoor" style="height:56px;"/></a>
+  <div class="nav__links">
+    <a href="index.html">Home</a>
+    <a href="food-mood.html">🎭 Food Mood</a>
+    <a href="news.html" class="active-link">📰 News</a>
+    <a href="meetup-guide.html">How it works</a>
+    <a href="user-auth.html" class="btn-nav">Find food →</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-tag">📰 Community News</div>
+  <h1>Home Cook &amp; Food<br/><span>Stories Near You</span></h1>
+  <p>Latest news on home-based food businesses, food charity, and community cooking across Singapore &amp; Malaysia.</p>
+  <div class="last-updated">Last updated: <span id="lastUpdatedEl">loading...</span></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SUCCESS STORIES                                            -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="stories-section">
+  <div class="section-header">
+    <div>
+      <div class="section-tag">🌟 Community Spotlight</div>
+      <h2>Neighbourhood Cook<br/><span>Success Stories</span></h2>
+    </div>
+    <p>Real home cooks from your area — turning passion into portions, one neighbour at a time.</p>
+  </div>
+  <div class="stories-scroll" id="storiesGrid">
+
+    <!-- Story 1 -->
+    <div class="story-card">
+      <div class="story-header">
+        <div class="story-avatar">👩‍🍳</div>
+        <div class="story-info">
+          <div class="story-name">Auntie Siti</div>
+          <div class="story-role">🍛 Biryani &amp; Malay Cuisine · Tampines</div>
+        </div>
+      </div>
+      <div class="story-body">
+        "I started cooking extra biryani every Friday for my kids. Then my neighbour Mrs Lim asked if she could buy some. <strong>Now I cook for 12–15 neighbours every week</strong> and haven't wasted a single pot of rice since joining CookNextDoor."
+      </div>
+      <div class="story-stats">
+        <div class="stat-pill">📦 200+ portions sold</div>
+        <div class="stat-pill">⭐ 4.9 rating</div>
+      </div>
+      <div class="story-tag">🗓 Joined 3 months ago</div>
+    </div>
+
+    <!-- Story 2 -->
+    <div class="story-card">
+      <div class="story-header">
+        <div class="story-avatar">👨‍🍳</div>
+        <div class="story-info">
+          <div class="story-name">Uncle Ah Kow</div>
+          <div class="story-role">🍗 Hainanese Chicken Rice · Bedok</div>
+        </div>
+      </div>
+      <div class="story-body">
+        "After I retired, I missed cooking for a crowd. My chicken rice recipe is 40 years old — my mum taught me. <strong>CookNextDoor gave me a reason to cook it every day again.</strong> My neighbours say it's better than any hawker stall."
+      </div>
+      <div class="story-stats">
+        <div class="stat-pill">📦 350+ portions sold</div>
+        <div class="stat-pill">❤️ 28 regulars</div>
+      </div>
+      <div class="story-tag">🗓 Joined 6 months ago</div>
+    </div>
+
+    <!-- Story 3 -->
+    <div class="story-card">
+      <div class="story-header">
+        <div class="story-avatar">👩‍🍳</div>
+        <div class="story-info">
+          <div class="story-name">Priya Amma</div>
+          <div class="story-role">🫓 South Indian Vegetarian · Geylang</div>
+        </div>
+      </div>
+      <div class="story-body">
+        "I cook thosai and sambar every morning for my family anyway. <strong>Listing it on CookNextDoor was natural.</strong> Now I have 5 neighbours who pre-order every Sunday. The extra income helps with groceries — and nothing goes to waste."
+      </div>
+      <div class="story-stats">
+        <div class="stat-pill">📦 120+ portions sold</div>
+        <div class="stat-pill">🌱 Zero food waste</div>
+      </div>
+      <div class="story-tag">🗓 Joined 2 months ago</div>
+    </div>
+
+    <!-- Story 4 -->
+    <div class="story-card">
+      <div class="story-header">
+        <div class="story-avatar">👨‍🍳</div>
+        <div class="story-info">
+          <div class="story-name">Encik Haji Rahman</div>
+          <div class="story-role">🍢 Satay &amp; Grilled Skewers · Jurong West</div>
+        </div>
+      </div>
+      <div class="story-body">
+        "I used to grill satay only during Hari Raya. My children said I should share it more. <strong>Now my weekend satay sessions are fully booked 3 days in advance.</strong> The community response was overwhelming — I feel appreciated."
+      </div>
+      <div class="story-stats">
+        <div class="stat-pill">📦 500+ skewers served</div>
+        <div class="stat-pill">🤝 Community favourite</div>
+      </div>
+      <div class="story-tag">🗓 Joined 4 months ago</div>
+    </div>
+
+    <!-- Story 5 (Charity) -->
+    <div class="story-card">
+      <div class="story-header">
+        <div class="story-avatar">🤝</div>
+        <div class="story-info">
+          <div class="story-name">Mdm Chen &amp; Block 45</div>
+          <div class="story-role">🍲 Community Charity Cook · Toa Payoh</div>
+        </div>
+      </div>
+      <div class="story-body">
+        "Every month, 6 of us home cooks in the block pool together and cook a big meal for our elderly neighbours. <strong>We've served 80+ seniors free hot meals</strong> through the CookNextDoor community group. Small acts, big hearts."
+      </div>
+      <div class="story-stats">
+        <div class="stat-pill">🍱 80+ seniors served</div>
+        <div class="stat-pill">👥 6 cooks in team</div>
+      </div>
+      <div class="story-tag">🏆 Community Hero</div>
+    </div>
+
+    <!-- Story 6 (Malaysia) -->
+    <div class="story-card">
+      <div class="story-header">
+        <div class="story-avatar">👩‍🍳</div>
+        <div class="story-info">
+          <div class="story-name">Kak Zainab</div>
+          <div class="story-role">🥘 Beef Rendang &amp; Gulai · Petaling Jaya</div>
+        </div>
+      </div>
+      <div class="story-body">
+        "I'm a stay-at-home mum and cooking is my therapy. My rendang recipe is from my late grandmother. <strong>My neighbours started requesting it every week.</strong> I never imagined my grandmother's recipe would bring our neighbourhood closer together."
+      </div>
+      <div class="story-stats">
+        <div class="stat-pill">📦 180+ portions sold</div>
+        <div class="stat-pill">🇲🇾 Petaling Jaya</div>
+      </div>
+      <div class="story-tag">🗓 Joined 5 months ago</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- TESTIMONIALS MARQUEE                                       -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="testimonials-section">
+  <div class="section-header" style="margin-bottom:28px;">
+    <div>
+      <div class="section-tag" style="background:rgba(248,123,49,0.12);border-color:rgba(248,123,49,0.28);color:var(--orange);">💬 What People Say</div>
+      <h2>Voices from the <span>Neighbourhood</span></h2>
+    </div>
+    <p>From buyers who found their new favourite meal, to cooks who found their community.</p>
+  </div>
+
+  <div class="testimonials-track-wrap">
+    <div class="testimonials-track" id="testimonialsTrack">
+      <!-- Testimonials are duplicated below for seamless infinite scroll -->
+
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"Found Auntie Siti's biryani by chance. Now it's my Friday tradition. Tastes exactly like what my mum used to make. I didn't know I was missing it until I had it."</div>
+        <div class="t-author">
+          <div class="t-avatar">😊</div>
+          <div><div class="t-name">Faridah B.</div><div class="t-meta">Buyer · Tampines</div></div>
+          <div class="t-type buyer">Buyer</div>
+        </div>
+      </div>
+
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"I was skeptical at first. But $4 for a full bowl of freshly-made wonton mee from a real home cook 0.4 km away? Life-changing. I've stopped buying frozen food entirely."</div>
+        <div class="t-author">
+          <div class="t-avatar">🧑</div>
+          <div><div class="t-name">Wei Jian T.</div><div class="t-meta">Buyer · Bedok</div></div>
+          <div class="t-type buyer">Buyer</div>
+        </div>
+      </div>
+
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"My regulars message me every week. I never expected to feel this connected to my neighbourhood just from cooking. CookNextDoor made me a local celebrity — but a humble one."</div>
+        <div class="t-author">
+          <div class="t-avatar">👩‍🍳</div>
+          <div><div class="t-name">Mdm Lim H.C.</div><div class="t-meta">Home Cook · Geylang</div></div>
+          <div class="t-type cook">Cook</div>
+        </div>
+      </div>
+
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"My daughter lives alone and used to eat cup noodles every night. Since CookNextDoor, she picks up a hot home-cooked meal 3–4 times a week. As a mum, that's priceless."</div>
+        <div class="t-author">
+          <div class="t-avatar">👵</div>
+          <div><div class="t-name">Janet O.</div><div class="t-meta">Parent · Bukit Timah</div></div>
+          <div class="t-type buyer">Buyer</div>
+        </div>
+      </div>
+
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"Zero commission means I actually earn something meaningful. I listed my kueh lapis on a Saturday — by Sunday morning I had 8 orders. The platform just works."</div>
+        <div class="t-author">
+          <div class="t-avatar">👩</div>
+          <div><div class="t-name">Rosalind C.</div><div class="t-meta">Home Cook · Queenstown</div></div>
+          <div class="t-type cook">Cook</div>
+        </div>
+      </div>
+
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"I was cooking too much rendang for my family and always had leftovers. Now my neighbours pre-order it every weekend. What used to be food waste became my side income."</div>
+        <div class="t-author">
+          <div class="t-avatar">👨</div>
+          <div><div class="t-name">Razif A.</div><div class="t-meta">Home Cook · PJ, Malaysia</div></div>
+          <div class="t-type cook">Cook</div>
+        </div>
+      </div>
+
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"As a student on a budget, $3–4 for a proper home-cooked meal is incredible. Uncle Ah Kow's chicken rice is so good I walk 0.8 km just to pick it up. Worth every step."</div>
+        <div class="t-author">
+          <div class="t-avatar">🧑‍🎓</div>
+          <div><div class="t-name">Marcus L.</div><div class="t-meta">Student · Clementi</div></div>
+          <div class="t-type buyer">Buyer</div>
+        </div>
+      </div>
+
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"I cook for charity every month with 5 of my neighbours. CookNextDoor helped us connect and organise. We've now served over 80 hot meals to seniors in our block. Very meaningful."</div>
+        <div class="t-author">
+          <div class="t-avatar">🤝</div>
+          <div><div class="t-name">Mdm Chen B.L.</div><div class="t-meta">Community Cook · Toa Payoh</div></div>
+          <div class="t-type cook">Cook</div>
+        </div>
+      </div>
+
+      <!-- Duplicate set for seamless loop -->
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"Found Auntie Siti's biryani by chance. Now it's my Friday tradition. Tastes exactly like what my mum used to make. I didn't know I was missing it until I had it."</div>
+        <div class="t-author"><div class="t-avatar">😊</div><div><div class="t-name">Faridah B.</div><div class="t-meta">Buyer · Tampines</div></div><div class="t-type buyer">Buyer</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"I was skeptical at first. But $4 for a full bowl of freshly-made wonton mee from a real home cook 0.4 km away? Life-changing. I've stopped buying frozen food entirely."</div>
+        <div class="t-author"><div class="t-avatar">🧑</div><div><div class="t-name">Wei Jian T.</div><div class="t-meta">Buyer · Bedok</div></div><div class="t-type buyer">Buyer</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"My regulars message me every week. I never expected to feel this connected to my neighbourhood just from cooking. CookNextDoor made me a local celebrity — but a humble one."</div>
+        <div class="t-author"><div class="t-avatar">👩‍🍳</div><div><div class="t-name">Mdm Lim H.C.</div><div class="t-meta">Home Cook · Geylang</div></div><div class="t-type cook">Cook</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"My daughter lives alone and used to eat cup noodles every night. Since CookNextDoor, she picks up a hot home-cooked meal 3–4 times a week. As a mum, that's priceless."</div>
+        <div class="t-author"><div class="t-avatar">👵</div><div><div class="t-name">Janet O.</div><div class="t-meta">Parent · Bukit Timah</div></div><div class="t-type buyer">Buyer</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"Zero commission means I actually earn something meaningful. I listed my kueh lapis on a Saturday — by Sunday morning I had 8 orders. The platform just works."</div>
+        <div class="t-author"><div class="t-avatar">👩</div><div><div class="t-name">Rosalind C.</div><div class="t-meta">Home Cook · Queenstown</div></div><div class="t-type cook">Cook</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"I was cooking too much rendang for my family and always had leftovers. Now my neighbours pre-order it every weekend. What used to be food waste became my side income."</div>
+        <div class="t-author"><div class="t-avatar">👨</div><div><div class="t-name">Razif A.</div><div class="t-meta">Home Cook · PJ, Malaysia</div></div><div class="t-type cook">Cook</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"As a student on a budget, $3–4 for a proper home-cooked meal is incredible. Uncle Ah Kow's chicken rice is so good I walk 0.8 km just to pick it up. Worth every step."</div>
+        <div class="t-author"><div class="t-avatar">🧑‍🎓</div><div><div class="t-name">Marcus L.</div><div class="t-meta">Student · Clementi</div></div><div class="t-type buyer">Buyer</div></div>
+      </div>
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"I cook for charity every month with 5 of my neighbours. CookNextDoor helped us connect and organise. We've now served over 80 hot meals to seniors in our block. Very meaningful."</div>
+        <div class="t-author"><div class="t-avatar">🤝</div><div><div class="t-name">Mdm Chen B.L.</div><div class="t-meta">Community Cook · Toa Payoh</div></div><div class="t-type cook">Cook</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider" style="padding:0 24px;"><hr/></div>
+
+<!-- Filter bar -->
+<div class="filter-wrap">
+  <div style="text-align:center;margin-bottom:12px;">
+    <div class="section-tag" style="background:rgba(248,123,49,0.12);border-color:rgba(248,123,49,0.28);color:var(--orange);display:inline-flex;">📰 Latest News</div>
+    <h2 style="font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.3rem,2.5vw,1.8rem);margin-top:8px;">Home Cook &amp; Food News</h2>
+  </div>
+  <div class="filter-bar">
+    <button class="f-btn active" onclick="setFilter('all',this)">🗂 All</button>
+    <button class="f-btn" onclick="setFilter('business',this)">🏠 Home Biz</button>
+    <button class="f-btn" onclick="setFilter('charity',this)">🤝 Charity</button>
+    <button class="f-btn" onclick="setFilter('culture',this)">🍜 Culture</button>
+    <button class="f-btn" onclick="setFilter('SG',this)">🇸🇬 Singapore</button>
+    <button class="f-btn" onclick="setFilter('MY',this)">🇲🇾 Malaysia</button>
+  </div>
+</div>
+
+<!-- News grid -->
+<div class="news-wrap">
+  <div class="news-grid" id="newsGrid">
+    <div class="state-msg"><p>Loading news...</p><small>Fetching latest stories</small></div>
+  </div>
+  <div class="pagination" id="pagination"></div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-inner">
+    <h2>Stay in the loop 🍳</h2>
+    <p>Get the latest home cook news and new listings near you delivered every few days.</p>
+    <form class="cta-form" onsubmit="subscribeNewsletter(event)">
+      <input type="email" placeholder="your@email.com" required/>
+      <button type="submit">Notify me</button>
+    </form>
+  </div>
+</div>
+
+<footer>
+  <p>
+    <a href="index.html">CookNextDoor</a> · Community News ·
+    Powered by Google News · Updated every 2–3 days ·
+    <a href="index.html">Back to home</a>
+  </p>
+</footer>
+
+<script>
+/* ── Config ── */
+const PER_PAGE = 9;
+let allArticles  = [];
+let filtered     = [];
+let currentPage  = 1;
+let activeFilter = 'all';
+
+/* ── Category emoji & icons ── */
+const CAT_EMOJI = { business:'🏠', charity:'🤝', culture:'🍜' };
+const CAT_LABEL = { business:'Home Biz', charity:'Charity', culture:'Food Culture' };
+const REGION_FLAG = { SG:'🇸🇬', MY:'🇲🇾' };
+
+/* ── Time formatting ── */
+function timeAgo(iso) {
+  const diff = (Date.now() - new Date(iso)) / 1000;
+  if (diff < 3600)  return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  if (diff < 604800)return Math.floor(diff/86400) + 'd ago';
+  return new Date(iso).toLocaleDateString('en-SG',{day:'numeric',month:'short'});
+}
+
+/* ── Filter ── */
+function setFilter(val, btn) {
+  activeFilter = val;
+  currentPage  = 1;
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilter();
+}
+
+function applyFilter() {
+  if (activeFilter === 'all') {
+    filtered = [...allArticles];
+  } else if (activeFilter === 'SG' || activeFilter === 'MY') {
+    filtered = allArticles.filter(a => a.region === activeFilter);
+  } else {
+    filtered = allArticles.filter(a => a.category === activeFilter);
+  }
+  renderPage();
+}
+
+/* ── Render ── */
+function renderPage() {
+  const grid  = document.getElementById('newsGrid');
+  const start = (currentPage - 1) * PER_PAGE;
+  const page  = filtered.slice(start, start + PER_PAGE);
+
+  if (page.length === 0) {
+    grid.innerHTML = `<div class="state-msg"><p>No stories found</p><small>Try a different filter</small></div>`;
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+
+  grid.innerHTML = page.map((a, i) => buildCard(a, i === 0 && currentPage === 1 && activeFilter === 'all')).join('');
+  renderPagination();
+}
+
+function buildCard(a, featured) {
+  const catClass = 'cat-' + (a.category || 'culture');
+  const catLabel = CAT_LABEL[a.category] || a.category;
+  const flag     = REGION_FLAG[a.region] || '';
+  const emoji    = CAT_EMOJI[a.category] || '📰';
+
+  return `
+    <div class="news-card${featured?' news-card--featured':''}" onclick="window.open('${escHtml(a.url)}','_blank')">
+      <div class="card-img">
+        <div class="card-img-inner">${emoji}</div>
+        <div class="card-cat ${catClass}">${catLabel}</div>
+        ${flag ? `<div class="region-badge">${flag} ${a.region}</div>` : ''}
+      </div>
+      <div class="card-body">
+        <div class="card-source">
+          <span>${escHtml(a.source || 'News')}</span>
+          <span class="dot"></span>
+          <span>${timeAgo(a.publishedAt)}</span>
+        </div>
+        <div class="card-title">${escHtml(a.title)}</div>
+        ${a.summary ? `<div class="card-summary">${escHtml(a.summary.slice(0,130))}...</div>` : ''}
+        <div class="card-footer">
+          <span class="card-date">${new Date(a.publishedAt).toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'})}</span>
+          <a class="card-link" href="${escHtml(a.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Read more →</a>
+        </div>
+      </div>
+    </div>`;
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── Pagination ── */
+function renderPagination() {
+  const total = Math.ceil(filtered.length / PER_PAGE);
+  if (total <= 1) { document.getElementById('pagination').innerHTML=''; return; }
+  let html = '';
+  html += `<button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>← Prev</button>`;
+  for (let i=1;i<=total;i++) {
+    html += `<button class="pg-btn${i===currentPage?' active':''}" onclick="goPage(${i})">${i}</button>`;
+  }
+  html += `<button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage===total?'disabled':''}>Next →</button>`;
+  document.getElementById('pagination').innerHTML = html;
+}
+
+function goPage(n) {
+  currentPage = n;
+  renderPage();
+  window.scrollTo({top: document.querySelector('.filter-wrap').offsetTop - 80, behavior:'smooth'});
+}
+
+/* ── Newsletter ── */
+function subscribeNewsletter(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('button');
+  btn.textContent = '✓ You\'re in!';
+  btn.style.background = '#5BAD6F';
+  e.target.querySelector('input').disabled = true;
+  btn.disabled = true;
+}
+
+/* ── Load news-data.json ── */
+async function loadNews() {
+  try {
+    const res  = await fetch('news-data.json?v=' + Date.now());
+    const data = await res.json();
+
+    allArticles = (data.articles || []).sort(
+      (a,b) => new Date(b.publishedAt) - new Date(a.publishedAt)
+    );
+
+    const lu = data.lastUpdated
+      ? new Date(data.lastUpdated).toLocaleDateString('en-SG',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})
+      : 'Unknown';
+    document.getElementById('lastUpdatedEl').textContent = lu;
+
+    filtered = [...allArticles];
+    renderPage();
+  } catch(e) {
+    document.getElementById('newsGrid').innerHTML = `
+      <div class="state-msg">
+        <p>⚠️ Could not load news</p>
+        <small>Run <code>node tools/fetch_news.js</code> to populate news-data.json</small>
+      </div>`;
+    document.getElementById('lastUpdatedEl').textContent = '—';
+  }
+}
+
+loadNews();
+</script>
+
+  <div id="cnd-chatbot"></div>
+  <script src="chatbot/dist/chatbot.js"></script>
+</body>
+</html>

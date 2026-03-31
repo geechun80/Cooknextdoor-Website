@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cook Registration – CookNextDoor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;background:#2D6444;min-height:100vh;}
+
+    :root{
+      --orange:#F87B31;--green:#5BAD6F;--dark:#2D2A26;--muted:#7A7067;
+      --bg:#2D6444;--bg-deep:#1A3D28;--shadow:0 8px 32px rgba(0,0,0,0.20);
+    }
+
+    /* ── Top bar ── */
+    .topbar{background:rgba(26,61,40,0.92);backdrop-filter:blur(16px);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:100;}
+    .topbar__logo img{height:54px;display:block;}
+    .topbar__back{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.7);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
+    .topbar__back:hover{color:var(--orange);}
+
+    /* ── Page layout ── */
+    .page{max-width:760px;margin:0 auto;padding:48px 24px 80px;}
+
+    /* ── Progress bar ── */
+    .progress-header{text-align:center;margin-bottom:48px;}
+    .progress-header h1{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.4rem,3vw,2rem);color:#fff;margin-bottom:8px;}
+    .progress-header p{color:rgba(255,255,255,0.65);font-size:0.9rem;}
+    .progress-bar{display:flex;align-items:center;justify-content:center;gap:0;margin-top:24px;}
+    .prog-step{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;}
+    .prog-step:not(:last-child)::after{content:'';position:absolute;top:18px;left:calc(50% + 18px);width:calc(100% - 36px);height:2px;background:rgba(255,255,255,0.15);z-index:0;min-width:32px;}
+    .prog-step.done::after{background:var(--green);}
+    .prog-dot{width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:1rem;font-family:'Poppins',sans-serif;font-weight:700;color:rgba(255,255,255,0.4);z-index:1;transition:all 0.3s;}
+    .prog-step.done   .prog-dot{background:var(--green);border-color:var(--green);color:#fff;}
+    .prog-step.active .prog-dot{background:var(--orange);border-color:var(--orange);color:#fff;box-shadow:0 0 0 4px rgba(248,123,49,0.25);}
+    .prog-label{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.62rem;color:rgba(255,255,255,0.40);letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;}
+    .prog-step.active .prog-label{color:var(--orange);}
+    .prog-step.done   .prog-label{color:rgba(255,255,255,0.60);}
+
+    /* ── Card ── */
+    .card{background:#fff;border-radius:24px;padding:40px;margin-bottom:0;box-shadow:var(--shadow);}
+    .card.hidden{display:none;}
+    .card h2{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.4rem;color:var(--dark);margin-bottom:6px;}
+    .card h2 span{color:var(--orange);}
+    .card .subtitle{font-size:0.88rem;color:var(--muted);margin-bottom:28px;line-height:1.6;}
+
+    /* Form */
+    .form-group{margin-bottom:20px;}
+    .form-group label{display:block;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.82rem;color:var(--dark);margin-bottom:7px;}
+    .form-group label .opt{font-weight:400;color:var(--muted);font-size:0.75rem;}
+    .form-control{width:100%;padding:13px 16px;border:2px solid #E8E8E8;border-radius:12px;font-family:'Inter',sans-serif;font-size:0.92rem;color:var(--dark);outline:none;transition:border 0.2s,box-shadow 0.2s;background:#fff;}
+    .form-control:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(248,123,49,0.10);}
+    .form-control::placeholder{color:#B0B0B0;}
+    textarea.form-control{resize:vertical;min-height:90px;}
+    select.form-control{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237A7067' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
+
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    @media(max-width:560px){.form-row{grid-template-columns:1fr;}}
+
+    .input-icon{position:relative;}
+    .input-icon .form-control{padding-left:44px;}
+    .input-icon .icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:1.1rem;}
+
+    .pw-wrap{position:relative;}
+    .pw-wrap .form-control{padding-right:44px;}
+    .pw-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--muted);font-size:0.9rem;border:none;background:none;padding:0;}
+
+    .phone-row{display:flex;gap:8px;}
+    .phone-prefix{width:100px;flex-shrink:0;padding:13px 10px;border:2px solid #E8E8E8;border-radius:12px;font-size:0.85rem;color:var(--dark);background:#F9F9F9;outline:none;}
+    .phone-row .form-control{flex:1;}
+
+    /* Multi-select chips for food categories */
+    .chip-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+    .chip{padding:8px 16px;border-radius:100px;border:2px solid #E8E8E8;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.8rem;cursor:pointer;transition:all 0.2s;color:var(--muted);background:#fff;display:flex;align-items:center;gap:6px;}
+    .chip.selected{background:var(--orange);border-color:var(--orange);color:#fff;}
+    .chip:hover:not(.selected){border-color:var(--orange);color:var(--orange);}
+
+    /* Price range */
+    .price-options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+    .price-opt{border:2px solid #E8E8E8;border-radius:14px;padding:16px;cursor:pointer;transition:all 0.2s;text-align:center;}
+    .price-opt.selected{border-color:var(--orange);background:#FFF8F3;}
+    .price-opt:hover:not(.selected){border-color:var(--orange);}
+    .price-opt__range{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.1rem;color:var(--dark);margin-bottom:2px;}
+    .price-opt__label{font-size:0.75rem;color:var(--muted);}
+
+    /* Photo upload */
+    .photo-upload{border:2px dashed #E0E0E0;border-radius:16px;padding:28px 20px;text-align:center;cursor:pointer;transition:border 0.2s,background 0.2s;position:relative;}
+    .photo-upload:hover{border-color:var(--orange);background:#FFF8F3;}
+    .photo-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:1;}
+    .photo-upload__icon{font-size:2rem;margin-bottom:8px;}
+    .photo-upload__title{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.88rem;color:var(--dark);margin-bottom:3px;}
+    .photo-upload__sub{font-size:0.75rem;color:var(--muted);}
+    .photo-previews{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+    .photo-thumb{width:72px;height:72px;border-radius:10px;object-fit:cover;border:2px solid var(--green);}
+
+    /* Days available */
+    .days-grid{display:flex;gap:8px;flex-wrap:wrap;}
+    .day-chip{width:44px;height:44px;border-radius:50%;border:2px solid #E8E8E8;display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.75rem;cursor:pointer;transition:all 0.2s;color:var(--muted);}
+    .day-chip.selected{background:var(--orange);border-color:var(--orange);color:#fff;}
+    .day-chip:hover:not(.selected){border-color:var(--orange);color:var(--orange);}
+
+    /* Gmail button */
+    .btn-gmail{width:100%;display:flex;align-items:center;justify-content:center;gap:12px;padding:13px;border:2px solid #E8E8E8;border-radius:12px;background:#fff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.92rem;color:var(--dark);cursor:pointer;transition:border 0.2s;text-decoration:none;margin-bottom:16px;}
+    .btn-gmail:hover{border-color:var(--orange);}
+    .gmail-icon{width:22px;height:22px;}
+    .divider{display:flex;align-items:center;gap:12px;margin:16px 0;}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:#EBEBEB;}
+    .divider span{font-size:0.78rem;color:#B0B0B0;font-weight:500;}
+
+    /* OTP */
+    .otp-row{display:flex;gap:10px;justify-content:center;margin:24px 0;}
+    .otp-input{width:48px;height:56px;text-align:center;border:2px solid #E8E8E8;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:700;font-size:1.3rem;color:var(--dark);outline:none;transition:border 0.2s;}
+    .otp-input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(248,123,49,0.12);}
+    .otp-input.filled{border-color:var(--green);background:#F0FAF3;}
+    .verify-info{background:#FFF8F3;border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:0.84rem;color:var(--muted);}
+    .verify-info strong{color:var(--dark);}
+    .resend-row{text-align:center;font-size:0.82rem;color:var(--muted);margin-top:10px;}
+    .resend-row a{color:var(--orange);text-decoration:none;font-weight:600;}
+
+    /* Buttons */
+    .btn-primary{width:100%;padding:15px;background:var(--orange);color:#fff;border:none;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 4px 16px rgba(248,123,49,0.28);}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(248,123,49,0.35);}
+    .btn-secondary{width:100%;padding:13px;background:transparent;color:var(--dark);border:2px solid #E8E8E8;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.92rem;cursor:pointer;transition:border 0.2s;margin-top:10px;}
+    .btn-secondary:hover{border-color:var(--dark);}
+    .btn-actions{display:flex;flex-direction:column;gap:10px;margin-top:8px;}
+
+    .helper{font-size:0.78rem;color:var(--muted);margin-top:5px;}
+    .terms{font-size:0.75rem;color:var(--muted);text-align:center;margin-top:16px;line-height:1.6;}
+    .terms a{color:var(--orange);text-decoration:none;}
+
+    /* ── VIDEO GUIDE section ── */
+    .video-guide{background:var(--bg-deep);border-radius:24px;padding:36px;margin-bottom:24px;color:#fff;}
+    .video-guide h3{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.15rem;color:#fff;margin-bottom:6px;}
+    .video-guide p{color:rgba(255,255,255,0.65);font-size:0.85rem;margin-bottom:20px;}
+    .video-player{background:#111;border-radius:16px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;cursor:pointer;margin-bottom:20px;}
+    .video-player::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(45,100,68,0.4) 0%,rgba(15,36,25,0.6) 100%);}
+    .video-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:5rem;opacity:0.3;}
+    .play-btn{position:relative;z-index:1;width:70px;height:70px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;box-shadow:0 8px 32px rgba(248,123,49,0.4);transition:transform 0.2s;}
+    .play-btn:hover{transform:scale(1.1);}
+    .video-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+    .vstep{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px;text-align:center;}
+    .vstep__num{font-family:'Poppins',sans-serif;font-weight:900;font-size:1.2rem;color:var(--orange);margin-bottom:4px;}
+    .vstep__label{font-size:0.78rem;color:rgba(255,255,255,0.65);}
+    @media(max-width:480px){.video-steps{grid-template-columns:1fr 1fr;}}
+
+    /* ── Success ── */
+    .success-card{text-align:center;}
+    .success-icon{width:88px;height:88px;border-radius:50%;background:#EAF7EC;display:flex;align-items:center;justify-content:center;font-size:2.4rem;margin:0 auto 20px;}
+    .success-title{font-family:'Poppins',sans-serif;font-weight:900;font-size:1.5rem;color:var(--dark);margin-bottom:8px;}
+    .success-sub{font-size:0.9rem;color:var(--muted);margin-bottom:28px;line-height:1.7;}
+    .next-steps{display:flex;flex-direction:column;gap:12px;margin-bottom:28px;}
+    .next-step{display:flex;align-items:center;gap:14px;background:#F9F9F9;border-radius:12px;padding:14px 16px;text-align:left;}
+    .next-step__icon{font-size:1.4rem;flex-shrink:0;}
+    .next-step__title{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.88rem;color:var(--dark);}
+    .next-step__sub{font-size:0.78rem;color:var(--muted);}
+
+    /* Review summary */
+    .review-item{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid #F0F0F0;}
+    .review-item:last-child{border-bottom:none;}
+    .review-label{font-size:0.82rem;color:var(--muted);}
+    .review-value{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;color:var(--dark);text-align:right;max-width:55%;}
+
+    /* Info box */
+    .info-box{background:#F0FAF3;border:1px solid #C3E6CB;border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:0.83rem;color:#2D6444;display:flex;gap:10px;align-items:flex-start;}
+    .info-box .icon{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
+  </style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+  <a class="topbar__logo" href="index.html"><img src="brand_assets/logo.png" alt="CookNextDoor"/></a>
+  <a class="topbar__back" href="index.html">← Back to home</a>
+</div>
+
+<div class="page">
+
+  <!-- Header & progress -->
+  <div class="progress-header">
+    <h1>🍳 Become a <span style="color:var(--orange)">Neighborhood Cook</span></h1>
+    <p>Share your home-cooked food with neighbors. It takes about 5 minutes to set up your profile.</p>
+    <div class="progress-bar" id="progressBar">
+      <div class="prog-step active" data-step="1"><div class="prog-dot">1</div><div class="prog-label">Account</div></div>
+      <div class="prog-step" data-step="2"><div class="prog-dot">2</div><div class="prog-label">Email</div></div>
+      <div class="prog-step" data-step="3"><div class="prog-dot">3</div><div class="prog-label">Phone</div></div>
+      <div class="prog-step" data-step="4"><div class="prog-dot">4</div><div class="prog-label">Location</div></div>
+      <div class="prog-step" data-step="5"><div class="prog-dot">5</div><div class="prog-label">Menu</div></div>
+      <div class="prog-step" data-step="6"><div class="prog-dot">6</div><div class="prog-label">Photos</div></div>
+      <div class="prog-step" data-step="7"><div class="prog-dot">✓</div><div class="prog-label">Done</div></div>
+    </div>
+  </div>
+
+  <!-- STEP 1 — Account Setup -->
+  <div class="card" id="step-1">
+    <h2>Step 1: <span>Account Setup</span></h2>
+    <p class="subtitle">Create your cook account. You can also use your Google account for a faster setup.</p>
+
+    <a href="#" class="btn-gmail">
+      <svg class="gmail-icon" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Continue with Google
+    </a>
+    <div class="divider"><span>or create with email</span></div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>First name</label>
+        <input class="form-control" type="text" placeholder="e.g. Siti"/>
+      </div>
+      <div class="form-group">
+        <label>Last name</label>
+        <input class="form-control" type="text" placeholder="e.g. Rahman"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Email address</label>
+      <div class="input-icon">
+        <span class="icon">📧</span>
+        <input class="form-control" type="email" placeholder="you@email.com"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <div class="pw-wrap">
+        <input class="form-control" type="password" id="cookPw" placeholder="Min. 8 characters"/>
+        <button class="pw-toggle" onclick="togglePw('cookPw',this)">👁</button>
+      </div>
+      <div class="helper">Use 8+ characters with letters and numbers</div>
+    </div>
+    <div class="form-group">
+      <label>Cook/Chef name <span class="opt">(what customers will see)</span></label>
+      <input class="form-control" type="text" placeholder="e.g. Auntie Siti's Kitchen"/>
+    </div>
+
+    <div class="btn-actions">
+      <button class="btn-primary" onclick="nextStep(1)">Continue →</button>
+    </div>
+    <p class="terms">By continuing you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
+  </div>
+
+  <!-- STEP 2 — Email Verification -->
+  <div class="card hidden" id="step-2">
+    <h2>Step 2: <span>Verify your email</span> 📧</h2>
+    <p class="subtitle">We've sent a 6-digit code to your email. This confirms your account is real.</p>
+    <div class="verify-info">Sent to: <strong>you@email.com</strong></div>
+    <div class="otp-row">
+      <input class="otp-input" type="text" maxlength="1" oninput="otpNext(this,0,'email')"/>
+      <input class="otp-input" type="text" maxlength="1" oninput="otpNext(this,1,'email')"/>
+      <input class="otp-input" type="text" maxlength="1" oninput="otpNext(this,2,'email')"/>
+      <input class="otp-input" type="text" maxlength="1" oninput="otpNext(this,3,'email')"/>
+      <input class="otp-input" type="text" maxlength="1" oninput="otpNext(this,4,'email')"/>
+      <input class="otp-input" type="text" maxlength="1" oninput="otpNext(this,5,'email')"/>
+    </div>
+    <div class="resend-row">Didn't receive it? <a href="#">Resend code</a></div>
+    <div class="btn-actions">
+      <button class="btn-primary" onclick="nextStep(2)">Verify Email →</button>
+      <button class="btn-secondary" onclick="prevStep(2)">← Back</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 — Phone Verification -->
+  <div class="card hidden" id="step-3">
+    <h2>Step 3: <span>Verify your phone</span> 📱</h2>
+    <p class="subtitle">Your phone number helps neighbors trust you and allows transaction coordination. We'll send a one-time SMS code.</p>
+    <div class="form-group">
+      <label>Mobile number</label>
+      <div class="phone-row">
+        <select class="phone-prefix">
+          <option>🇸🇬 +65</option><option>🇲🇾 +60</option><option>🇮🇩 +62</option>
+          <option>🇵🇭 +63</option><option>🇹🇭 +66</option><option>🇻🇳 +84</option>
+          <option>🇮🇳 +91</option><option>🇦🇺 +61</option><option>🇬🇧 +44</option><option>🇺🇸 +1</option>
+        </select>
+        <input type="tel" class="form-control" placeholder="9123 4567"/>
+      </div>
+    </div>
+    <button class="btn-primary" id="sendPhoneBtn" onclick="showPhoneOtp()" style="margin-bottom:0;">Send SMS Code →</button>
+
+    <div id="phoneOtp" style="display:none;margin-top:24px;">
+      <div class="verify-info">Code sent to: <strong>+65 9123 4567</strong></div>
+      <div class="otp-row">
+        <input class="otp-input" type="text" maxlength="1"/>
+        <input class="otp-input" type="text" maxlength="1"/>
+        <input class="otp-input" type="text" maxlength="1"/>
+        <input class="otp-input" type="text" maxlength="1"/>
+        <input class="otp-input" type="text" maxlength="1"/>
+        <input class="otp-input" type="text" maxlength="1"/>
+      </div>
+      <div class="resend-row">Didn't get it? <a href="#">Resend SMS</a></div>
+      <button class="btn-primary" onclick="nextStep(3)" style="margin-top:16px;">Verify Phone →</button>
+    </div>
+    <button class="btn-secondary" onclick="prevStep(3)" style="margin-top:10px;">← Back</button>
+  </div>
+
+  <!-- STEP 4 — Location -->
+  <div class="card hidden" id="step-4">
+    <h2>Step 4: <span>Your location</span> 📍</h2>
+    <p class="subtitle">Buyers within 1 km will discover your food. We only show your neighborhood name — not your full address — publicly.</p>
+    <div class="info-box"><span class="icon">🔒</span><span>Your full address is kept private. Buyers will only see your neighborhood for the public listing. You share the exact pickup spot only after a reservation is made.</span></div>
+    <div class="form-group">
+      <label>Block / Unit number</label>
+      <input class="form-control" type="text" placeholder="e.g. Blk 123 #05-45"/>
+    </div>
+    <div class="form-group">
+      <label>Street name</label>
+      <input class="form-control" type="text" placeholder="e.g. Tampines Street 81"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Postal code</label>
+        <input class="form-control" type="text" placeholder="e.g. 520123"/>
+      </div>
+      <div class="form-group">
+        <label>Neighborhood / Town</label>
+        <select class="form-control">
+          <option value="">Select area...</option>
+          <optgroup label="East">
+            <option>Tampines</option><option>Bedok</option><option>Pasir Ris</option><option>Changi</option>
+          </optgroup>
+          <optgroup label="West">
+            <option>Jurong</option><option>Clementi</option><option>Buona Vista</option><option>Bukit Batok</option><option>Choa Chu Kang</option>
+          </optgroup>
+          <optgroup label="North">
+            <option>Woodlands</option><option>Yishun</option><option>Sembawang</option><option>Admiralty</option>
+          </optgroup>
+          <optgroup label="North-East">
+            <option>Hougang</option><option>Sengkang</option><option>Punggol</option><option>Ang Mo Kio</option><option>Serangoon</option>
+          </optgroup>
+          <optgroup label="Central">
+            <option>Toa Payoh</option><option>Bishan</option><option>Bukit Timah</option><option>Queenstown</option><option>Novena</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Pickup instructions <span class="opt">shown to reserved buyers only</span></label>
+      <textarea class="form-control" placeholder="e.g. Come to the void deck, Block 123. I'll be at the bench near the lift. Look for my red tote bag!"></textarea>
+    </div>
+    <div class="btn-actions">
+      <button class="btn-primary" onclick="nextStep(4)">Continue →</button>
+      <button class="btn-secondary" onclick="prevStep(4)">← Back</button>
+    </div>
+  </div>
+
+  <!-- STEP 5 — Menu Setup -->
+  <div class="card hidden" id="step-5">
+    <h2>Step 5: <span>Your menu</span> 🍽️</h2>
+    <p class="subtitle">Tell buyers what kind of food you cook. You can add specific dishes later from your dashboard.</p>
+
+    <div class="form-group">
+      <label>Food categories <span class="opt">select all that apply</span></label>
+      <div class="chip-grid" id="categoryChips">
+        <div class="chip" onclick="toggleChip(this)">🍚 Malay Food</div>
+        <div class="chip" onclick="toggleChip(this)">🥢 Chinese Food</div>
+        <div class="chip" onclick="toggleChip(this)">🫓 Indian Food</div>
+        <div class="chip" onclick="toggleChip(this)">🍝 Western Food</div>
+        <div class="chip" onclick="toggleChip(this)">🍣 Japanese Food</div>
+        <div class="chip" onclick="toggleChip(this)">🥘 Korean Food</div>
+        <div class="chip" onclick="toggleChip(this)">🥗 Thai Food</div>
+        <div class="chip" onclick="toggleChip(this)">🍜 Vietnamese Food</div>
+        <div class="chip" onclick="toggleChip(this)">🍲 Indonesian Food</div>
+        <div class="chip" onclick="toggleChip(this)">🥙 Filipino Food</div>
+        <div class="chip" onclick="toggleChip(this)">🧆 Middle Eastern Food</div>
+        <div class="chip" onclick="toggleChip(this)">🌱 Vegetarian / Vegan</div>
+        <div class="chip" onclick="toggleChip(this)">🎂 Desserts &amp; Pastries</div>
+        <div class="chip" onclick="toggleChip(this)">🥤 Beverages &amp; Drinks</div>
+        <div class="chip" onclick="toggleChip(this)">🥦 Healthy / Diet Food</div>
+        <div class="chip" onclick="toggleChip(this)">🔀 Fusion Food</div>
+        <div class="chip" onclick="toggleChip(this)">✨ Other</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Signature dishes <span class="opt">list your best 3–5 dishes</span></label>
+      <textarea class="form-control" placeholder="e.g. Chicken Biryani, Mee Goreng, Sambal Udang, Nasi Lemak..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Typical portion sizes</label>
+      <select class="form-control">
+        <option value="">Select...</option>
+        <option>1 portion only</option>
+        <option>2–3 portions</option>
+        <option>3–5 portions (recommended)</option>
+        <option>5–10 portions</option>
+        <option>Varies by dish</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Dietary notes <span class="opt">helps buyers filter</span></label>
+      <div class="chip-grid">
+        <div class="chip" onclick="toggleChip(this)">✅ Halal</div>
+        <div class="chip" onclick="toggleChip(this)">🐷 Contains pork</div>
+        <div class="chip" onclick="toggleChip(this)">🥚 Contains egg</div>
+        <div class="chip" onclick="toggleChip(this)">🌾 Contains gluten</div>
+        <div class="chip" onclick="toggleChip(this)">🥜 Contains nuts</div>
+        <div class="chip" onclick="toggleChip(this)">🌿 Vegetarian</div>
+        <div class="chip" onclick="toggleChip(this)">🌱 Vegan</div>
+        <div class="chip" onclick="toggleChip(this)">🐟 Contains seafood</div>
+        <div class="chip" onclick="toggleChip(this)">🐄 Contains dairy</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Typical price per portion</label>
+      <div class="price-options">
+        <div class="price-opt" onclick="selectPrice(this)">
+          <div class="price-opt__range">$3 – $5</div>
+          <div class="price-opt__label">Budget friendly</div>
+        </div>
+        <div class="price-opt" onclick="selectPrice(this)">
+          <div class="price-opt__range">$5 – $8</div>
+          <div class="price-opt__label">Standard home meal</div>
+        </div>
+        <div class="price-opt" onclick="selectPrice(this)">
+          <div class="price-opt__range">$8 – $15</div>
+          <div class="price-opt__label">Premium dish</div>
+        </div>
+        <div class="price-opt" onclick="selectPrice(this)">
+          <div class="price-opt__range">Custom</div>
+          <div class="price-opt__label">I set per listing</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Days you typically cook <span class="opt">approximate</span></label>
+      <div class="days-grid">
+        <div class="day-chip" onclick="toggleDay(this)">Mon</div>
+        <div class="day-chip" onclick="toggleDay(this)">Tue</div>
+        <div class="day-chip" onclick="toggleDay(this)">Wed</div>
+        <div class="day-chip" onclick="toggleDay(this)">Thu</div>
+        <div class="day-chip" onclick="toggleDay(this)">Fri</div>
+        <div class="day-chip" onclick="toggleDay(this)">Sat</div>
+        <div class="day-chip" onclick="toggleDay(this)">Sun</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Short description <span class="opt">tell buyers about your cooking style</span></label>
+      <textarea class="form-control" placeholder="e.g. I'm a home cook from Tampines who learned from my grandmother. I specialize in authentic Malay dishes and cook with love every weekend!"></textarea>
+    </div>
+
+    <div class="btn-actions">
+      <button class="btn-primary" onclick="nextStep(5)">Continue →</button>
+      <button class="btn-secondary" onclick="prevStep(5)">← Back</button>
+    </div>
+  </div>
+
+  <!-- STEP 6 — Photos -->
+  <div class="card hidden" id="step-6">
+    <h2>Step 6: <span>Your photos</span> 📸</h2>
+    <p class="subtitle">Listings with photos get 3× more reservations. Add a photo of yourself and your food.</p>
+
+    <!-- Video guidance -->
+    <div class="video-guide">
+      <h3>🎬 Watch: How to set up your cook profile</h3>
+      <p>This short video walks you through taking great food photos, setting up your listing, and what happens when your first reservation comes in.</p>
+      <div class="video-player" onclick="playVideo(this)">
+        <div class="video-bg">🍳</div>
+        <div class="play-btn">▶</div>
+      </div>
+      <div class="video-steps">
+        <div class="vstep"><div class="vstep__num">1:00</div><div class="vstep__label">Taking food photos</div></div>
+        <div class="vstep"><div class="vstep__num">2:30</div><div class="vstep__label">Setting your price</div></div>
+        <div class="vstep"><div class="vstep__num">4:00</div><div class="vstep__label">First reservation</div></div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Your chef / profile photo</label>
+      <label class="photo-upload">
+        <input type="file" accept="image/*" onchange="addThumb(this,'chefThumbs')"/>
+        <div class="photo-upload__icon">🤳</div>
+        <div class="photo-upload__title">Upload your photo</div>
+        <div class="photo-upload__sub">Smiling face works best · JPG or PNG · Max 5 MB</div>
+      </label>
+      <div class="photo-previews" id="chefThumbs"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Food photos <span class="opt">add up to 5 photos of your dishes</span></label>
+      <label class="photo-upload">
+        <input type="file" accept="image/*" multiple onchange="addThumb(this,'foodThumbs')"/>
+        <div class="photo-upload__icon">🍽️</div>
+        <div class="photo-upload__title">Upload food photos</div>
+        <div class="photo-upload__sub">Natural light photos are best · JPG or PNG · Max 5 MB each</div>
+      </label>
+      <div class="photo-previews" id="foodThumbs"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Photo tips 💡</label>
+      <div style="background:#F9F9F9;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-size:0.82rem;color:var(--muted);display:flex;gap:8px;"><span>📸</span><span>Take photos in natural daylight — avoid flash</span></div>
+        <div style="font-size:0.82rem;color:var(--muted);display:flex;gap:8px;"><span>🍽️</span><span>Use a clean plate or bowl as background</span></div>
+        <div style="font-size:0.82rem;color:var(--muted);display:flex;gap:8px;"><span>📐</span><span>Shoot from directly above for best results</span></div>
+        <div style="font-size:0.82rem;color:var(--muted);display:flex;gap:8px;"><span>😊</span><span>A friendly chef photo builds trust with buyers</span></div>
+      </div>
+    </div>
+
+    <div class="btn-actions">
+      <button class="btn-primary" onclick="nextStep(6)">Review & Submit →</button>
+      <button class="btn-secondary" onclick="nextStep(6)">Skip photos for now</button>
+      <button class="btn-secondary" onclick="prevStep(6)">← Back</button>
+    </div>
+  </div>
+
+  <!-- STEP 7 — Review -->
+  <div class="card hidden" id="step-7">
+    <h2>Almost there! <span>Review your profile</span> ✅</h2>
+    <p class="subtitle">Check everything looks right before submitting.</p>
+    <div>
+      <div class="review-item"><span class="review-label">Chef name</span><span class="review-value">Auntie Siti's Kitchen</span></div>
+      <div class="review-item"><span class="review-label">Email</span><span class="review-value">siti@email.com ✅ Verified</span></div>
+      <div class="review-item"><span class="review-label">Phone</span><span class="review-value">+65 9123 4567 ✅ Verified</span></div>
+      <div class="review-item"><span class="review-label">Neighborhood</span><span class="review-value">Tampines, East Singapore</span></div>
+      <div class="review-item"><span class="review-label">Categories</span><span class="review-value">Malay Food, Halal, Vegetarian</span></div>
+      <div class="review-item"><span class="review-label">Price range</span><span class="review-value">$5 – $8 per portion</span></div>
+      <div class="review-item"><span class="review-label">Photos</span><span class="review-value">Chef photo ✅ · Food photos ✅</span></div>
+    </div>
+    <div class="btn-actions" style="margin-top:24px;">
+      <button class="btn-primary" onclick="nextStep(7)">Submit & Go Live! 🚀</button>
+      <button class="btn-secondary" onclick="prevStep(7)">← Edit details</button>
+    </div>
+    <p class="terms">By submitting you confirm your food is prepared safely and you comply with our <a href="#">Cook Guidelines</a> and <a href="#">Community Standards</a>.</p>
+  </div>
+
+  <!-- STEP 8 — Success -->
+  <div class="card hidden" id="step-8">
+    <div class="success-card">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">You're now a CookNextDoor cook!</div>
+      <div class="success-sub">Your profile is live. Neighbors within 1 km can now discover and reserve your food. Here's what happens next:</div>
+      <div class="next-steps">
+        <div class="next-step">
+          <div class="next-step__icon">📱</div>
+          <div>
+            <div class="next-step__title">You'll get notified when someone reserves</div>
+            <div class="next-step__sub">We'll SMS and email you with the buyer's name and pickup time request</div>
+          </div>
+        </div>
+        <div class="next-step">
+          <div class="next-step__icon">💬</div>
+          <div>
+            <div class="next-step__title">Confirm the pickup details</div>
+            <div class="next-step__sub">Chat directly with your buyer to agree on time and exact pickup spot</div>
+          </div>
+        </div>
+        <div class="next-step">
+          <div class="next-step__icon">🤝</div>
+          <div>
+            <div class="next-step__title">They pick up, you get paid</div>
+            <div class="next-step__sub">Accept PayNow, PayLah, or cash. 100% goes to you — no platform cut</div>
+          </div>
+        </div>
+        <div class="next-step">
+          <div class="next-step__icon">⭐</div>
+          <div>
+            <div class="next-step__title">Build your rating</div>
+            <div class="next-step__sub">Buyers leave a rating after pickup. Good ratings = more reservations</div>
+          </div>
+        </div>
+      </div>
+      <a href="cook-list-dish.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;margin-bottom:12px;">🍽️ List your first dish →</a>
+      <a href="meetup-guide.html" style="display:block;text-align:center;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;color:var(--orange);text-decoration:none;margin-bottom:10px;">📋 Read the full pickup guide</a>
+      <a href="index.html" style="display:block;text-align:center;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;color:rgba(255,255,255,0.45);text-decoration:none;">← Back to home</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let currentStep = 1;
+  const totalSteps = 7;
+
+  function nextStep(from) {
+    const next = from + 1;
+    document.getElementById('step-' + from).classList.add('hidden');
+    document.getElementById('step-' + next).classList.remove('hidden');
+    document.getElementById('step-' + next).scrollIntoView({behavior:'smooth',block:'start'});
+    updateProgress(next);
+    currentStep = next;
+  }
+
+  function prevStep(from) {
+    const prev = from - 1;
+    document.getElementById('step-' + from).classList.add('hidden');
+    document.getElementById('step-' + prev).classList.remove('hidden');
+    document.getElementById('step-' + prev).scrollIntoView({behavior:'smooth',block:'start'});
+    updateProgress(prev);
+    currentStep = prev;
+  }
+
+  function updateProgress(step) {
+    document.querySelectorAll('.prog-step').forEach((el, i) => {
+      const s = i + 1;
+      el.classList.remove('active','done');
+      if (s < step) el.classList.add('done');
+      else if (s === step) el.classList.add('active');
+    });
+  }
+
+  function toggleChip(el) { el.classList.toggle('selected'); }
+  function toggleDay(el)  { el.classList.toggle('selected'); }
+
+  function selectPrice(el) {
+    document.querySelectorAll('.price-opt').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function togglePw(id, btn) {
+    const el = document.getElementById(id);
+    el.type = el.type === 'password' ? 'text' : 'password';
+    btn.textContent = el.type === 'password' ? '👁' : '🙈';
+  }
+
+  function otpNext(el, idx, group) {
+    el.classList.add('filled');
+    const inputs = el.closest('.otp-row').querySelectorAll('.otp-input');
+    if (el.value && idx < inputs.length - 1) inputs[idx + 1].focus();
+  }
+
+  function showPhoneOtp() {
+    document.getElementById('phoneOtp').style.display = 'block';
+    document.getElementById('sendPhoneBtn').style.display = 'none';
+  }
+
+  function addThumb(input, containerId) {
+    const container = document.getElementById(containerId);
+    Array.from(input.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.className = 'photo-thumb';
+        container.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function playVideo(el) {
+    el.innerHTML = '<div style="color:#fff;font-family:Poppins,sans-serif;font-size:0.9rem;font-weight:600;opacity:0.7;text-align:center;padding:20px;">📹 Video player would load here<br/><span style="font-size:0.75rem;opacity:0.6;">Connect to your video hosting service (YouTube, Vimeo, etc.)</span></div>';
+  }
+</script>
+  <div id="cnd-chatbot"></div>
+  <script src="chatbot/dist/chatbot.js"></script>
+</body>
+</html>
