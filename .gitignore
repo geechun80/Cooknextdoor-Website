@@ -22,6 +22,5 @@ screenshots/
 # Claude Code internal
 .claude/settings.local.json
 
-# Chatbot — contains API key, never push to public GitHub
+# Chatbot source (has its own repo)
 chatbot/
-widget/
