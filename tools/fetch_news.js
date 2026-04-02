@@ -12,6 +12,7 @@ const https  = require('https');
 const http   = require('http');
 const fs     = require('fs');
 const path   = require('path');
+const { execSync } = require('child_process');
 
 const OUT = path.join(__dirname, '..', 'news-data.json');
 
@@ -197,6 +198,20 @@ async function main() {
   if (newArticles.length > 0) {
     console.log('\n🆕 New articles:');
     newArticles.forEach(a => console.log(`   • [${a.region}/${a.category}] ${a.title.slice(0,70)}`));
+  }
+
+  // Auto-push to GitHub so cooknextdoor.org gets the fresh news
+  if (newArticles.length > 0) {
+    try {
+      const ROOT = path.join(__dirname, '..');
+      execSync('git add news-data.json', { cwd: ROOT, stdio: 'pipe' });
+      const date = new Date().toLocaleDateString('en-SG', { day:'numeric', month:'short', year:'numeric' });
+      execSync(`git commit -m "news: auto-update ${newArticles.length} new articles (${date})"`, { cwd: ROOT, stdio: 'pipe' });
+      execSync('git push origin main', { cwd: ROOT, stdio: 'pipe' });
+      console.log(`🚀 Pushed to GitHub — cooknextdoor.org will update in ~30 seconds`);
+    } catch(e) {
+      console.warn(`⚠️  Git push skipped: ${e.message.split('\n')[0]}`);
+    }
   }
 }
 
