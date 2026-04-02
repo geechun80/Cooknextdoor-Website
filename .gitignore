@@ -22,8 +22,6 @@ screenshots/
 # Claude Code internal
 .claude/settings.local.json
 
-# Chatbot source (has its own repo — only keep the built dist)
-chatbot/node_modules/
-chatbot/src/
-chatbot/public/
-chatbot/.git/
+# Chatbot — contains API key, never push to public GitHub
+chatbot/
+widget/
