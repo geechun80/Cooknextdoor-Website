@@ -504,6 +504,29 @@ const CAT_EMOJI = { business:'🏠', charity:'🤝', culture:'🍜' };
 const CAT_LABEL = { business:'Home Biz', charity:'Charity', culture:'Food Culture' };
 const REGION_FLAG = { SG:'🇸🇬', MY:'🇲🇾' };
 
+/* ── Category image pools (local food_mood_images) ── */
+const IMG_BASE = 'food_mood_images/';
+const CAT_IMGS = {
+  business: ['chicken-rice.jpg','char-kway-teow.jpg','nasi-lemak.jpg','laksa.jpg','economic-rice.jpg',
+             'biryani.jpg','butter-prawns.jpg','satay.jpg','murtabak.jpg','prawn-mee.jpg',
+             'rendang.jpg','wonton-mee.jpg','fishball-noodle.jpg','roti-john.jpg','bento.jpg'],
+  charity:  ['congee.jpg','sayur-lodeh.jpg','chicken-soup.jpg','mee-rebus.jpg','mee-soto.jpg',
+             'economic-rice.jpg','thosai.jpg','otak-otak.jpg','popiah.jpg','yong-tau-foo.jpg',
+             'fishball-noodle.jpg','laksa.jpg','biryani.jpg','steamed-fish.jpg','nasi-lemak.jpg'],
+  culture:  ['bak-kut-teh.jpg','nonya-kueh.jpg','kueh-lapis.jpg','ondeh-ondeh.jpg','pandan-cake.jpg',
+             'kaya-toast.jpg','otak-otak.jpg','popiah.jpg','yong-tau-foo.jpg','chendol.jpg',
+             'tau-huey.jpg','devil-curry.jpg','murtabak.jpg','fish-head-curry.jpg','rendang.jpg'],
+};
+const DEFAULT_IMGS = ['chicken-rice.jpg','nasi-lemak.jpg','laksa.jpg','rendang.jpg','satay.jpg'];
+
+function pickImg(category, id) {
+  const pool = CAT_IMGS[category] || DEFAULT_IMGS;
+  // Deterministic selection based on article id hash
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) & 0xffff;
+  return IMG_BASE + pool[h % pool.length];
+}
+
 /* ── Time formatting ── */
 function timeAgo(iso) {
   const diff = (Date.now() - new Date(iso)) / 1000;
@@ -553,12 +576,12 @@ function buildCard(a, featured) {
   const catClass = 'cat-' + (a.category || 'culture');
   const catLabel = CAT_LABEL[a.category] || a.category;
   const flag     = REGION_FLAG[a.region] || '';
-  const emoji    = CAT_EMOJI[a.category] || '📰';
+  const imgSrc   = pickImg(a.category, a.id || a.title);
 
   return `
     <div class="news-card${featured?' news-card--featured':''}" onclick="window.open('${escHtml(a.url)}','_blank')">
       <div class="card-img">
-        <div class="card-img-inner">${emoji}</div>
+        <img src="${imgSrc}" alt="" loading="lazy" onerror="this.style.display='none'"/>
         <div class="card-cat ${catClass}">${catLabel}</div>
         ${flag ? `<div class="region-badge">${flag} ${a.region}</div>` : ''}
       </div>
