@@ -1,8 +1,52 @@
 {
-  "lastUpdated": "2026-04-04T06:35:47.428Z",
-  "totalArticles": 37,
-  "newThisRun": 3,
+  "lastUpdated": "2026-04-06T01:45:44.133Z",
+  "totalArticles": 41,
+  "newThisRun": 4,
   "articles": [
+    {
+      "id": "fairness-fear-and-the-great-hbb-backlash-thepeakmagazine-com",
+      "title": "Fairness, fear, and the great HBB backlash - thepeakmagazine.com.sg",
+      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxNME5PamdYbUNoVUtEZERhUVAzWDA5b3g1bnJVUm9sMnl1U2ZXNXpfc1VXNm1iSzkxbXVwa3ROUE12dGdtcm83cXZyZ1lnYURTd25Zck9uSUp2cGdYUldwY1FWLWE5X0VQd3RGZjNPWWk4alJmSk5IZnNLb1N5U0hwS3dqRGJLMzhhVkVuaHJn?oc=5",
+      "source": "thepeakmagazine.com.sg",
+      "publishedAt": "2025-06-16T07:00:00.000Z",
+      "summary": "<a href=\"https://news.google.com/rss/articles/CBMijgFBVV95cUxNME5PamdYbUNoVUtEZERhUVAzWDA5b3g1bnJVUm9sMnl1U2ZXNXpfc1VXNm1iSzkxbXVwa3ROUE12dGdtcm83cXZyZ1lnYURTd25Zck9uSUp2cGdYUldwY1FWLWE5X0VQd3RGZjNPWWk4alJmSk5IZnNLb1N5U0",
+      "category": "business",
+      "region": "SG",
+      "postedToFB": false
+    },
+    {
+      "id": "malaysian-home-cook-s-hari-raya-recipes-ayam-masak-merah-dag",
+      "title": "Malaysian home cook's Hari Raya recipes: Ayam masak merah, daging hitam - The Star",
+      "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxQa0tIWEJ5TXUtdzQtVDE5QUFTRVNJekN6TndIckdQNFVOUjBLMmZkVEdnZlBWWlBxSndzc3pydUM2SE1uRmRoY09XUjNiaWNzQ19oM1Z4VFpmSFRyM1JpLVdOdk40UTJvbFhDSG1HUDZsVW1IeEpEY2cwejdPQ2REbEUtYU1Md2M4T1ppc3F4VXZ4ZHhuc3V1Mzh5aGVLNEZMaWMzeHQwckFpaFJRZ1pxUzlHai01SWQ2bjB6N0lXSUlrV1NZ?oc=5",
+      "source": "The Star",
+      "publishedAt": "2025-03-30T07:00:00.000Z",
+      "summary": "<a href=\"https://news.google.com/rss/articles/CBMixAFBVV95cUxQa0tIWEJ5TXUtdzQtVDE5QUFTRVNJekN6TndIckdQNFVOUjBLMmZkVEdnZlBWWlBxSndzc3pydUM2SE1uRmRoY09XUjNiaWNzQ19oM1Z4VFpmSFRyM1JpLVdOdk40UTJvbFhDSG1HUDZsVW1IeEpEY2cwejdPQ2",
+      "category": "business",
+      "region": "MY",
+      "postedToFB": false
+    },
+    {
+      "id": "seniors-checking-in-on-neighbours-how-groups-are-preventing-",
+      "title": "Seniors checking in on neighbours: How groups are preventing lonely deaths among S’pore’s elderly - The Straits Times",
+      "url": "https://news.google.com/rss/articles/CBMi2wFBVV95cUxOVHBYMElQWW4zLW1PRkdnSjZRSWhIeW5LZW9wNkk1U1pIOTFTTEw2OUxjanJENFF3TjBDZGk4WkhfRjZocWd5blZ0QmJRck9HdXBrc3A1dlMzTU5GU1FqLTJyNHRQYVpuR3BjeXg1TkVvWEtobFVHOXlvQVQzaTFZVmhRRmhkOHNQYVBYMHp5THlFbVBNa0dRbzFkUFJvRk9wblNQclJ3THYwR01Pb2g0UXU5NUtzandLU1U0UG9jTnRsbVBqZXRvc0ttNzkxczhzS3ltVkg0N0JaS1k?oc=5",
+      "source": "The Straits Times",
+      "publishedAt": "2026-01-18T08:00:00.000Z",
+      "summary": "<a href=\"https://news.google.com/rss/articles/CBMi2wFBVV95cUxOVHBYMElQWW4zLW1PRkdnSjZRSWhIeW5LZW9wNkk1U1pIOTFTTEw2OUxjanJENFF3TjBDZGk4WkhfRjZocWd5blZ0QmJRck9HdXBrc3A1dlMzTU5GU1FqLTJyNHRQYVpuR3BjeXg1TkVvWEtobFVHOXlvQVQzaT",
+      "category": "charity",
+      "region": "SG",
+      "postedToFB": false
+    },
+    {
+      "id": "singapore-culinary-champions-on-preserving-local-food-cultur",
+      "title": "Singapore Culinary Champions On Preserving Local Food Culture - epicure Magazine",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxNWkZYY0tCYWk0VFBUNUZmSEZicE1tV1pNb19BQ291bklJN1FCcXdSYm5rT3M4UmlNX0xqdW1RNlY1QXl4a0psQzNiVjRzN1F6MVdNb3N5T3ZYMnpxdHZ0aHQ1TXl6R2htbnlndXNzakRzdUQ2dFNpb2VsM3o5eTd1aFNFa3puc1MzbmlrYmpaYVNadVZSQlhUUnNFeF8tMUh3QVpvUHVB?oc=5",
+      "source": "epicure Magazine",
+      "publishedAt": "2025-08-29T07:00:00.000Z",
+      "summary": "<a href=\"https://news.google.com/rss/articles/CBMipgFBVV95cUxNWkZYY0tCYWk0VFBUNUZmSEZicE1tV1pNb19BQ291bklJN1FCcXdSYm5rT3M4UmlNX0xqdW1RNlY1QXl4a0psQzNiVjRzN1F6MVdNb3N5T3ZYMnpxdHZ0aHQ1TXl6R2htbnlndXNzakRzdUQ2dFNpb2VsM3o5eT",
+      "category": "culture",
+      "region": "SG",
+      "postedToFB": false
+    },
     {
       "id": "how-saza-turned-creativity-into-purpose-free-malaysia-today",
       "title": "How Saza turned creativity into purpose - Free Malaysia Today",
