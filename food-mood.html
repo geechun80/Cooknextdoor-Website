@@ -10,7 +10,8 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{scroll-behavior:smooth;}
-    body{font-family:'Inter',sans-serif;background:#0F2419;color:#fff;min-height:100vh;overflow-x:hidden;}
+    @keyframes pageGradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#2D6444,#1A3D28,#3D7A5A,#F87B31,#2D6444,#1E4A30,#5BAD6F,#2D6444);background-size:400% 400%;animation:pageGradient 12s ease infinite;color:#fff;min-height:100vh;overflow-x:hidden;}
 
     :root{
       --orange:#F87B31;--green:#5BAD6F;
