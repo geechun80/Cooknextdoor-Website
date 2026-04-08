@@ -385,13 +385,51 @@
   </div>
 </div>
 
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC3ynPUHYnPQ9msdLJNB5l-gM--CogrXAQ",
+    authDomain: "cooknextdoor-eedbe.firebaseapp.com",
+    projectId: "cooknextdoor-eedbe",
+    storageBucket: "cooknextdoor-eedbe.firebasestorage.app",
+    messagingSenderId: "924339275437",
+    appId: "1:924339275437:web:a97a0a2bda0089dd58e824"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  window.googleSignIn = async function() {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      // Show success and redirect
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('panel-5').classList.add('active');
+      const successTitle = document.querySelector('.success-title');
+      if (successTitle) successTitle.textContent = `Welcome, ${user.displayName}! 🎉`;
+    } catch (err) {
+      const toast = document.getElementById('gToast');
+      toast.textContent = '⚠️ Sign-in failed. Please try again.';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 4000);
+      console.error(err);
+    }
+  };
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      console.log('Signed in:', user.displayName, user.email);
+    }
+  });
+</script>
+
 <script>
-  /* ── Google Sign-In (coming soon toast) ── */
-  function googleSignIn() {
-    const toast = document.getElementById('gToast');
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 4000);
-  }
+  /* ── Non-Firebase helpers ── */
 
   function goToStep(n) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -435,7 +473,7 @@
     reader.readAsDataURL(input.files[0]);
   }
 </script>
-  <div id="gToast">🔐 Google Sign-In coming soon! Use email for now 🙏</div>
+  <div id="gToast">⚠️ Sign-in failed. Please try again.</div>
   <div id="cnd-chatbot"></div>
   <script src="widget/chatbot.js"></script>
 </body>
