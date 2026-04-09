@@ -191,17 +191,18 @@
     footer a{color:rgba(255,255,255,0.40);text-decoration:none;transition:color 0.2s;}
     footer a:hover{color:var(--orange);}
 
-    /* ── Mood gradient backgrounds ── */
-    .bg-happy    {background:radial-gradient(ellipse at 30% 20%, rgba(248,210,49,0.10) 0%, transparent 55%), linear-gradient(160deg,#1E4A30 0%,#0F2419 100%);}
-    .bg-sad      {background:radial-gradient(ellipse at 70% 30%, rgba(80,130,200,0.12) 0%, transparent 55%), linear-gradient(160deg,#152040 0%,#0F2419 100%);}
-    .bg-tired    {background:radial-gradient(ellipse at 40% 50%, rgba(150,100,200,0.10) 0%, transparent 55%), linear-gradient(160deg,#20152E 0%,#0F2419 100%);}
-    .bg-excited  {background:radial-gradient(ellipse at 60% 20%, rgba(248,123,49,0.12) 0%, transparent 55%), linear-gradient(160deg,#2E1A0F 0%,#0F2419 100%);}
-    .bg-healthy  {background:radial-gradient(ellipse at 25% 40%, rgba(91,173,111,0.14) 0%, transparent 55%), linear-gradient(160deg,#0F2E1A 0%,#0F2419 100%);}
-    .bg-comfort  {background:radial-gradient(ellipse at 50% 30%, rgba(220,160,60,0.12) 0%, transparent 55%), linear-gradient(160deg,#2A1E0A 0%,#0F2419 100%);}
-    .bg-romantic {background:radial-gradient(ellipse at 70% 40%, rgba(220,80,100,0.10) 0%, transparent 55%), linear-gradient(160deg,#2A0F1A 0%,#0F2419 100%);}
-    .bg-spicy    {background:radial-gradient(ellipse at 35% 25%, rgba(220,40,40,0.12) 0%, transparent 55%), linear-gradient(160deg,#2E0A0A 0%,#0F2419 100%);}
-    .bg-sweet    {background:radial-gradient(ellipse at 65% 35%, rgba(210,100,180,0.10) 0%, transparent 55%), linear-gradient(160deg,#250A22 0%,#0F2419 100%);}
-    .bg-curious  {background:radial-gradient(ellipse at 40% 20%, rgba(49,180,200,0.10) 0%, transparent 55%), linear-gradient(160deg,#0A2030 0%,#0F2419 100%);}
+    /* ── Mood tint overlays (body::before so animated gradient still shows) ── */
+    body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:background 0.6s,opacity 0.6s;}
+    .bg-happy::before    {background:radial-gradient(ellipse at 30% 20%,rgba(248,210,49,0.18) 0%,transparent 60%);opacity:1;}
+    .bg-sad::before      {background:radial-gradient(ellipse at 70% 30%,rgba(80,130,200,0.20) 0%,transparent 60%);opacity:1;}
+    .bg-tired::before    {background:radial-gradient(ellipse at 40% 50%,rgba(150,100,200,0.18) 0%,transparent 60%);opacity:1;}
+    .bg-excited::before  {background:radial-gradient(ellipse at 60% 20%,rgba(248,123,49,0.22) 0%,transparent 60%);opacity:1;}
+    .bg-healthy::before  {background:radial-gradient(ellipse at 25% 40%,rgba(91,173,111,0.22) 0%,transparent 60%);opacity:1;}
+    .bg-comfort::before  {background:radial-gradient(ellipse at 50% 30%,rgba(220,160,60,0.20) 0%,transparent 60%);opacity:1;}
+    .bg-romantic::before {background:radial-gradient(ellipse at 70% 40%,rgba(220,80,100,0.18) 0%,transparent 60%);opacity:1;}
+    .bg-spicy::before    {background:radial-gradient(ellipse at 35% 25%,rgba(220,40,40,0.20) 0%,transparent 60%);opacity:1;}
+    .bg-sweet::before    {background:radial-gradient(ellipse at 65% 35%,rgba(210,100,180,0.18) 0%,transparent 60%);opacity:1;}
+    .bg-curious::before  {background:radial-gradient(ellipse at 40% 20%,rgba(49,180,200,0.18) 0%,transparent 60%);opacity:1;}
   </style>
 </head>
 <body>
