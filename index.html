@@ -11,9 +11,12 @@
     /* ── Reset & Base ─────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
+    @keyframes pageGradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
     body {
       font-family: 'Inter', sans-serif; color: #fff;
-      background: #2D6444;
+      background: linear-gradient(135deg,#2D6444,#1A3D28,#3D7A5A,#F87B31,#2D6444,#1E4A30,#5BAD6F,#2D6444);
+      background-size: 400% 400%;
+      animation: pageGradient 12s ease infinite;
       overflow-x: hidden; line-height: 1.6;
     }
 
@@ -98,26 +101,9 @@
     @media (max-width: 768px) { .nav__links, .nav__cta .btn--outline { display: none; } .hamburger { display: flex; } }
 
     /* ── Hero ─────────────────────────────────────────────── */
-    @keyframes heroGradient {
-      0%   { background-position: 0% 50%; }
-      50%  { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
     .hero {
       min-height: 100vh; padding: 130px 0 80px;
-      background: linear-gradient(
-        135deg,
-        #2D6444,
-        #1A3D28,
-        #3D7A5A,
-        #F87B31,
-        #2D6444,
-        #1E4A30,
-        #5BAD6F,
-        #2D6444
-      );
-      background-size: 400% 400%;
-      animation: heroGradient 12s ease infinite;
+      background: transparent;
       display: flex; align-items: center;
       position: relative; overflow: hidden;
     }
@@ -214,7 +200,7 @@
     @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
 
     /* ── Listings ─────────────────────────────────────────── */
-    .listings { background: var(--bg-alt); }
+    .listings { background: rgba(0,0,0,0.18); }
     .listings__header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; flex-wrap: wrap; gap: 16px; }
     .listings__header h2 { font-size: clamp(1.8rem, 3.5vw, 2.5rem); font-weight: 800; color: #fff; }
     .listings__header h2 span { color: var(--orange); }
@@ -252,7 +238,7 @@
     @media (max-width: 480px) { .food-grid { grid-template-columns: 1fr; } }
 
     /* ── How It Works ─────────────────────────────────────── */
-    .how { background: var(--bg-deep); }
+    .how { background: rgba(0,0,0,0.25); }
     .how__inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
     .how__left h2 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 900; color: #fff; margin-bottom: 16px; }
     .how__left h2 em { font-style: italic; color: var(--orange); }
@@ -292,7 +278,7 @@
     @media (max-width: 900px) { .how__inner { grid-template-columns: 1fr; gap: 40px; } .how__right { display: none; } }
 
     /* ── Why ──────────────────────────────────────────────── */
-    .why { background: var(--bg-main); }
+    .why { background: rgba(0,0,0,0.12); }
     .why__inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
     .why__heading { font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 900; margin-bottom: 20px; color: #fff; }
     .why__heading span { color: var(--orange); }
