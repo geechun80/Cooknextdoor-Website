@@ -2,7 +2,7 @@
   'use strict';
 
   // ── Config ────────────────────────────────────────────────────────────────
-  const API_URL = 'http://72.62.192.99:3001/api/chat/message';
+  const API_URL = 'https://api.cooknextdoor.org/api/chat/message';
 
   const SYSTEM_PROMPT = `You are the official AI assistant for CookNextDoor, a hyperlocal home-cooked food platform in Singapore.
 
