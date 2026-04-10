@@ -855,8 +855,8 @@ async function updateDishRating(listingId, newRating) {
 // CHATBOT / AI ASSISTANT
 // ============================================================================
 
-// POST /api/chat/message - Send message to Claude AI (secure backend proxy)
-app.post('/api/chat/message', verifyToken, async (req, res) => {
+// POST /api/chat/message - Send message to Claude AI (public endpoint — no auth required)
+app.post('/api/chat/message', async (req, res) => {
   try {
     const { message, history = [] } = req.body;
 
