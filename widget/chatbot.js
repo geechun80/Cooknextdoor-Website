@@ -53,19 +53,19 @@ If someone asks about ANYTHING outside CookNextDoor (e.g., general cooking recip
       to { opacity: 1; }
     }
 
-    /* ── Toggle button: middle-left, vertically centered ── */
+    /* ── Toggle button: middle-right, vertically centered ── */
     #cnd-chatbot-toggle {
       position: fixed;
-      left: 20px;
+      right: 20px;
       top: 50%;
       transform: translateY(-50%);
-      width: 56px;
-      height: 56px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       background: linear-gradient(135deg, #2D6444, #F87B31);
       border: none;
       cursor: pointer;
-      box-shadow: 0 4px 20px rgba(45,100,68,0.5);
+      box-shadow: 0 4px 16px rgba(45,100,68,0.5);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -76,30 +76,30 @@ If someone asks about ANYTHING outside CookNextDoor (e.g., general cooking recip
     }
     #cnd-chatbot-toggle:hover {
       transform: translateY(-50%) scale(1.08);
-      box-shadow: 0 6px 28px rgba(45,100,68,0.65);
+      box-shadow: 0 6px 22px rgba(45,100,68,0.65);
     }
     #cnd-chatbot-toggle svg {
-      width: 26px;
-      height: 26px;
+      width: 18px;
+      height: 18px;
       fill: white;
     }
 
-    /* ── Chat window: opens to the right of the toggle button ── */
+    /* ── Chat window: 50% size, opens to the left of the toggle button ── */
     #cnd-chatbot-window {
       position: fixed;
-      left: 90px;
+      right: 72px;
       top: 50%;
-      width: 380px;
-      height: 560px;
+      width: 190px;
+      height: 280px;
       max-height: calc(100vh - 40px);
       background: #0f1b2d;
-      border-radius: 20px;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+      border-radius: 12px;
+      box-shadow: 0 10px 32px rgba(0,0,0,0.6);
       z-index: 9999;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transform: translateY(-50%) translateX(-12px) scale(0.97);
+      transform: translateY(-50%) translateX(12px) scale(0.97);
       opacity: 0;
       pointer-events: none;
       transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease;
@@ -114,46 +114,50 @@ If someone asks about ANYTHING outside CookNextDoor (e.g., general cooking recip
     /* Header */
     #cnd-chat-header {
       background: linear-gradient(135deg, #0a1628 0%, #1a2f50 100%);
-      padding: 16px 18px;
+      padding: 8px 10px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 7px;
       border-bottom: 1px solid rgba(255,255,255,0.06);
       flex-shrink: 0;
     }
     #cnd-chat-avatar {
-      width: 42px;
-      height: 42px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       background: linear-gradient(135deg, #2D6444, #F87B31);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
+      font-size: 12px;
       flex-shrink: 0;
     }
     #cnd-chat-header-info {
       flex: 1;
+      min-width: 0;
     }
     #cnd-chat-header-name {
       color: #ffffff;
-      font-size: 15px;
+      font-size: 11px;
       font-weight: 600;
       line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     #cnd-chat-header-status {
       color: #8ba7c9;
-      font-size: 12px;
+      font-size: 10px;
       display: flex;
       align-items: center;
-      gap: 5px;
-      margin-top: 2px;
+      gap: 4px;
+      margin-top: 1px;
     }
     #cnd-chat-header-status::before {
       content: '';
       display: inline-block;
-      width: 7px;
-      height: 7px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
       background: #22c55e;
       flex-shrink: 0;
@@ -163,11 +167,12 @@ If someone asks about ANYTHING outside CookNextDoor (e.g., general cooking recip
       border: none;
       cursor: pointer;
       color: #8ba7c9;
-      padding: 4px;
-      border-radius: 6px;
+      padding: 3px;
+      border-radius: 4px;
       display: flex;
       align-items: center;
       transition: color 0.15s, background 0.15s;
+      flex-shrink: 0;
     }
     #cnd-chat-close:hover {
       color: #fff;
@@ -178,16 +183,16 @@ If someone asks about ANYTHING outside CookNextDoor (e.g., general cooking recip
     #cnd-chat-messages {
       flex: 1;
       overflow-y: auto;
-      padding: 16px;
+      padding: 8px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 6px;
       scrollbar-width: thin;
       scrollbar-color: rgba(255,255,255,0.12) transparent;
     }
-    #cnd-chat-messages::-webkit-scrollbar { width: 4px; }
+    #cnd-chat-messages::-webkit-scrollbar { width: 3px; }
     #cnd-chat-messages::-webkit-scrollbar-track { background: transparent; }
-    #cnd-chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
+    #cnd-chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
 
     /* Welcome screen */
     #cnd-welcome {
@@ -197,41 +202,41 @@ If someone asks about ANYTHING outside CookNextDoor (e.g., general cooking recip
       justify-content: center;
       height: 100%;
       text-align: center;
-      padding: 24px 16px;
-      gap: 12px;
+      padding: 10px 8px;
+      gap: 6px;
     }
     #cnd-welcome-icon {
-      font-size: 48px;
+      font-size: 24px;
       line-height: 1;
     }
     #cnd-welcome-title {
       color: #ffffff;
-      font-size: 17px;
+      font-size: 12px;
       font-weight: 600;
     }
     #cnd-welcome-sub {
-      color: #8ba7c9;
-      font-size: 13px;
-      line-height: 1.5;
-      max-width: 280px;
+      display: none;
     }
     #cnd-suggestions {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 4px;
       width: 100%;
-      margin-top: 8px;
+      margin-top: 4px;
     }
     .cnd-suggestion-btn {
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.1);
       color: #c8d9ef;
-      padding: 10px 14px;
-      border-radius: 10px;
+      padding: 5px 8px;
+      border-radius: 6px;
       text-align: left;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 10px;
       transition: background 0.15s, border-color 0.15s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .cnd-suggestion-btn:hover {
       background: rgba(255,255,255,0.1);
@@ -242,46 +247,46 @@ If someone asks about ANYTHING outside CookNextDoor (e.g., general cooking recip
     /* Message bubbles */
     .cnd-msg-row {
       display: flex;
-      gap: 8px;
+      gap: 4px;
       align-items: flex-end;
     }
     .cnd-msg-row.user {
       flex-direction: row-reverse;
     }
     .cnd-msg-bubble-avatar {
-      width: 28px;
-      height: 28px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
       background: linear-gradient(135deg, #2D6444, #F87B31);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 9px;
       flex-shrink: 0;
     }
     .cnd-msg-bubble {
-      max-width: 80%;
-      padding: 10px 14px;
-      border-radius: 16px;
-      font-size: 14px;
-      line-height: 1.5;
+      max-width: 82%;
+      padding: 5px 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      line-height: 1.4;
       word-break: break-word;
     }
     .cnd-msg-row.bot .cnd-msg-bubble {
       background: rgba(255,255,255,0.07);
       color: #dde8f5;
-      border-bottom-left-radius: 4px;
+      border-bottom-left-radius: 2px;
     }
     .cnd-msg-row.user .cnd-msg-bubble {
       background: linear-gradient(135deg, #2D6444, #3d7a5a);
       color: #ffffff;
-      border-bottom-right-radius: 4px;
+      border-bottom-right-radius: 2px;
     }
 
     /* Typing indicator */
     #cnd-typing-indicator {
       display: none;
-      gap: 8px;
+      gap: 4px;
       align-items: flex-end;
     }
     #cnd-typing-indicator.visible {
@@ -289,16 +294,16 @@ If someone asks about ANYTHING outside CookNextDoor (e.g., general cooking recip
     }
     .cnd-typing-dots {
       background: rgba(255,255,255,0.07);
-      padding: 12px 16px;
-      border-radius: 16px;
-      border-bottom-left-radius: 4px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border-bottom-left-radius: 2px;
       display: flex;
-      gap: 4px;
+      gap: 3px;
       align-items: center;
     }
     .cnd-typing-dot {
-      width: 6px;
-      height: 6px;
+      width: 4px;
+      height: 4px;
       background: #8ba7c9;
       border-radius: 50%;
       animation: cndBounce 1.2s ease-in-out infinite;
@@ -307,32 +312,32 @@ If someone asks about ANYTHING outside CookNextDoor (e.g., general cooking recip
     .cnd-typing-dot:nth-child(3) { animation-delay: 0.4s; }
     @keyframes cndBounce {
       0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
-      30% { transform: translateY(-5px); opacity: 1; }
+      30% { transform: translateY(-3px); opacity: 1; }
     }
 
     /* Input area */
     #cnd-chat-input-area {
-      padding: 12px 14px;
+      padding: 6px 8px;
       background: rgba(0,0,0,0.3);
       border-top: 1px solid rgba(255,255,255,0.06);
       flex-shrink: 0;
     }
     #cnd-input-row {
       display: flex;
-      gap: 8px;
+      gap: 5px;
       align-items: flex-end;
     }
     #cnd-chat-input {
       flex: 1;
       background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
+      border-radius: 7px;
       color: #dde8f5;
-      font-size: 14px;
-      padding: 10px 14px;
+      font-size: 11px;
+      padding: 6px 8px;
       resize: none;
-      max-height: 80px;
-      min-height: 40px;
+      max-height: 48px;
+      min-height: 28px;
       outline: none;
       font-family: inherit;
       line-height: 1.4;
@@ -341,9 +346,9 @@ If someone asks about ANYTHING outside CookNextDoor (e.g., general cooking recip
     #cnd-chat-input::placeholder { color: #4e6a8a; }
     #cnd-chat-input:focus { border-color: rgba(45,100,68,0.5); }
     #cnd-send-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
       background: linear-gradient(135deg, #2D6444, #F87B31);
       border: none;
       cursor: pointer;
@@ -355,34 +360,32 @@ If someone asks about ANYTHING outside CookNextDoor (e.g., general cooking recip
     }
     #cnd-send-btn:hover { opacity: 0.85; transform: scale(1.05); }
     #cnd-send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-    #cnd-send-btn svg { width: 16px; height: 16px; fill: white; }
+    #cnd-send-btn svg { width: 10px; height: 10px; fill: white; }
     #cnd-input-footer {
       color: #3d566e;
-      font-size: 11px;
+      font-size: 9px;
       text-align: center;
-      margin-top: 8px;
+      margin-top: 4px;
     }
 
-    /* ── Mobile: move to bottom-right corner ── */
+    /* ── Mobile: collapse to bottom-right corner ── */
     @media (max-width: 768px) {
       #cnd-chatbot-toggle {
-        left: auto;
-        right: 20px;
+        right: 16px;
         top: auto;
-        bottom: 20px;
+        bottom: 16px;
         transform: none;
       }
       #cnd-chatbot-toggle:hover {
         transform: scale(1.08);
       }
       #cnd-chatbot-window {
-        left: auto;
         right: 16px;
         top: auto;
-        bottom: 88px;
+        bottom: 66px;
         width: calc(100vw - 32px);
-        max-height: calc(100vh - 120px);
-        transform: translateY(16px) scale(0.97);
+        max-height: calc(100vh - 100px);
+        transform: translateY(12px) scale(0.97);
       }
       #cnd-chatbot-window.open {
         transform: translateY(0) scale(1);
@@ -420,7 +423,7 @@ If someone asks about ANYTHING outside CookNextDoor (e.g., general cooking recip
           <div id="cnd-chat-header-status">Online — here to help</div>
         </div>
         <button id="cnd-chat-close" aria-label="Close chat">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
         </button>
