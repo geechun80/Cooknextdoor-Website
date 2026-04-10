@@ -204,13 +204,70 @@ sudo systemctl status nginx
 
 ---
 
+## If VPS Already Has Traefik (skip nginx entirely)
+
+Hostinger VPS and many managed VPS providers pre-install **Traefik** as the reverse proxy. If port 80 is taken by `traefik`, do NOT install nginx — use Traefik's file provider instead.
+
+**Check first:**
+```bash
+ss -tlnp | grep ':80'
+# If you see traefik → follow steps below
+```
+
+**Step A — Create dynamic route file:**
+```bash
+mkdir -p /etc/traefik/dynamic
+cat > /etc/traefik/dynamic/yourdomain-api.yml << 'EOF'
+http:
+  routers:
+    yourapp-api:
+      rule: "Host(`api.yourdomain.org`)"
+      entrypoints:
+        - websecure
+      tls:
+        certResolver: letsencrypt
+      service: yourapp-api-svc
+  services:
+    yourapp-api-svc:
+      loadBalancer:
+        servers:
+          - url: "http://localhost:3001"
+EOF
+```
+
+**Step B — Add file provider to Traefik docker-compose:**
+```bash
+# Find Traefik compose file
+docker inspect traefik-traefik-1 --format '{{index .Config.Labels "com.docker.compose.project.working_dir"}}'
+# Edit that docker-compose.yml — add these two lines:
+#   command: - --providers.file.directory=/etc/traefik/dynamic
+#             - --providers.file.watch=true
+#   volumes:  - /etc/traefik/dynamic:/etc/traefik/dynamic:ro
+```
+
+**Step C — Restart Traefik:**
+```bash
+cd /docker/traefik && docker compose up -d
+# Traefik auto-issues Let's Encrypt cert — no certbot needed
+```
+
+**Verify:**
+```bash
+curl https://api.yourdomain.org/api/health
+```
+
+---
+
 ## Lessons Learned (CookNextDoor project)
 
 - **Root cause of broken chatbot:** Frontend on `https://cooknextdoor.org` was calling `http://72.62.192.99:3001` — browsers block mixed content (HTTPS page → HTTP API)
 - **Secondary issue:** `app.use(cors())` with no config allows all origins — fine for dev, security risk in prod
-- **Never expose Node.js directly on port 80/443** — use nginx as the front door; it handles SSL termination, keeps Node on a local port
-- **Let's Encrypt is free** and auto-renews — no excuse not to use HTTPS
-- **Always test with `curl https://...` from VPS** before debugging the browser
+- **Check for Traefik before installing nginx** — Hostinger VPS ships with Traefik pre-installed; installing nginx causes port 80 conflict
+- **Traefik `network_mode: host`** means it can reach `localhost:3001` directly — no Docker networking needed for PM2 apps
+- **File provider** is the clean way to add non-Docker services to Traefik — no need to Dockerize everything
+- **Let's Encrypt is free** and auto-renews — Traefik handles this automatically, no certbot needed
+- **Always test with `curl https://...`** before debugging the browser
+- **Chat/public endpoints must not have `verifyToken` middleware** — anonymous users can't get Firebase tokens
 
 ---
 
