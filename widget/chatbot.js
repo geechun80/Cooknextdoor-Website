@@ -49,10 +49,16 @@ If someone asks about ANYTHING outside CookNextDoor (e.g., general cooking recip
 
   // ── Styles ────────────────────────────────────────────────────────────────
   const STYLES = `
+    @keyframes cndFadeIn {
+      to { opacity: 1; }
+    }
+
+    /* ── Toggle button: middle-left, vertically centered ── */
     #cnd-chatbot-toggle {
       position: fixed;
-      bottom: 32px;
-      left: 32px;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
       width: 56px;
       height: 56px;
       border-radius: 50%;
@@ -64,25 +70,28 @@ If someone asks about ANYTHING outside CookNextDoor (e.g., general cooking recip
       align-items: center;
       justify-content: center;
       z-index: 9998;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      opacity: 0;
+      animation: cndFadeIn 0.4s ease 0.5s forwards;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
     }
     #cnd-chatbot-toggle:hover {
-      transform: scale(1.08);
+      transform: translateY(-50%) scale(1.08);
       box-shadow: 0 6px 28px rgba(45,100,68,0.65);
     }
     #cnd-chatbot-toggle svg {
       width: 26px;
       height: 26px;
       fill: white;
-      transition: opacity 0.2s;
     }
 
+    /* ── Chat window: opens to the right of the toggle button ── */
     #cnd-chatbot-window {
       position: fixed;
-      bottom: 100px;
-      left: 32px;
+      left: 90px;
+      top: 50%;
       width: 380px;
       height: 560px;
+      max-height: calc(100vh - 40px);
       background: #0f1b2d;
       border-radius: 20px;
       box-shadow: 0 16px 48px rgba(0,0,0,0.6);
@@ -90,14 +99,14 @@ If someone asks about ANYTHING outside CookNextDoor (e.g., general cooking recip
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transform: translateY(20px) scale(0.97);
+      transform: translateY(-50%) translateX(-12px) scale(0.97);
       opacity: 0;
       pointer-events: none;
       transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
     #cnd-chatbot-window.open {
-      transform: translateY(0) scale(1);
+      transform: translateY(-50%) translateX(0) scale(1);
       opacity: 1;
       pointer-events: all;
     }
@@ -354,16 +363,29 @@ If someone asks about ANYTHING outside CookNextDoor (e.g., general cooking recip
       margin-top: 8px;
     }
 
-    @media (max-width: 480px) {
-      #cnd-chatbot-window {
-        left: 12px;
-        right: 12px;
-        width: auto;
-        bottom: 90px;
-      }
+    /* ── Mobile: move to bottom-right corner ── */
+    @media (max-width: 768px) {
       #cnd-chatbot-toggle {
-        left: 16px;
+        left: auto;
+        right: 20px;
+        top: auto;
         bottom: 20px;
+        transform: none;
+      }
+      #cnd-chatbot-toggle:hover {
+        transform: scale(1.08);
+      }
+      #cnd-chatbot-window {
+        left: auto;
+        right: 16px;
+        top: auto;
+        bottom: 88px;
+        width: calc(100vw - 32px);
+        max-height: calc(100vh - 120px);
+        transform: translateY(16px) scale(0.97);
+      }
+      #cnd-chatbot-window.open {
+        transform: translateY(0) scale(1);
       }
     }
   `;
