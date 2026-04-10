@@ -18,8 +18,23 @@ dotenv.config({ path: '.env.local' });
 const app = express();
 const PORT = process.env.API_PORT || 3001;
 
-// Middleware
-app.use(cors());
+// Middleware — restrict CORS to known origins in production
+const allowedOrigins = [
+  'https://cooknextdoor.org',
+  'https://www.cooknextdoor.org',
+  'http://localhost:8080',
+  'http://127.0.0.1:8080',
+  'http://localhost:3000',
+];
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (curl, mobile apps, Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) return callback(null, true);
+    return callback(new Error('Not allowed by CORS: ' + origin));
+  },
+  credentials: true,
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
