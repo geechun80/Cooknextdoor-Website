@@ -257,7 +257,10 @@
     .step-item:hover .step-item__num { opacity: 1; }
     .step-item__num--orange { color: var(--orange); }
     .step-item__num--green  { color: var(--green); }
-    .step-item__icon  { font-size: 1.5rem; margin-bottom: 6px; }
+    .step-item__icon  { font-size: 1.5rem; margin-bottom: 6px; display:flex; }
+    .step-item__icon svg,.why__card__icon svg,.why__stat-icon svg { transition:transform 0.25s ease,opacity 0.25s ease; }
+    .step-item:hover .step-item__icon svg { transform:scale(1.15) rotate(-6deg); }
+    .why__card:hover .why__card__icon svg { transform:scale(1.12); }
     .step-item__title { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1rem; color: #fff; margin-bottom: 4px; }
     .step-item__desc  { font-size: 0.9rem; color: rgba(255,255,255,0.5); line-height: 1.6; }
 
@@ -628,7 +631,8 @@
 <section class="section how" id="how">
   <!-- CND video styles + modal (shared for this page) -->
   <style>
-    .cnd-vid-btn{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.22);border-radius:16px;padding:8px 12px 8px 8px;cursor:pointer;transition:background 0.2s,transform 0.15s,box-shadow 0.2s;font-family:'Poppins',sans-serif;}
+    .cnd-vid-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;padding:12px 24px 48px;}
+    .cnd-vid-btn{display:flex;align-items:center;gap:10px;width:205px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.22);border-radius:16px;padding:8px 12px 8px 8px;cursor:pointer;transition:background 0.2s,transform 0.15s,box-shadow 0.2s;font-family:'Poppins',sans-serif;}
     .cnd-vid-btn:hover{background:rgba(255,255,255,0.20);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.18);}
     .cnd-vid-thumb{position:relative;width:72px;height:44px;border-radius:10px;overflow:hidden;flex-shrink:0;background:rgba(0,0,0,0.25);}
     .cnd-vid-thumb img{width:100%;height:100%;object-fit:cover;}
@@ -636,7 +640,11 @@
     .cnd-vid-play-inner{background:rgba(255,255,255,0.92);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;}
     .cnd-vid-play-inner svg{width:10px;height:10px;fill:#111;margin-left:2px;}
     .cnd-yt-badge{position:absolute;bottom:3px;right:3px;background:#c00;color:#fff;font-size:7px;font-weight:700;padding:2px 4px;border-radius:3px;line-height:1;}
-    .cnd-vid-label{color:#fff;font-weight:600;font-size:0.83rem;white-space:nowrap;}
+    .cnd-vid-label{color:#fff;font-weight:600;font-size:0.83rem;white-space:nowrap;flex:1;}
+    @media(max-width:600px){
+      .cnd-vid-row{flex-direction:column;align-items:stretch;padding:12px 20px 40px;}
+      .cnd-vid-btn{width:100%;}
+    }
     .cnd-vid-modal{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:16px;}
     .cnd-vid-modal.open{display:flex;}
     .cnd-vid-inner-wrap{position:relative;width:100%;max-width:900px;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 24px 80px rgba(0,0,0,0.5);}
@@ -670,7 +678,7 @@
             <div class="step-item">
               <div class="step-item__num step-item__num--orange">01</div>
               <div class="step-item__content">
-                <div class="step-item__icon">📍</div>
+                <div class="step-item__icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
                 <div class="step-item__title">Discover nearby food</div>
                 <div class="step-item__desc">See home-cooked meals listed by neighbors within 1 km, updated in real time.</div>
               </div>
@@ -678,7 +686,7 @@
             <div class="step-item">
               <div class="step-item__num step-item__num--orange">02</div>
               <div class="step-item__content">
-                <div class="step-item__icon">🙋</div>
+                <div class="step-item__icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg></div>
                 <div class="step-item__title">Reserve a portion</div>
                 <div class="step-item__desc">Tap to reserve — the cook gets notified instantly. No middlemen, no waiting.</div>
               </div>
@@ -686,7 +694,7 @@
             <div class="step-item">
               <div class="step-item__num step-item__num--orange">03</div>
               <div class="step-item__content">
-                <div class="step-item__icon">🤝</div>
+                <div class="step-item__icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
                 <div class="step-item__title">Pick up &amp; pay direct</div>
                 <div class="step-item__desc">Collect your meal and pay via PayNow, PayLah, or cash. Simple and direct.</div>
               </div>
@@ -698,7 +706,7 @@
             <div class="step-item">
               <div class="step-item__num step-item__num--green">01</div>
               <div class="step-item__content">
-                <div class="step-item__icon">📸</div>
+                <div class="step-item__icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></div>
                 <div class="step-item__title">Post your extra food</div>
                 <div class="step-item__desc">Cooked too much? Snap a photo, set your price and portions in 60 seconds.</div>
               </div>
@@ -706,7 +714,7 @@
             <div class="step-item">
               <div class="step-item__num step-item__num--green">02</div>
               <div class="step-item__content">
-                <div class="step-item__icon">🔔</div>
+                <div class="step-item__icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div>
                 <div class="step-item__title">Get reservations</div>
                 <div class="step-item__desc">Neighbors see your listing and reserve portions. You get notified instantly.</div>
               </div>
@@ -714,7 +722,7 @@
             <div class="step-item">
               <div class="step-item__num step-item__num--green">03</div>
               <div class="step-item__content">
-                <div class="step-item__icon">💸</div>
+                <div class="step-item__icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg></div>
                 <div class="step-item__title">Earn — keep 100%</div>
                 <div class="step-item__desc">They pick up and pay you directly. Zero commission. Every cent is yours.</div>
               </div>
@@ -752,7 +760,7 @@
   </div>
 
   <!-- Video guides — inline at bottom of #how section -->
-  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;padding:12px 24px 48px;">
+  <div class="cnd-vid-row">
     <button class="cnd-vid-btn" onclick="cndOpenVid('Xpl1-o4ZUxI')">
       <div class="cnd-vid-thumb">
         <img src="https://img.youtube.com/vi/Xpl1-o4ZUxI/maxresdefault.jpg" alt="Eater guide">
@@ -789,17 +797,17 @@
         <h2 class="why__heading">Built for neighbors,<br/><span>not corporations.</span></h2>
         <p class="why__desc">We take nothing. Every cent you earn goes directly to you. No delivery, no complex setup — just real food shared between real people.</p>
         <div class="why__grid">
-          <div class="why__card"><div class="why__card__icon">🚫</div><div class="why__card__title">Zero commission</div><div class="why__card__desc">What you earn, you keep — always. No hidden fees, ever.</div></div>
-          <div class="why__card"><div class="why__card__icon">🏃</div><div class="why__card__title">No delivery</div><div class="why__card__desc">Self-pickup only. No drivers, no delays, no cold food.</div></div>
-          <div class="why__card"><div class="why__card__icon">🌿</div><div class="why__card__title">Reduce waste</div><div class="why__card__desc">Turn extra portions into meals for someone who needs them.</div></div>
-          <div class="why__card"><div class="why__card__icon">🏘️</div><div class="why__card__title">Community first</div><div class="why__card__desc">Every purchase helps a real person in your neighborhood.</div></div>
+          <div class="why__card"><div class="why__card__icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg></div><div class="why__card__title">Zero commission</div><div class="why__card__desc">What you earn, you keep — always. No hidden fees, ever.</div></div>
+          <div class="why__card"><div class="why__card__icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="m6 8 6 2 6-2"/><path d="M12 10v4"/></svg></div><div class="why__card__title">No delivery</div><div class="why__card__desc">Self-pickup only. No drivers, no delays, no cold food.</div></div>
+          <div class="why__card"><div class="why__card__icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div><div class="why__card__title">Reduce waste</div><div class="why__card__desc">Turn extra portions into meals for someone who needs them.</div></div>
+          <div class="why__card"><div class="why__card__icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="why__card__title">Community first</div><div class="why__card__desc">Every purchase helps a real person in your neighborhood.</div></div>
         </div>
       </div>
       <div class="why__stats fade-up" style="transition-delay:0.2s">
-        <div class="why__stat-card"><div class="why__stat-icon wsi--orange">🚫</div><div><div class="why__stat-val">0%</div><div class="why__stat-label">Commission taken, ever</div></div></div>
-        <div class="why__stat-card"><div class="why__stat-icon wsi--green">📍</div><div><div class="why__stat-val">1 km</div><div class="why__stat-label">Hyperlocal radius only</div></div></div>
-        <div class="why__stat-card"><div class="why__stat-icon wsi--orange">⚡</div><div><div class="why__stat-val">60 sec</div><div class="why__stat-label">To post your first listing</div></div></div>
-        <div class="why__stat-card"><div class="why__stat-icon wsi--green">💸</div><div><div class="why__stat-val">$0</div><div class="why__stat-label">To get started</div></div></div>
+        <div class="why__stat-card"><div class="why__stat-icon wsi--orange"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg></div><div><div class="why__stat-val">0%</div><div class="why__stat-label">Commission taken, ever</div></div></div>
+        <div class="why__stat-card"><div class="why__stat-icon wsi--green"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div><div><div class="why__stat-val">1 km</div><div class="why__stat-label">Hyperlocal radius only</div></div></div>
+        <div class="why__stat-card"><div class="why__stat-icon wsi--orange"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div><div class="why__stat-val">60 sec</div><div class="why__stat-label">To post your first listing</div></div></div>
+        <div class="why__stat-card"><div class="why__stat-icon wsi--green"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg></div><div><div class="why__stat-val">$0</div><div class="why__stat-label">To get started</div></div></div>
       </div>
     </div>
   </div>
