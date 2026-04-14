@@ -3,11 +3,11 @@ import { ShinyButton } from "@/components/ui/shiny-button";
 import { ThumbnailButton } from "@/components/ui/thumbnail-button";
 
 const cookNextDoorGradients = [
-  "linear-gradient(135deg, #2D6444 0%, #F87B31 100%)",
-  "linear-gradient(135deg, #1A3D28 0%, #5BAD6F 100%)",
-  "linear-gradient(135deg, #2D6444 0%, #F87B31 100%)",
-  "linear-gradient(135deg, #3D7A5A 0%, #F87B31 100%)",
-  "linear-gradient(135deg, #1E4A30 0%, #5BAD6F 100%)",
+  "linear-gradient(135deg, #076653 0%, #E3EF26 100%)",
+  "linear-gradient(135deg, #0C342C 0%, #076653 100%)",
+  "linear-gradient(135deg, #076653 0%, #E3EF26 100%)",
+  "linear-gradient(135deg, #06231D 0%, #076653 100%)",
+  "linear-gradient(135deg, #0C342C 0%, #E3EF26 100%)",
 ];
 
 export default function Home() {
