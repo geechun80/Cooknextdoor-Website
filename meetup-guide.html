@@ -539,6 +539,80 @@
     // For MVP — full flow always shown; in production filter by role
   }
 </script>
+  <!-- ── CookNextDoor Video Widget ───────────────────────────── -->
+  <style>
+    .cnd-vid-btn{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.22);border-radius:16px;padding:8px 12px 8px 8px;cursor:pointer;transition:background 0.2s,transform 0.15s,box-shadow 0.2s;font-family:'Poppins',sans-serif;text-decoration:none;}
+    .cnd-vid-btn:hover{background:rgba(255,255,255,0.20);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.18);}
+    .cnd-vid-thumb{position:relative;width:72px;height:44px;border-radius:10px;overflow:hidden;flex-shrink:0;background:rgba(0,0,0,0.25);}
+    .cnd-vid-thumb img{width:100%;height:100%;object-fit:cover;}
+    .cnd-vid-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+    .cnd-vid-play-inner{background:rgba(255,255,255,0.92);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;}
+    .cnd-vid-play-inner svg{width:10px;height:10px;fill:#111;margin-left:2px;}
+    .cnd-yt-badge{position:absolute;bottom:3px;right:3px;background:#c00;color:#fff;font-size:7px;font-weight:700;padding:2px 4px;border-radius:3px;line-height:1;}
+    .cnd-vid-label{color:#fff;font-weight:600;font-size:0.83rem;white-space:nowrap;}
+    .cnd-vid-modal{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:16px;}
+    .cnd-vid-modal.open{display:flex;}
+    .cnd-vid-inner-wrap{position:relative;width:100%;max-width:900px;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 24px 80px rgba(0,0,0,0.5);}
+    .cnd-vid-inner-wrap iframe{width:100%;height:100%;border:none;}
+    .cnd-vid-close-btn{position:absolute;top:10px;right:10px;z-index:10;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.20);color:#fff;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+    .cnd-vid-close-btn:hover{background:rgba(0,0,0,0.80);}
+  </style>
+
+  <!-- Video modal -->
+  <div class="cnd-vid-modal" id="cndVidModal" onclick="if(event.target===this)cndCloseVid()">
+    <div class="cnd-vid-inner-wrap">
+      <button class="cnd-vid-close-btn" onclick="cndCloseVid()">✕</button>
+      <iframe id="cndVidFrame" src="" allowfullscreen allow="autoplay;encrypted-media"></iframe>
+    </div>
+  </div>
+
+  <!-- Guide videos — fixed bottom-center -->
+  <div style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200;display:flex;gap:10px;align-items:center;">
+    <button class="cnd-vid-btn" onclick="cndOpenVid('Xpl1-o4ZUxI')">
+      <div class="cnd-vid-thumb">
+        <img src="https://img.youtube.com/vi/Xpl1-o4ZUxI/maxresdefault.jpg" alt="Eater guide">
+        <div class="cnd-vid-play"><div class="cnd-vid-play-inner"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <div class="cnd-yt-badge">YT</div>
+      </div>
+      <span class="cnd-vid-label">Eater guide</span>
+    </button>
+    <button class="cnd-vid-btn" onclick="cndOpenVid('QD4JWVQBfgI')">
+      <div class="cnd-vid-thumb">
+        <img src="https://img.youtube.com/vi/QD4JWVQBfgI/maxresdefault.jpg" alt="Cook guide">
+        <div class="cnd-vid-play"><div class="cnd-vid-play-inner"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <div class="cnd-yt-badge">YT</div>
+      </div>
+      <span class="cnd-vid-label">Cook guide</span>
+    </button>
+  </div>
+
+  <!-- Intro video — fixed bottom-right -->
+  <div style="position:fixed;bottom:24px;right:24px;z-index:200;">
+    <button class="cnd-vid-btn" onclick="cndOpenVid('Jc9ULZJxG8w')">
+      <div class="cnd-vid-thumb">
+        <img src="https://img.youtube.com/vi/Jc9ULZJxG8w/maxresdefault.jpg" alt="Watch intro">
+        <div class="cnd-vid-play"><div class="cnd-vid-play-inner"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <div class="cnd-yt-badge">YT</div>
+      </div>
+      <span class="cnd-vid-label">Watch our intro</span>
+    </button>
+  </div>
+
+  <script>
+    function cndOpenVid(ytId){
+      document.getElementById('cndVidFrame').src='https://www.youtube.com/embed/'+ytId+'?autoplay=1&rel=0';
+      document.getElementById('cndVidModal').classList.add('open');
+      document.body.style.overflow='hidden';
+    }
+    function cndCloseVid(){
+      document.getElementById('cndVidFrame').src='';
+      document.getElementById('cndVidModal').classList.remove('open');
+      document.body.style.overflow='';
+    }
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')cndCloseVid();});
+  </script>
+  <!-- ── End Video Widget ──────────────────────────────────────── -->
+
   <div id="cnd-chatbot"></div>
   <script src="widget/chatbot.js"></script>
 </body>
