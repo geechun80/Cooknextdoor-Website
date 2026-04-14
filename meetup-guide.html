@@ -126,6 +126,89 @@
 
     /* Divider */
     .page-divider{height:1px;background:rgba(255,255,255,0.08);max-width:900px;margin:0 auto;}
+
+    /* ── Expand Map ── */
+    .map-section{max-width:900px;margin:0 auto;padding:40px 24px 40px;}
+    .map-section-label{font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--orange);margin-bottom:8px;}
+    .map-section h2{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.6rem;color:#fff;margin-bottom:8px;}
+    .map-section h2 em{color:var(--orange);font-style:normal;}
+    .map-section > p{font-size:0.92rem;color:rgba(255,255,255,0.60);margin-bottom:28px;max-width:600px;}
+    .expand-map-wrap{display:flex;justify-content:center;}
+    .expand-map{
+      position:relative;cursor:pointer;user-select:none;
+      border-radius:20px;overflow:hidden;
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.14);
+      width:260px;height:150px;
+      transition:width 0.5s cubic-bezier(0.34,1.56,0.64,1),
+                 height 0.5s cubic-bezier(0.34,1.56,0.64,1),
+                 box-shadow 0.3s,
+                 transform 0.2s;
+      transform-style:preserve-3d;
+      will-change:transform;
+      box-shadow:0 8px 32px rgba(0,0,0,0.30);
+    }
+    .expand-map:hover{box-shadow:0 16px 48px rgba(0,0,0,0.45);}
+    .expand-map.is-expanded{width:min(700px,90vw);height:420px;}
+    @media(max-width:600px){
+      .expand-map{width:calc(100vw - 48px);height:160px;}
+      .expand-map.is-expanded{width:calc(100vw - 48px);height:320px;}
+    }
+    .expand-map iframe{
+      width:100%;height:100%;border:none;
+      pointer-events:none;
+      transition:opacity 0.35s 0.15s;
+      opacity:0.85;
+      border-radius:20px;
+    }
+    .expand-map.is-expanded iframe{pointer-events:all;opacity:1;}
+    /* Overlay bar — collapsed state label */
+    .expand-map__bar{
+      position:absolute;bottom:0;left:0;right:0;
+      padding:10px 14px;
+      background:linear-gradient(to top,rgba(0,0,0,0.72) 0%,transparent 100%);
+      display:flex;align-items:center;gap:10px;
+      transition:opacity 0.25s;
+      pointer-events:none;
+      z-index:2;
+    }
+    .expand-map.is-expanded .expand-map__bar{opacity:0;}
+    .expand-map__pin{
+      width:30px;height:30px;border-radius:50%;
+      background:var(--orange);
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;
+      box-shadow:0 2px 8px rgba(0,0,0,0.35);
+    }
+    .expand-map__pin svg{width:15px;height:15px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+    .expand-map__info{}
+    .expand-map__title{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.82rem;color:#fff;line-height:1.2;}
+    .expand-map__sub{font-size:0.70rem;color:rgba(255,255,255,0.65);}
+    /* Expand hint chip — top-right corner */
+    .expand-map__hint{
+      position:absolute;top:10px;right:10px;z-index:3;
+      background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.18);
+      color:#fff;font-size:0.66rem;font-weight:600;font-family:'Poppins',sans-serif;
+      padding:4px 10px;border-radius:100px;
+      display:flex;align-items:center;gap:5px;
+      transition:opacity 0.25s;
+      pointer-events:none;
+      backdrop-filter:blur(4px);
+    }
+    .expand-map.is-expanded .expand-map__hint{opacity:0;}
+    .expand-map__hint svg{width:10px;height:10px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+    /* Close button */
+    .expand-map__close{
+      position:absolute;top:10px;right:10px;z-index:4;
+      width:34px;height:34px;border-radius:50%;
+      background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.20);
+      color:#fff;font-size:16px;cursor:pointer;
+      display:none;align-items:center;justify-content:center;
+      backdrop-filter:blur(4px);
+      transition:background 0.2s;
+    }
+    .expand-map__close:hover{background:rgba(0,0,0,0.80);}
+    .expand-map.is-expanded .expand-map__close{display:flex;}
   </style>
 </head>
 <body>
@@ -277,6 +360,77 @@
     </div>
   </div>
 </div>
+
+<!-- Meeting spot map -->
+<div class="map-section">
+  <div class="map-section-label">Meeting Point</div>
+  <h2>Pickup happens <em>near you</em></h2>
+  <p>All meetups are within a 1km radius — a short walk from your door. Click the map to explore the area.</p>
+  <div class="expand-map-wrap">
+    <div class="expand-map" id="expandMap" onclick="cndToggleMap(event)">
+
+      <!-- Map iframe — OpenStreetMap, no API key needed -->
+      <iframe
+        id="expandMapFrame"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=103.7998%2C1.3321%2C103.8398%2C1.3721&layer=mapnik"
+        title="Pickup area map"
+        loading="lazy"
+        allowfullscreen>
+      </iframe>
+
+      <!-- Expand hint chip -->
+      <div class="expand-map__hint">
+        <svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+        Tap to expand
+      </div>
+
+      <!-- Collapsed label bar -->
+      <div class="expand-map__bar">
+        <div class="expand-map__pin">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="expand-map__info">
+          <div class="expand-map__title">Nearby pickup spot</div>
+          <div class="expand-map__sub">Within 1km · Singapore / Malaysia</div>
+        </div>
+      </div>
+
+      <!-- Close button (expanded state) -->
+      <button class="expand-map__close" onclick="cndCollapseMap(event)" aria-label="Close map">✕</button>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function cndToggleMap(e) {
+  var map = document.getElementById('expandMap');
+  if (map.classList.contains('is-expanded')) return; // let close button handle it
+  map.classList.add('is-expanded');
+  // 3D tilt reset when expanded
+  map.style.transform = 'none';
+}
+function cndCollapseMap(e) {
+  e.stopPropagation();
+  var map = document.getElementById('expandMap');
+  map.classList.remove('is-expanded');
+}
+// 3D tilt on hover (collapsed only)
+(function(){
+  var map = document.getElementById('expandMap');
+  map.addEventListener('mousemove', function(e) {
+    if (map.classList.contains('is-expanded')) return;
+    var r = map.getBoundingClientRect();
+    var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    var dx = (e.clientX - cx) / (r.width / 2);
+    var dy = (e.clientY - cy) / (r.height / 2);
+    map.style.transform = 'perspective(800px) rotateY(' + (dx * 7) + 'deg) rotateX(' + (-dy * 7) + 'deg) scale(1.02)';
+  });
+  map.addEventListener('mouseleave', function() {
+    map.style.transform = '';
+  });
+})();
+</script>
 
 <div class="page-divider"></div>
 
