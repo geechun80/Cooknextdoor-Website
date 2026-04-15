@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Press – CookNextDoor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;background:#06231D;color:#fff;min-height:100vh;overflow-x:hidden;}
+    :root{--orange:#E3EF26;--on-lime:#06231D;--green:#E2FBCE;--mid:#0C342C;--light:#076653;}
+
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(12,52,44,0.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,0.07);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;}
+    .nav__logo img{height:56px;display:block;}
+    .nav__links{display:flex;align-items:center;gap:20px;}
+    .nav__links a{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.70);text-decoration:none;transition:color 0.2s;}
+    .nav__links a:hover{color:var(--orange);}
+    .btn-nav{background:var(--orange);color:var(--on-lime);padding:9px 20px;border-radius:100px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.82rem;text-decoration:none;transition:transform 0.2s;box-shadow:0 4px 14px rgba(227,239,38,0.30);}
+    .btn-nav:hover{transform:translateY(-2px);}
+
+    .hero{padding:130px 24px 56px;text-align:center;position:relative;}
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(227,239,38,0.07) 0%,transparent 60%);pointer-events:none;}
+    .pill{display:inline-flex;align-items:center;gap:7px;background:rgba(227,239,38,0.12);border:1px solid rgba(227,239,38,0.30);color:var(--orange);font-family:'Poppins',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;padding:7px 16px;border-radius:100px;margin-bottom:20px;}
+    .hero h1{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(2rem,5vw,3.4rem);line-height:1.1;margin-bottom:14px;}
+    .hero h1 span{color:var(--orange);}
+    .hero p{color:rgba(255,255,255,0.60);font-size:1rem;max-width:540px;margin:0 auto;line-height:1.8;}
+
+    .wrap{max-width:860px;margin:0 auto;padding:48px 24px 80px;}
+    .section{margin-bottom:52px;}
+    .section h2{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.3rem;margin-bottom:20px;}
+    .section h2 span{color:var(--orange);}
+
+    /* Fast facts */
+    .facts{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+    @media(max-width:500px){.facts{grid-template-columns:1fr;}}
+    .fact{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:18px 20px;display:flex;gap:14px;align-items:flex-start;}
+    .fact .icon{font-size:1.4rem;flex-shrink:0;margin-top:2px;}
+    .fact h4{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.85rem;margin-bottom:4px;}
+    .fact p{font-size:0.78rem;color:rgba(255,255,255,0.50);line-height:1.55;}
+
+    /* Press releases */
+    .pr-list{display:flex;flex-direction:column;gap:14px;}
+    .pr-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:20px 22px;display:flex;align-items:center;gap:16px;transition:border-color 0.2s;}
+    .pr-card:hover{border-color:rgba(227,239,38,0.30);}
+    .pr-date{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.72rem;color:var(--orange);min-width:72px;}
+    .pr-title{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.90rem;color:#fff;flex:1;}
+    .pr-link{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.75rem;color:rgba(255,255,255,0.40);text-decoration:none;white-space:nowrap;transition:color 0.2s;}
+    .pr-link:hover{color:var(--orange);}
+
+    /* Assets */
+    .asset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+    @media(max-width:560px){.asset-grid{grid-template-columns:repeat(2,1fr);}}
+    .asset-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:20px;text-align:center;cursor:pointer;transition:border-color 0.2s;}
+    .asset-card:hover{border-color:rgba(227,239,38,0.30);}
+    .asset-icon{font-size:2rem;margin-bottom:10px;}
+    .asset-name{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.80rem;color:#fff;margin-bottom:4px;}
+    .asset-size{font-size:0.72rem;color:rgba(255,255,255,0.35);}
+    .asset-btn{display:inline-block;margin-top:10px;background:rgba(227,239,38,0.10);border:1px solid rgba(227,239,38,0.25);color:var(--orange);font-family:'Poppins',sans-serif;font-weight:700;font-size:0.70rem;padding:5px 12px;border-radius:100px;text-decoration:none;transition:background 0.2s;}
+    .asset-btn:hover{background:rgba(227,239,38,0.20);}
+
+    /* Contact band */
+    .contact-band{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:32px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
+    .contact-band .info{flex:1;}
+    .contact-band h3{font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;margin-bottom:6px;}
+    .contact-band p{font-size:0.85rem;color:rgba(255,255,255,0.55);line-height:1.6;}
+    .btn-contact{background:var(--orange);color:var(--on-lime);font-family:'Poppins',sans-serif;font-weight:700;font-size:0.85rem;padding:12px 22px;border-radius:100px;text-decoration:none;white-space:nowrap;transition:transform 0.2s;}
+    .btn-contact:hover{transform:translateY(-2px);}
+
+    footer{background:#040D09;padding:32px 24px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+    footer p{font-size:0.8rem;color:rgba(255,255,255,0.25);}
+    footer a{color:rgba(255,255,255,0.40);text-decoration:none;transition:color 0.2s;}
+    footer a:hover{color:var(--orange);}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html"><img src="brand_assets/logo.png" alt="CookNextDoor"/></a>
+  <div class="nav__links">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="user-auth.html" class="btn-nav">Find food</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="pill">📰 Press room</div>
+  <h1>Media & <span>press resources.</span></h1>
+  <p>Everything journalists, bloggers and content creators need to write about CookNextDoor.</p>
+</div>
+
+<div class="wrap">
+
+  <div class="section">
+    <h2>Fast <span>facts</span></h2>
+    <div class="facts">
+      <div class="fact"><div class="icon">🏠</div><div><h4>What is CookNextDoor?</h4><p>A free hyperlocal platform connecting home cooks with hungry neighbours within 1 km. Zero commission. No delivery. Direct payment.</p></div></div>
+      <div class="fact"><div class="icon">📍</div><div><h4>Where do we operate?</h4><p>Singapore and Malaysia. Expanding to more Southeast Asian cities in 2025–2026.</p></div></div>
+      <div class="fact"><div class="icon">💸</div><div><h4>Business model</h4><p>Completely free for cooks and buyers. No commission, no subscription fee. We grow through community trust.</p></div></div>
+      <div class="fact"><div class="icon">🌱</div><div><h4>Mission</h4><p>Reduce food waste, build neighbourhood communities, and help home cooks earn from their passion.</p></div></div>
+      <div class="fact"><div class="icon">📅</div><div><h4>Founded</h4><p>2024, Singapore. Bootstrapped and community-funded.</p></div></div>
+      <div class="fact"><div class="icon">👥</div><div><h4>Team size</h4><p>Small, passionate team of builders and food lovers based in Singapore.</p></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Press <span>releases</span></h2>
+    <div class="pr-list">
+      <div class="pr-card"><div class="pr-date">Apr 2025</div><div class="pr-title">CookNextDoor launches in Malaysia — bringing hyperlocal home cooking to Kuala Lumpur and Penang</div><a href="#" class="pr-link">Read →</a></div>
+      <div class="pr-card"><div class="pr-date">Mar 2025</div><div class="pr-title">CookNextDoor introduces Food Mood — AI-powered meal matching based on how you feel</div><a href="#" class="pr-link">Read →</a></div>
+      <div class="pr-card"><div class="pr-date">Jan 2025</div><div class="pr-title">Platform surpasses 500 active home cooks across Singapore neighbourhoods</div><a href="#" class="pr-link">Read →</a></div>
+      <div class="pr-card"><div class="pr-date">Nov 2024</div><div class="pr-title">CookNextDoor officially launches in Singapore with zero-commission model</div><a href="#" class="pr-link">Read →</a></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Brand <span>assets</span></h2>
+    <div class="asset-grid">
+      <div class="asset-card"><div class="asset-icon">🖼️</div><div class="asset-name">Logo (PNG)</div><div class="asset-size">Transparent · 1024×1024</div><a href="brand_assets/logo.png" download class="asset-btn">Download</a></div>
+      <div class="asset-card"><div class="asset-icon">🎨</div><div class="asset-name">Brand colours</div><div class="asset-size">Palette guide</div><a href="#" class="asset-btn">View</a></div>
+      <div class="asset-card"><div class="asset-icon">📦</div><div class="asset-name">Press kit</div><div class="asset-size">Full kit · ZIP</div><a href="#" class="asset-btn">Download</a></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Media <span>enquiries</span></h2>
+    <div class="contact-band">
+      <div class="info">
+        <h3>Talk to our team</h3>
+        <p>For interviews, features, partnership announcements or product questions — we are happy to help. We typically respond within 24 hours.</p>
+      </div>
+      <a href="contact.html" class="btn-contact">Get in touch</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2025 CookNextDoor · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="contact.html">Contact</a></p>
+</footer>
+
+</body>
+</html>

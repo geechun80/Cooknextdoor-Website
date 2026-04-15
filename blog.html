@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blog – CookNextDoor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;background:#06231D;color:#fff;min-height:100vh;overflow-x:hidden;}
+    :root{--orange:#E3EF26;--on-lime:#06231D;--green:#E2FBCE;--mid:#0C342C;--light:#076653;}
+
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(12,52,44,0.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,0.07);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;}
+    .nav__logo img{height:56px;display:block;}
+    .nav__links{display:flex;align-items:center;gap:20px;}
+    .nav__links a{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.70);text-decoration:none;transition:color 0.2s;}
+    .nav__links a:hover{color:var(--orange);}
+    .btn-nav{background:var(--orange);color:var(--on-lime);padding:9px 20px;border-radius:100px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.82rem;text-decoration:none;transition:transform 0.2s;box-shadow:0 4px 14px rgba(227,239,38,0.30);}
+    .btn-nav:hover{transform:translateY(-2px);}
+
+    .hero{padding:130px 24px 56px;text-align:center;position:relative;}
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(227,239,38,0.07) 0%,transparent 60%);pointer-events:none;}
+    .pill{display:inline-flex;align-items:center;gap:7px;background:rgba(227,239,38,0.12);border:1px solid rgba(227,239,38,0.30);color:var(--orange);font-family:'Poppins',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;padding:7px 16px;border-radius:100px;margin-bottom:20px;}
+    .hero h1{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(2rem,5vw,3.4rem);line-height:1.1;margin-bottom:14px;}
+    .hero h1 span{color:var(--orange);}
+    .hero p{color:rgba(255,255,255,0.60);font-size:1rem;max-width:540px;margin:0 auto;line-height:1.8;}
+
+    .wrap{max-width:900px;margin:0 auto;padding:48px 24px 80px;}
+
+    .featured{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;margin-bottom:48px;}
+    @media(max-width:680px){.featured{grid-template-columns:1fr;}}
+
+    .post-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:20px;overflow:hidden;cursor:pointer;transition:transform 0.25s,box-shadow 0.25s;}
+    .post-card:hover{transform:translateY(-5px);box-shadow:0 18px 48px rgba(0,0,0,0.35);}
+    .post-img{height:200px;background:var(--mid);display:flex;align-items:center;justify-content:center;font-size:3.5rem;position:relative;}
+    .post-img.tall{height:100%;min-height:260px;}
+    .post-cat{position:absolute;top:12px;left:12px;background:var(--orange);color:var(--on-lime);font-family:'Poppins',sans-serif;font-weight:700;font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;padding:4px 10px;border-radius:100px;}
+    .post-body{padding:20px;}
+    .post-meta{font-size:0.72rem;color:rgba(255,255,255,0.35);font-family:'Poppins',sans-serif;font-weight:600;margin-bottom:8px;}
+    .post-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;line-height:1.35;color:#fff;margin-bottom:8px;}
+    .post-title.lg{font-size:1.2rem;}
+    .post-excerpt{font-size:0.80rem;color:rgba(255,255,255,0.50);line-height:1.65;margin-bottom:14px;}
+    .post-link{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.75rem;color:var(--orange);text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:gap 0.2s;}
+    .post-link:hover{gap:7px;}
+
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+    @media(max-width:680px){.grid{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:460px){.grid{grid-template-columns:1fr;}}
+
+    .section-label{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.1rem;margin-bottom:20px;color:#fff;}
+    .section-label span{color:var(--orange);}
+
+    .newsletter{background:rgba(227,239,38,0.07);border:1px solid rgba(227,239,38,0.15);border-radius:20px;padding:36px;text-align:center;margin-top:48px;}
+    .newsletter h3{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.3rem;margin-bottom:8px;}
+    .newsletter p{color:rgba(255,255,255,0.55);font-size:0.88rem;margin-bottom:20px;}
+    .newsletter-form{display:flex;gap:10px;max-width:380px;margin:0 auto;}
+    .newsletter-form input{flex:1;padding:12px 16px;background:rgba(255,255,255,0.07);border:2px solid rgba(255,255,255,0.12);border-radius:100px;font-family:'Inter',sans-serif;font-size:0.88rem;color:#fff;outline:none;transition:border 0.2s;}
+    .newsletter-form input::placeholder{color:rgba(255,255,255,0.30);}
+    .newsletter-form input:focus{border-color:var(--orange);}
+    .newsletter-form button{background:var(--orange);color:var(--on-lime);border:none;border-radius:100px;padding:12px 20px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;white-space:nowrap;transition:transform 0.2s;}
+    .newsletter-form button:hover{transform:scale(1.04);}
+    @media(max-width:400px){.newsletter-form{flex-direction:column;}}
+
+    footer{background:#040D09;padding:32px 24px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+    footer p{font-size:0.8rem;color:rgba(255,255,255,0.25);}
+    footer a{color:rgba(255,255,255,0.40);text-decoration:none;transition:color 0.2s;}
+    footer a:hover{color:var(--orange);}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html"><img src="brand_assets/logo.png" alt="CookNextDoor"/></a>
+  <div class="nav__links">
+    <a href="index.html">Home</a>
+    <a href="news.html">News</a>
+    <a href="about.html">About</a>
+    <a href="user-auth.html" class="btn-nav">Find food</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="pill">✍️ Blog</div>
+  <h1>Stories from the <span>neighbourhood.</span></h1>
+  <p>Tips for home cooks, community stories, food culture deep-dives, and everything in between.</p>
+</div>
+
+<div class="wrap">
+
+  <!-- Featured -->
+  <div class="section-label">Featured <span>article</span></div>
+  <div class="featured">
+    <div class="post-card">
+      <div class="post-img tall" style="background:linear-gradient(135deg,#0C342C,#076653);">
+        <span>🍜</span>
+        <div class="post-cat">Featured</div>
+      </div>
+    </div>
+    <div class="post-card" style="display:flex;flex-direction:column;">
+      <div style="padding:28px;flex:1;display:flex;flex-direction:column;justify-content:center;">
+        <div class="post-meta">Community · 12 Apr 2025</div>
+        <div class="post-title lg">How one auntie in Clementi turned her weekend cooking into a neighbourhood institution</div>
+        <div class="post-excerpt">Mdm Siti has been cooking nasi lemak for 30 years. When her kids grew up and moved out, she had too much food and not enough people to feed. CookNextDoor changed that.</div>
+        <a href="#" class="post-link">Read the story →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="section-label">Latest <span>posts</span></div>
+  <div class="grid">
+    <div class="post-card">
+      <div class="post-img" style="background:linear-gradient(135deg,#06231D,#0C342C);">🍛<div class="post-cat">Cooks</div></div>
+      <div class="post-body">
+        <div class="post-meta">Tips · 8 Apr 2025</div>
+        <div class="post-title">5 things every new home cook should know before listing their first dish</div>
+        <div class="post-excerpt">From pricing to portions — a practical guide to getting started.</div>
+        <a href="#" class="post-link">Read more →</a>
+      </div>
+    </div>
+    <div class="post-card">
+      <div class="post-img" style="background:linear-gradient(135deg,#0C342C,#076653);">🌶️<div class="post-cat">Culture</div></div>
+      <div class="post-body">
+        <div class="post-meta">Culture · 5 Apr 2025</div>
+        <div class="post-title">Why Malaysian food deserves its own hyperlocal platform</div>
+        <div class="post-excerpt">From nasi kandar to laksa — the case for keeping food culture local.</div>
+        <a href="#" class="post-link">Read more →</a>
+      </div>
+    </div>
+    <div class="post-card">
+      <div class="post-img" style="background:linear-gradient(135deg,#076653,#06231D);">♻️<div class="post-cat">Sustainability</div></div>
+      <div class="post-body">
+        <div class="post-meta">Sustainability · 1 Apr 2025</div>
+        <div class="post-title">How sharing extra portions reduces food waste one plate at a time</div>
+        <div class="post-excerpt">Singapore wastes 665,000 tonnes of food yearly. We want to change that.</div>
+        <a href="#" class="post-link">Read more →</a>
+      </div>
+    </div>
+    <div class="post-card">
+      <div class="post-img" style="background:linear-gradient(135deg,#06231D,#076653);">💬<div class="post-cat">Community</div></div>
+      <div class="post-body">
+        <div class="post-meta">Community · 28 Mar 2025</div>
+        <div class="post-title">From stranger to regular: how food builds trust between neighbours</div>
+        <div class="post-excerpt">Real stories of friendships that started with a shared bowl of soup.</div>
+        <a href="#" class="post-link">Read more →</a>
+      </div>
+    </div>
+    <div class="post-card">
+      <div class="post-img" style="background:linear-gradient(135deg,#0C342C,#06231D);">💰<div class="post-cat">Finance</div></div>
+      <div class="post-body">
+        <div class="post-meta">Finance · 24 Mar 2025</div>
+        <div class="post-title">How much can a home cook realistically earn in a month?</div>
+        <div class="post-excerpt">We ran the numbers. The results might surprise you.</div>
+        <a href="#" class="post-link">Read more →</a>
+      </div>
+    </div>
+    <div class="post-card">
+      <div class="post-img" style="background:linear-gradient(135deg,#076653,#0C342C);">🤝<div class="post-cat">Platform</div></div>
+      <div class="post-body">
+        <div class="post-meta">Platform · 20 Mar 2025</div>
+        <div class="post-title">Why CookNextDoor will never charge commission — ever</div>
+        <div class="post-excerpt">Our commitment to the community and why the zero-fee model works.</div>
+        <a href="#" class="post-link">Read more →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="newsletter">
+    <h3>Get new stories in your inbox</h3>
+    <p>Fresh articles, cook spotlights, and community news — no spam, ever.</p>
+    <div class="newsletter-form">
+      <input type="email" placeholder="your@email.com"/>
+      <button>Subscribe</button>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2025 CookNextDoor · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="contact.html">Contact</a></p>
+</footer>
+
+</body>
+</html>
