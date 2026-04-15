@@ -37,7 +37,7 @@
     .prog-step.done::after{background:var(--green);}
     .prog-dot{width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:0.95rem;font-family:'Poppins',sans-serif;font-weight:700;color:rgba(255,255,255,0.4);z-index:1;transition:all 0.3s;}
     .prog-step.done   .prog-dot{background:var(--green);border-color:var(--green);color:#fff;}
-    .prog-step.active .prog-dot{background:var(--orange);border-color:var(--orange);color:#fff;box-shadow:0 0 0 4px rgba(248,123,49,0.25);}
+    .prog-step.active .prog-dot{background:var(--orange);border-color:var(--orange);color:var(--on-lime);box-shadow:0 0 0 4px rgba(248,123,49,0.25);}
     .prog-label{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.62rem;color:rgba(255,255,255,0.40);letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;}
     .prog-step.active .prog-label{color:var(--orange);}
     .prog-step.done   .prog-label{color:rgba(255,255,255,0.60);}
@@ -84,7 +84,7 @@
     #uploadPanel{display:none;}
     .library-filter{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
     .lib-tag{padding:5px 12px;border-radius:100px;border:1.5px solid #E8E8E8;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.72rem;color:var(--muted);cursor:pointer;transition:all 0.2s;}
-    .lib-tag.active{background:var(--orange);border-color:var(--orange);color:#fff;}
+    .lib-tag.active{background:var(--orange);border-color:var(--orange);color:var(--on-lime);}
     .library-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-height:420px;overflow-y:auto;padding-right:4px;}
     @media(max-width:500px){.library-grid{grid-template-columns:repeat(2,1fr);}}
     .lib-item{border:2.5px solid #E8E8E8;border-radius:14px;overflow:hidden;cursor:pointer;transition:all 0.22s;position:relative;}
@@ -93,7 +93,7 @@
     .lib-item img{width:100%;height:90px;object-fit:cover;display:block;}
     .lib-item__name{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.70rem;color:var(--dark);padding:7px 8px 5px;line-height:1.3;}
     .lib-item__tag{font-size:0.63rem;color:var(--muted);padding:0 8px 7px;}
-    .lib-item .check{position:absolute;top:6px;right:6px;width:22px;height:22px;background:var(--orange);border-radius:50%;display:none;align-items:center;justify-content:center;color:#fff;font-size:0.75rem;font-weight:900;}
+    .lib-item .check{position:absolute;top:6px;right:6px;width:22px;height:22px;background:var(--orange);border-radius:50%;display:none;align-items:center;justify-content:center;color:var(--on-lime);font-size:0.75rem;font-weight:900;}
     .lib-item.selected .check{display:flex;}
 
     /* ── Upload panel ── */
@@ -118,7 +118,7 @@
     /* ── Chips ── */
     .chip-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
     .chip{padding:7px 14px;border-radius:100px;border:2px solid #E8E8E8;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.78rem;cursor:pointer;transition:all 0.2s;color:var(--muted);background:#fff;display:flex;align-items:center;gap:5px;}
-    .chip.selected{background:var(--orange);border-color:var(--orange);color:#fff;}
+    .chip.selected{background:var(--orange);border-color:var(--orange);color:var(--on-lime);}
     .chip:hover:not(.selected){border-color:var(--orange);color:var(--orange);}
 
     /* ── Price options ── */
@@ -173,7 +173,7 @@
     .why-item span:first-child{flex-shrink:0;margin-top:1px;}
 
     /* ── Buttons ── */
-    .btn-primary{width:100%;padding:15px;background:var(--orange);color:#fff;border:none;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 4px 16px rgba(248,123,49,0.28);}
+    .btn-primary{width:100%;padding:15px;background:var(--orange);color:var(--on-lime);border:none;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 4px 16px rgba(248,123,49,0.28);}
     .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(248,123,49,0.35);}
     .btn-secondary{width:100%;padding:13px;background:transparent;color:var(--dark);border:2px solid #E8E8E8;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.92rem;cursor:pointer;transition:border 0.2s;margin-top:10px;}
     .btn-secondary:hover{border-color:var(--dark);}
