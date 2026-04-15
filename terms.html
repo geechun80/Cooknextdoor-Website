@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Terms of Service – CookNextDoor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;background:#06231D;color:#fff;min-height:100vh;overflow-x:hidden;}
+    :root{--orange:#E3EF26;--on-lime:#06231D;--green:#E2FBCE;--mid:#0C342C;}
+
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(12,52,44,0.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,0.07);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;}
+    .nav__logo img{height:56px;display:block;}
+    .nav__links{display:flex;align-items:center;gap:20px;}
+    .nav__links a{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.70);text-decoration:none;transition:color 0.2s;}
+    .nav__links a:hover{color:var(--orange);}
+    .btn-nav{background:var(--orange);color:var(--on-lime);padding:9px 20px;border-radius:100px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.82rem;text-decoration:none;transition:transform 0.2s;}
+    .btn-nav:hover{transform:translateY(-2px);}
+
+    .hero{padding:120px 24px 48px;text-align:center;position:relative;}
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(227,239,38,0.06) 0%,transparent 60%);pointer-events:none;}
+    .pill{display:inline-flex;align-items:center;gap:7px;background:rgba(227,239,38,0.12);border:1px solid rgba(227,239,38,0.30);color:var(--orange);font-family:'Poppins',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;padding:7px 16px;border-radius:100px;margin-bottom:18px;}
+    .hero h1{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.15;margin-bottom:12px;}
+    .hero p{color:rgba(255,255,255,0.45);font-size:0.85rem;}
+
+    .doc{max-width:720px;margin:0 auto;padding:40px 24px 80px;}
+    .toc{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:24px;margin-bottom:40px;}
+    .toc h3{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.85rem;color:var(--orange);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.08em;}
+    .toc ol{padding-left:18px;display:flex;flex-direction:column;gap:6px;}
+    .toc ol li{font-size:0.82rem;color:rgba(255,255,255,0.60);}
+    .toc ol li a{color:rgba(255,255,255,0.60);text-decoration:none;transition:color 0.2s;}
+    .toc ol li a:hover{color:var(--orange);}
+
+    .doc-section{margin-bottom:40px;}
+    .doc-section h2{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.05rem;margin-bottom:12px;color:#fff;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.07);}
+    .doc-section p{font-size:0.88rem;color:rgba(255,255,255,0.60);line-height:1.85;margin-bottom:10px;}
+    .doc-section ul{padding-left:18px;margin-bottom:10px;}
+    .doc-section ul li{font-size:0.85rem;color:rgba(255,255,255,0.55);line-height:1.75;margin-bottom:4px;}
+    .doc-section strong{color:#fff;font-weight:600;}
+
+    .last-updated{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:100px;padding:6px 14px;font-size:0.75rem;color:rgba(255,255,255,0.40);font-family:'Poppins',sans-serif;font-weight:600;margin-bottom:32px;}
+
+    footer{background:#040D09;padding:32px 24px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+    footer p{font-size:0.8rem;color:rgba(255,255,255,0.25);}
+    footer a{color:rgba(255,255,255,0.40);text-decoration:none;transition:color 0.2s;}
+    footer a:hover{color:var(--orange);}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html"><img src="brand_assets/logo.png" alt="CookNextDoor"/></a>
+  <div class="nav__links">
+    <a href="index.html">Home</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="cookies.html">Cookies</a>
+    <a href="user-auth.html" class="btn-nav">Find food</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="pill">📄 Legal</div>
+  <h1>Terms of Service</h1>
+  <p>Please read these terms carefully before using CookNextDoor.</p>
+</div>
+
+<div class="doc">
+  <div class="last-updated">📅 Last updated: 1 April 2025</div>
+
+  <div class="toc">
+    <h3>Contents</h3>
+    <ol>
+      <li><a href="#acceptance">Acceptance of terms</a></li>
+      <li><a href="#platform">What CookNextDoor is</a></li>
+      <li><a href="#cooks">Cook responsibilities</a></li>
+      <li><a href="#buyers">Buyer responsibilities</a></li>
+      <li><a href="#payments">Payments & transactions</a></li>
+      <li><a href="#prohibited">Prohibited conduct</a></li>
+      <li><a href="#liability">Limitation of liability</a></li>
+      <li><a href="#changes">Changes to terms</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ol>
+  </div>
+
+  <div class="doc-section" id="acceptance">
+    <h2>1. Acceptance of terms</h2>
+    <p>By accessing or using CookNextDoor ("the Platform", "we", "us"), you agree to be bound by these Terms of Service. If you do not agree, please do not use the platform.</p>
+    <p>These terms apply to all users, including home cooks ("Cooks") and people purchasing food ("Buyers").</p>
+  </div>
+
+  <div class="doc-section" id="platform">
+    <h2>2. What CookNextDoor is</h2>
+    <p>CookNextDoor is a <strong>free community marketplace</strong> that connects home cooks with nearby people within a hyperlocal radius (approximately 1 km). We are a technology platform — we do not prepare, sell, or deliver food ourselves.</p>
+    <p>All transactions occur directly between Cooks and Buyers. CookNextDoor charges <strong>zero commission</strong> and takes no percentage of any sale.</p>
+  </div>
+
+  <div class="doc-section" id="cooks">
+    <h2>3. Cook responsibilities</h2>
+    <p>As a Cook on the platform, you agree to:</p>
+    <ul>
+      <li>Prepare food in a clean, hygienic environment consistent with applicable food safety standards</li>
+      <li>Accurately describe all dishes including ingredients, allergens, and portion sizes</li>
+      <li>Only list food that is safe for consumption and prepared on the day of listing</li>
+      <li>Communicate promptly and honestly with Buyers</li>
+      <li>Comply with all applicable local laws regarding home-based food businesses</li>
+      <li>Not misrepresent yourself or your food in any way</li>
+    </ul>
+    <p>CookNextDoor does not inspect kitchens or certify cooks. You are solely responsible for ensuring your food is safe.</p>
+  </div>
+
+  <div class="doc-section" id="buyers">
+    <h2>4. Buyer responsibilities</h2>
+    <p>As a Buyer, you agree to:</p>
+    <ul>
+      <li>Pay Cooks directly via agreed payment methods (PayNow, PayLah!, DuitNow, cash, etc.)</li>
+      <li>Collect food at the agreed time and location</li>
+      <li>Communicate any dietary requirements or allergies clearly and in advance</li>
+      <li>Treat Cooks respectfully and professionally</li>
+      <li>Leave honest, fair reviews based on your genuine experience</li>
+    </ul>
+  </div>
+
+  <div class="doc-section" id="payments">
+    <h2>5. Payments & transactions</h2>
+    <p>All payments are made <strong>directly between Cooks and Buyers</strong>. CookNextDoor does not process, hold, or facilitate payments. Supported methods include PayNow, PayLah!, DuitNow, Touch 'n Go, GrabPay, and cash.</p>
+    <p>CookNextDoor is not responsible for any payment disputes, fraud, or failure to pay. All financial transactions are the sole responsibility of the parties involved.</p>
+  </div>
+
+  <div class="doc-section" id="prohibited">
+    <h2>6. Prohibited conduct</h2>
+    <p>Users may not:</p>
+    <ul>
+      <li>List food containing controlled substances or illegal ingredients</li>
+      <li>Misrepresent the nature, quality, or safety of food</li>
+      <li>Harass, threaten, or abuse other users</li>
+      <li>Create fake reviews or manipulate ratings</li>
+      <li>Use the platform for any purpose other than the buying and selling of home-cooked food</li>
+      <li>Scrape, copy, or reproduce platform content without permission</li>
+    </ul>
+    <p>Violations may result in immediate account suspension or permanent ban.</p>
+  </div>
+
+  <div class="doc-section" id="liability">
+    <h2>7. Limitation of liability</h2>
+    <p>CookNextDoor is provided "as is" without warranties of any kind. To the maximum extent permitted by law, we are not liable for:</p>
+    <ul>
+      <li>Any illness, injury, or harm resulting from food purchased through the platform</li>
+      <li>Financial losses arising from transactions between Cooks and Buyers</li>
+      <li>Loss of data, revenue, or goodwill</li>
+      <li>Any indirect, incidental, or consequential damages</li>
+    </ul>
+  </div>
+
+  <div class="doc-section" id="changes">
+    <h2>8. Changes to terms</h2>
+    <p>We may update these terms from time to time. When we do, we will update the "Last updated" date at the top of this page. Continued use of the platform after changes constitutes acceptance of the revised terms.</p>
+  </div>
+
+  <div class="doc-section" id="contact">
+    <h2>9. Contact</h2>
+    <p>For questions about these terms, please contact us at <strong>legal@cooknextdoor.org</strong> or via our <a href="contact.html" style="color:var(--orange);text-decoration:none;">Contact page</a>.</p>
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 CookNextDoor · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="cookies.html">Cookies</a> · <a href="contact.html">Contact</a></p>
+</footer>
+
+</body>
+</html>

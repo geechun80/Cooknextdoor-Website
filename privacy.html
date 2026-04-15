@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy Policy – CookNextDoor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;background:#06231D;color:#fff;min-height:100vh;overflow-x:hidden;}
+    :root{--orange:#E3EF26;--on-lime:#06231D;--green:#E2FBCE;--mid:#0C342C;}
+
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(12,52,44,0.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,0.07);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;}
+    .nav__logo img{height:56px;display:block;}
+    .nav__links{display:flex;align-items:center;gap:20px;}
+    .nav__links a{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.70);text-decoration:none;transition:color 0.2s;}
+    .nav__links a:hover{color:var(--orange);}
+    .btn-nav{background:var(--orange);color:var(--on-lime);padding:9px 20px;border-radius:100px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.82rem;text-decoration:none;transition:transform 0.2s;}
+    .btn-nav:hover{transform:translateY(-2px);}
+
+    .hero{padding:120px 24px 48px;text-align:center;position:relative;}
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(227,239,38,0.06) 0%,transparent 60%);pointer-events:none;}
+    .pill{display:inline-flex;align-items:center;gap:7px;background:rgba(227,239,38,0.12);border:1px solid rgba(227,239,38,0.30);color:var(--orange);font-family:'Poppins',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;padding:7px 16px;border-radius:100px;margin-bottom:18px;}
+    .hero h1{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.15;margin-bottom:12px;}
+    .hero p{color:rgba(255,255,255,0.45);font-size:0.85rem;}
+
+    .doc{max-width:720px;margin:0 auto;padding:40px 24px 80px;}
+    .last-updated{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:100px;padding:6px 14px;font-size:0.75rem;color:rgba(255,255,255,0.40);font-family:'Poppins',sans-serif;font-weight:600;margin-bottom:32px;}
+
+    .summary-box{background:rgba(227,239,38,0.07);border:1px solid rgba(227,239,38,0.18);border-radius:16px;padding:24px;margin-bottom:36px;}
+    .summary-box h3{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.88rem;color:var(--orange);margin-bottom:12px;}
+    .summary-box ul{padding-left:18px;display:flex;flex-direction:column;gap:6px;}
+    .summary-box ul li{font-size:0.83rem;color:rgba(255,255,255,0.70);line-height:1.6;}
+
+    .doc-section{margin-bottom:36px;}
+    .doc-section h2{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.05rem;margin-bottom:12px;color:#fff;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.07);}
+    .doc-section p{font-size:0.88rem;color:rgba(255,255,255,0.60);line-height:1.85;margin-bottom:10px;}
+    .doc-section ul{padding-left:18px;margin-bottom:10px;}
+    .doc-section ul li{font-size:0.85rem;color:rgba(255,255,255,0.55);line-height:1.75;margin-bottom:4px;}
+    .doc-section strong{color:#fff;font-weight:600;}
+
+    footer{background:#040D09;padding:32px 24px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+    footer p{font-size:0.8rem;color:rgba(255,255,255,0.25);}
+    footer a{color:rgba(255,255,255,0.40);text-decoration:none;transition:color 0.2s;}
+    footer a:hover{color:var(--orange);}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html"><img src="brand_assets/logo.png" alt="CookNextDoor"/></a>
+  <div class="nav__links">
+    <a href="index.html">Home</a>
+    <a href="terms.html">Terms</a>
+    <a href="cookies.html">Cookies</a>
+    <a href="user-auth.html" class="btn-nav">Find food</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="pill">🔒 Legal</div>
+  <h1>Privacy Policy</h1>
+  <p>How we collect, use, and protect your personal information.</p>
+</div>
+
+<div class="doc">
+  <div class="last-updated">📅 Last updated: 1 April 2025</div>
+
+  <div class="summary-box">
+    <h3>The short version</h3>
+    <ul>
+      <li>We collect only what we need to run the platform</li>
+      <li>We never sell your personal data to third parties</li>
+      <li>You can request deletion of your data at any time</li>
+      <li>We use Firebase (Google) for authentication and data storage</li>
+      <li>Payments happen directly between users — we never touch your money</li>
+    </ul>
+  </div>
+
+  <div class="doc-section">
+    <h2>1. Who we are</h2>
+    <p>CookNextDoor ("we", "us", "our") operates the website cooknextdoor.org and associated mobile interfaces. We are based in Singapore. For privacy queries, contact <strong>privacy@cooknextdoor.org</strong>.</p>
+  </div>
+
+  <div class="doc-section">
+    <h2>2. Data we collect</h2>
+    <p>We collect the following categories of information:</p>
+    <ul>
+      <li><strong>Account data:</strong> Name, email address, profile photo (via Google sign-in)</li>
+      <li><strong>Cook listings:</strong> Dish name, description, price, availability, location (approximate)</li>
+      <li><strong>Usage data:</strong> Pages visited, features used, device type, browser</li>
+      <li><strong>Communications:</strong> Messages sent via our Contact form</li>
+    </ul>
+    <p>We do <strong>not</strong> collect payment details — all transactions occur directly between users.</p>
+  </div>
+
+  <div class="doc-section">
+    <h2>3. How we use your data</h2>
+    <ul>
+      <li>To create and manage your account</li>
+      <li>To display your listings to nearby users</li>
+      <li>To improve the platform and fix bugs</li>
+      <li>To send service-related notifications (not marketing without consent)</li>
+      <li>To respond to your enquiries and support requests</li>
+    </ul>
+  </div>
+
+  <div class="doc-section">
+    <h2>4. Data sharing</h2>
+    <p>We share limited data with the following trusted services:</p>
+    <ul>
+      <li><strong>Google Firebase:</strong> Authentication and database (Google LLC, USA)</li>
+      <li><strong>Google Fonts / APIs:</strong> Font delivery and maps</li>
+    </ul>
+    <p>We do <strong>not</strong> sell, rent, or trade your personal data to any third party for marketing purposes.</p>
+  </div>
+
+  <div class="doc-section">
+    <h2>5. Data retention</h2>
+    <p>We retain your data for as long as your account is active. If you delete your account, your personal data is removed within 30 days, except where we are required to retain it by law.</p>
+  </div>
+
+  <div class="doc-section">
+    <h2>6. Your rights</h2>
+    <p>You have the right to:</p>
+    <ul>
+      <li>Access the personal data we hold about you</li>
+      <li>Correct inaccurate data</li>
+      <li>Request deletion of your data ("right to be forgotten")</li>
+      <li>Object to certain types of processing</li>
+      <li>Port your data in a machine-readable format</li>
+    </ul>
+    <p>To exercise any of these rights, email <strong>privacy@cooknextdoor.org</strong>.</p>
+  </div>
+
+  <div class="doc-section">
+    <h2>7. Cookies</h2>
+    <p>We use cookies to maintain your session and improve platform performance. For full details, see our <a href="cookies.html" style="color:var(--orange);text-decoration:none;">Cookie Policy</a>.</p>
+  </div>
+
+  <div class="doc-section">
+    <h2>8. Security</h2>
+    <p>We use industry-standard security measures including HTTPS encryption, Firebase security rules, and access controls. However, no system is 100% secure and we cannot guarantee absolute security.</p>
+  </div>
+
+  <div class="doc-section">
+    <h2>9. Contact</h2>
+    <p>For privacy-related questions, contact us at <strong>privacy@cooknextdoor.org</strong> or via our <a href="contact.html" style="color:var(--orange);text-decoration:none;">Contact page</a>.</p>
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 CookNextDoor · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="cookies.html">Cookies</a> · <a href="contact.html">Contact</a></p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact – CookNextDoor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Inter',sans-serif;background:#06231D;color:#fff;min-height:100vh;overflow-x:hidden;}
+    :root{--orange:#E3EF26;--on-lime:#06231D;--green:#E2FBCE;--mid:#0C342C;--light:#076653;}
+
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(12,52,44,0.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,0.07);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;}
+    .nav__logo img{height:56px;display:block;}
+    .nav__links{display:flex;align-items:center;gap:20px;}
+    .nav__links a{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.70);text-decoration:none;transition:color 0.2s;}
+    .nav__links a:hover{color:var(--orange);}
+    .btn-nav{background:var(--orange);color:var(--on-lime);padding:9px 20px;border-radius:100px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.82rem;text-decoration:none;transition:transform 0.2s;box-shadow:0 4px 14px rgba(227,239,38,0.30);}
+    .btn-nav:hover{transform:translateY(-2px);}
+
+    .hero{padding:130px 24px 56px;text-align:center;position:relative;}
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(227,239,38,0.07) 0%,transparent 60%);pointer-events:none;}
+    .pill{display:inline-flex;align-items:center;gap:7px;background:rgba(227,239,38,0.12);border:1px solid rgba(227,239,38,0.30);color:var(--orange);font-family:'Poppins',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;padding:7px 16px;border-radius:100px;margin-bottom:20px;}
+    .hero h1{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(2rem,5vw,3.2rem);line-height:1.1;margin-bottom:14px;}
+    .hero h1 span{color:var(--orange);}
+    .hero p{color:rgba(255,255,255,0.60);font-size:1rem;max-width:500px;margin:0 auto;line-height:1.8;}
+
+    .wrap{max-width:860px;margin:0 auto;padding:48px 24px 80px;display:grid;grid-template-columns:1fr 1.4fr;gap:32px;align-items:start;}
+    @media(max-width:680px){.wrap{grid-template-columns:1fr;}}
+
+    /* Left: channels */
+    .channels{display:flex;flex-direction:column;gap:14px;}
+    .channel{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px;display:flex;gap:14px;align-items:flex-start;transition:border-color 0.2s;}
+    .channel:hover{border-color:rgba(227,239,38,0.25);}
+    .ch-icon{font-size:1.6rem;flex-shrink:0;}
+    .ch-label{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.82rem;margin-bottom:4px;color:#fff;}
+    .ch-value{font-size:0.80rem;color:var(--orange);font-weight:600;}
+    .ch-note{font-size:0.73rem;color:rgba(255,255,255,0.38);margin-top:3px;}
+
+    /* Right: form */
+    .form-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:32px;}
+    .form-card h2{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.1rem;margin-bottom:24px;}
+    .form-card h2 span{color:var(--orange);}
+    .field{margin-bottom:18px;}
+    .field label{display:block;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.78rem;color:rgba(255,255,255,0.65);margin-bottom:7px;}
+    .field input,.field select,.field textarea{width:100%;padding:12px 16px;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.10);border-radius:12px;font-family:'Inter',sans-serif;font-size:0.90rem;color:#fff;outline:none;transition:border 0.2s;resize:none;}
+    .field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,0.28);}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--orange);}
+    .field select{appearance:none;cursor:pointer;}
+    .field select option{background:#0C342C;color:#fff;}
+    .btn-submit{width:100%;padding:14px;background:var(--orange);color:var(--on-lime);border:none;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 4px 16px rgba(227,239,38,0.25);}
+    .btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(227,239,38,0.35);}
+    .form-note{font-size:0.72rem;color:rgba(255,255,255,0.30);text-align:center;margin-top:12px;line-height:1.6;}
+
+    footer{background:#040D09;padding:32px 24px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
+    footer p{font-size:0.8rem;color:rgba(255,255,255,0.25);}
+    footer a{color:rgba(255,255,255,0.40);text-decoration:none;transition:color 0.2s;}
+    footer a:hover{color:var(--orange);}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html"><img src="brand_assets/logo.png" alt="CookNextDoor"/></a>
+  <div class="nav__links">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="press.html">Press</a>
+    <a href="user-auth.html" class="btn-nav">Find food</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="pill">💬 Get in touch</div>
+  <h1>We'd love to <span>hear from you.</span></h1>
+  <p>Whether you're a home cook, a food lover, press, or a potential partner — drop us a message.</p>
+</div>
+
+<div class="wrap">
+
+  <div class="channels">
+    <div class="channel">
+      <div class="ch-icon">📧</div>
+      <div>
+        <div class="ch-label">General enquiries</div>
+        <div class="ch-value">hello@cooknextdoor.org</div>
+        <div class="ch-note">We reply within 1–2 business days</div>
+      </div>
+    </div>
+    <div class="channel">
+      <div class="ch-icon">📰</div>
+      <div>
+        <div class="ch-label">Press & media</div>
+        <div class="ch-value">press@cooknextdoor.org</div>
+        <div class="ch-note">Interview requests & press kits</div>
+      </div>
+    </div>
+    <div class="channel">
+      <div class="ch-icon">🤝</div>
+      <div>
+        <div class="ch-label">Partnerships</div>
+        <div class="ch-value">partners@cooknextdoor.org</div>
+        <div class="ch-note">Community orgs, brands & NGOs</div>
+      </div>
+    </div>
+    <div class="channel">
+      <div class="ch-icon">🐛</div>
+      <div>
+        <div class="ch-label">Report a bug</div>
+        <div class="ch-value">support@cooknextdoor.org</div>
+        <div class="ch-note">Technical issues & feedback</div>
+      </div>
+    </div>
+    <div class="channel">
+      <div class="ch-icon">📍</div>
+      <div>
+        <div class="ch-label">Based in</div>
+        <div class="ch-value">Singapore 🇸🇬</div>
+        <div class="ch-note">Also serving Malaysia 🇲🇾</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h2>Send us a <span>message</span></h2>
+    <div class="field">
+      <label>Your name</label>
+      <input type="text" placeholder="Jane Tan"/>
+    </div>
+    <div class="field">
+      <label>Email address</label>
+      <input type="email" placeholder="jane@email.com"/>
+    </div>
+    <div class="field">
+      <label>Topic</label>
+      <select>
+        <option value="">Select a topic…</option>
+        <option>General question</option>
+        <option>I'm a home cook</option>
+        <option>Press / media</option>
+        <option>Partnership</option>
+        <option>Bug report</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Message</label>
+      <textarea rows="5" placeholder="Tell us what's on your mind…"></textarea>
+    </div>
+    <button class="btn-submit">Send message →</button>
+    <p class="form-note">By submitting you agree to our <a href="privacy.html" style="color:var(--orange);text-decoration:none;">Privacy Policy</a>. We never share your data.</p>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2025 CookNextDoor · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="contact.html">Contact</a></p>
+</footer>
+
+</body>
+</html>
