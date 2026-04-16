@@ -65,10 +65,26 @@
     .cat-chip{padding:7px 14px;border-radius:100px;border:1px solid rgba(255,255,255,0.15);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.78rem;color:rgba(255,255,255,0.75);background:rgba(255,255,255,0.06);}
     .diet-chip{padding:6px 12px;border-radius:100px;border:1px solid rgba(52,211,153,0.3);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;color:#9FECD6;background:rgba(52,211,153,0.08);}
 
-    /* ── Schedule grid ── */
-    .schedule-list{display:flex;flex-direction:column;gap:8px;}
-    .sch-item{display:flex;align-items:center;gap:10px;font-size:0.88rem;color:rgba(255,255,255,0.80);}
-    .sch-dot{width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0;}
+    /* ── Schedule / Calendar display ── */
+    .meal-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+    .meal-chip{padding:6px 14px;border-radius:100px;border:1px solid rgba(227,239,38,0.3);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.78rem;color:var(--orange);background:rgba(227,239,38,0.08);}
+    /* Profile calendar */
+    .prof-cal{margin-top:4px;}
+    .prof-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+    .prof-cal-nav-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);border-radius:8px;width:32px;height:32px;font-size:1rem;cursor:pointer;color:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+    .prof-cal-nav-btn:hover{border-color:var(--orange);color:var(--orange);}
+    .prof-cal-month{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.9rem;color:rgba(255,255,255,0.80);}
+    .prof-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+    .prof-cal-hdr{text-align:center;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.60rem;color:rgba(255,255,255,0.35);padding:5px 2px;text-transform:uppercase;}
+    .prof-cal-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:7px;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.80rem;color:rgba(255,255,255,0.30);border:1px solid transparent;}
+    .prof-cal-cell.prof-avail{background:rgba(227,239,38,0.18);border-color:rgba(227,239,38,0.35);color:var(--orange);font-weight:800;}
+    .prof-cal-cell.prof-today{border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.60);}
+    .prof-cal-cell.prof-today.prof-avail{border-color:var(--orange);}
+    .prof-cal-cell.prof-past{color:rgba(255,255,255,0.12);}
+    .prof-cal-empty{aspect-ratio:1;}
+    .prof-cal-legend{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:0.72rem;color:rgba(255,255,255,0.40);}
+    .prof-cal-legend-dot{width:10px;height:10px;border-radius:3px;background:rgba(227,239,38,0.25);border:1px solid rgba(227,239,38,0.5);flex-shrink:0;}
+    .no-schedule{font-size:0.85rem;color:rgba(255,255,255,0.40);font-style:italic;}
 
     /* ── Dishes list ── */
     .dishes-text{font-size:0.92rem;color:rgba(255,255,255,0.80);line-height:1.7;white-space:pre-line;}
@@ -181,7 +197,19 @@
   <!-- Cooking schedule -->
   <div class="info-card" id="prof-schedule-card" style="display:none;">
     <h3>🗓️ Cooking schedule</h3>
-    <div class="schedule-list" id="prof-schedule"></div>
+    <!-- Meal time chips -->
+    <div class="meal-chips" id="prof-meal-chips"></div>
+    <!-- Calendar showing available dates -->
+    <div class="prof-cal" id="prof-cal">
+      <div class="prof-cal-nav">
+        <button class="prof-cal-nav-btn" type="button" onclick="profCalPrev()">&#8249;</button>
+        <span class="prof-cal-month" id="prof-cal-month">–</span>
+        <button class="prof-cal-nav-btn" type="button" onclick="profCalNext()">&#8250;</button>
+      </div>
+      <div class="prof-cal-grid" id="prof-cal-grid"></div>
+      <div class="prof-cal-legend"><div class="prof-cal-legend-dot"></div> Available for pickup</div>
+    </div>
+    <div class="no-schedule" id="prof-no-schedule" style="display:none;">No specific dates set — contact the cook to check availability.</div>
   </div>
 
   <!-- Dietary info -->
@@ -331,15 +359,39 @@
       show('prof-dishes-card');
     }
 
-    // Schedule
-    if (data.schedule && data.schedule.length) {
-      const list = document.getElementById('prof-schedule');
+    // Schedule: meal times + available dates
+    const mealTimes      = data.mealTimes || [];
+    const availableDates = data.availableDates || [];
+
+    // Fallback: old `schedule` field if new fields not yet saved
+    if (!mealTimes.length && !availableDates.length && data.schedule && data.schedule.length) {
+      const mealChipsWrap = document.getElementById('prof-meal-chips');
       data.schedule.forEach(s => {
-        const item = document.createElement('div');
-        item.className = 'sch-item';
-        item.innerHTML = '<div class="sch-dot"></div><span>' + escHtml(s) + '</span>';
-        list.appendChild(item);
+        const ch = document.createElement('span');
+        ch.className = 'meal-chip';
+        ch.textContent = s;
+        mealChipsWrap.appendChild(ch);
       });
+      show('prof-schedule-card');
+      document.getElementById('prof-cal').style.display = 'none';
+    } else if (mealTimes.length || availableDates.length) {
+      const mealChipsWrap = document.getElementById('prof-meal-chips');
+      mealTimes.forEach(m => {
+        const ch = document.createElement('span');
+        ch.className = 'meal-chip';
+        ch.textContent = m;
+        mealChipsWrap.appendChild(ch);
+      });
+      if (!mealTimes.length) mealChipsWrap.style.display = 'none';
+
+      if (availableDates.length) {
+        // Store dates globally for calendar nav
+        window._profDates = new Set(availableDates);
+        profCalRender();
+      } else {
+        document.getElementById('prof-cal').style.display = 'none';
+        document.getElementById('prof-no-schedule').style.display = 'block';
+      }
       show('prof-schedule-card');
     }
 
@@ -381,6 +433,72 @@
   function escHtml(s) {
     return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
+
+  // Profile calendar state
+  window._profCalView = (function(){ var d = new Date(); d.setDate(1); return d; })();
+  window._profDates   = new Set();
+
+  const _PROF_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const _PROF_DAYS   = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+  window.profCalRender = function() {
+    const year  = _profCalView.getFullYear();
+    const month = _profCalView.getMonth();
+
+    const lbl = document.getElementById('prof-cal-month');
+    if (lbl) lbl.textContent = _PROF_MONTHS[month] + ' ' + year;
+
+    const grid = document.getElementById('prof-cal-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    // Day headers
+    _PROF_DAYS.forEach(d => {
+      const hdr = document.createElement('div');
+      hdr.className = 'prof-cal-hdr';
+      hdr.textContent = d;
+      grid.appendChild(hdr);
+    });
+
+    const today = new Date(); today.setHours(0,0,0,0);
+    const firstDow    = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // Empty leading cells
+    for (let i = 0; i < firstDow; i++) {
+      const e = document.createElement('div');
+      e.className = 'prof-cal-empty';
+      grid.appendChild(e);
+    }
+
+    // Date cells
+    for (let day = 1; day <= daysInMonth; day++) {
+      const cellDate = new Date(year, month, day);
+      const mm  = String(month + 1).padStart(2, '0');
+      const dd  = String(day).padStart(2, '0');
+      const ds  = year + '-' + mm + '-' + dd;
+
+      const cell = document.createElement('div');
+      cell.className = 'prof-cal-cell';
+      cell.textContent = day;
+
+      if (cellDate < today)              cell.classList.add('prof-past');
+      if (cellDate.getTime() === today.getTime()) cell.classList.add('prof-today');
+      if (_profDates.has(ds))            cell.classList.add('prof-avail');
+
+      grid.appendChild(cell);
+    }
+  };
+
+  window.profCalPrev = function() {
+    _profCalView.setMonth(_profCalView.getMonth() - 1);
+    profCalRender();
+  };
+
+  window.profCalNext = function() {
+    _profCalView.setMonth(_profCalView.getMonth() + 1);
+    profCalRender();
+  };
 
   loadProfile();
 </script>
