@@ -635,8 +635,10 @@
     getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut,
     createUserWithEmailAndPassword, updateProfile, sendEmailVerification
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, serverTimestamp }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import {
+    initializeFirestore, persistentLocalCache,
+    doc, setDoc, getDoc, serverTimestamp, waitForPendingWrites
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC3ynPUHYnPQ9msdLJNB5l-gM--CogrXAQ",
@@ -649,7 +651,16 @@
 
   const app  = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  const db   = getFirestore(app);
+  // Offline persistence: writes go to local cache immediately, sync to server in background
+  let db;
+  try {
+    db = initializeFirestore(app, { localCache: persistentLocalCache() });
+  } catch (e) {
+    // Fallback (e.g. private browsing / IndexedDB unavailable)
+    const { getFirestore } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    db = getFirestore(app);
+    console.warn('Firestore persistence unavailable, using in-memory:', e.message);
+  }
   const provider = new GoogleAuthProvider();
 
   // Sign out
@@ -899,22 +910,27 @@
 
       console.log('[submitProfile] writing to Firestore cooks/' + uid + '…');
 
-      // Race the Firestore write against a 12-second timeout
-      await Promise.race([
-        setDoc(doc(db, 'cooks', uid), data, { merge: true }),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error(
-            'Save timed out after 12 s. Check your internet connection and Firestore rules, then try again.'
-          )), 12000)
-        )
-      ]);
+      // setDoc with offline persistence resolves immediately from local cache
+      await setDoc(doc(db, 'cooks', uid), data, { merge: true });
+      console.log('[submitProfile] ✅ Written to local cache — waiting for server sync…');
 
-      console.log('[submitProfile] ✅ Saved successfully');
-
-      // Wire "View live profile" link then show success screen
+      // Wire "View live profile" link and go to success screen NOW
       const profileLink = document.getElementById('cook-profile-link');
       if (profileLink) profileLink.href = 'cook-profile.html?uid=' + uid;
       goToStep(8);
+
+      // Wait in the background for the server to confirm (max 15 s)
+      try {
+        await Promise.race([
+          waitForPendingWrites(db),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 15000))
+        ]);
+        console.log('[submitProfile] ✅ Server confirmed write');
+      } catch (syncErr) {
+        // Not fatal — persistence queued it; will sync when Firestore is reachable
+        console.warn('[submitProfile] Server sync pending (will retry automatically):', syncErr.message);
+        fbToast('⏳ Profile saved! Data is syncing — check your Firestore security rules if your profile doesn\'t appear.', 7000);
+      }
 
     } catch (err) {
       console.error('[submitProfile] ❌ error:', err);
@@ -1023,16 +1039,35 @@
     set('rv-phone',        phone);
     set('rv-neighborhood', neighborhood);
     const mealTimes = [...document.querySelectorAll('#mealTimeChips .chip.selected')].map(c => c.textContent.trim());
-    const datesArr  = Array.from(_selectedDates).sort();
-    let scheduleText = '';
-    if (mealTimes.length) scheduleText += mealTimes.join(', ');
-    if (datesArr.length) {
-      if (scheduleText) scheduleText += ' · ';
-      scheduleText += datesArr.length + ' date' + (datesArr.length > 1 ? 's' : '') + ' selected';
+    const datesArr  = Array.from(window._selectedDates || []).sort();
+
+    // Format dates as human-readable (e.g. "Mon 21 Apr")
+    function fmtDate(ds) {
+      const p = ds.split('-');
+      const d = new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2]));
+      return d.toLocaleDateString('en-SG', { weekday:'short', day:'numeric', month:'short' });
     }
+
+    // Build schedule text
+    let scheduleText = mealTimes.length ? mealTimes.join(', ') : '';
+    if (datesArr.length) {
+      const dateLabels = datesArr.map(fmtDate);
+      // Show first 4, then "+N more"
+      const shown = dateLabels.slice(0, 4).join(', ');
+      const extra = dateLabels.length > 4 ? (' +' + (dateLabels.length - 4) + ' more') : '';
+      if (scheduleText) scheduleText += '\n';
+      scheduleText += dateLabels.length + ' date' + (dateLabels.length > 1 ? 's' : '') + ': ' + shown + extra;
+    }
+
     set('rv-categories',   cats.length ? cats.join(', ') : '—');
     set('rv-price',        price !== '—' ? price + ' per portion' : '—');
-    set('rv-schedule',     scheduleText || '—');
+
+    // Schedule: use pre element to preserve newline
+    const rvSch = document.getElementById('rv-schedule');
+    if (rvSch) {
+      rvSch.style.whiteSpace = 'pre-line';
+      rvSch.textContent = scheduleText || '—';
+    }
     set('rv-photos',       photoText);
   }
 
