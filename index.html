@@ -563,67 +563,18 @@
       <button class="pill">🍱 Bento</button>
       <button class="pill">🍰 Desserts</button>
     </div>
-    <div class="food-grid fade-up">
-      <div class="food-card">
-        <div class="food-card__img">
-          <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&h=340&fit=crop&q=80" alt="Chicken Biryani" loading="lazy" />
-          <div class="food-card__dist">📍 0.3 km</div>
-          <div class="food-card__badge">3 left</div>
-        </div>
-        <div class="food-card__body">
-          <div class="food-card__name">Chicken Biryani</div>
-          <div class="food-card__cook">👩 Auntie Siti · Tampines</div>
-          <div class="food-card__footer">
-            <div><div class="food-card__price">$5</div><div class="food-card__portions">per portion</div></div>
-            <button class="food-card__btn">+</button>
-          </div>
-        </div>
-      </div>
-      <div class="food-card">
-        <div class="food-card__img">
-          <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&h=340&fit=crop&q=80" alt="Prawn Mee Soup" loading="lazy" />
-          <div class="food-card__dist">📍 0.5 km</div>
-          <div class="food-card__badge">5 left</div>
-        </div>
-        <div class="food-card__body">
-          <div class="food-card__name">Prawn Mee Soup</div>
-          <div class="food-card__cook">👨 Uncle Tan · Bedok</div>
-          <div class="food-card__footer">
-            <div><div class="food-card__price">$4</div><div class="food-card__portions">per portion</div></div>
-            <button class="food-card__btn">+</button>
-          </div>
-        </div>
-      </div>
-      <div class="food-card">
-        <div class="food-card__img">
-          <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=340&fit=crop&q=80" alt="Beef Rendang" loading="lazy" />
-          <div class="food-card__dist">📍 0.8 km</div>
-          <div class="food-card__badge">2 left</div>
-        </div>
-        <div class="food-card__body">
-          <div class="food-card__name">Beef Rendang &amp; Rice</div>
-          <div class="food-card__cook">👵 Mdm Lim · Pasir Ris</div>
-          <div class="food-card__footer">
-            <div><div class="food-card__price">$6</div><div class="food-card__portions">per portion</div></div>
-            <button class="food-card__btn">+</button>
-          </div>
-        </div>
-      </div>
-      <div class="food-card">
-        <div class="food-card__img">
-          <img src="https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=600&h=340&fit=crop&q=80" alt="Japanese Bento Box" loading="lazy" />
-          <div class="food-card__dist">📍 0.6 km</div>
-          <div class="food-card__badge">4 left</div>
-        </div>
-        <div class="food-card__body">
-          <div class="food-card__name">Japanese Bento Box</div>
-          <div class="food-card__cook">🧑 Kenji · Hougang</div>
-          <div class="food-card__footer">
-            <div><div class="food-card__price">$7</div><div class="food-card__portions">per portion</div></div>
-            <button class="food-card__btn">+</button>
-          </div>
-        </div>
-      </div>
+    <div class="food-grid fade-up" id="food-grid">
+      <!-- Skeleton loaders shown while Firestore loads -->
+      <div class="food-card food-skeleton"><div class="food-card__img" style="background:rgba(255,255,255,0.06);"></div><div class="food-card__body"><div style="height:14px;background:rgba(255,255,255,0.08);border-radius:6px;margin-bottom:10px;"></div><div style="height:10px;background:rgba(255,255,255,0.05);border-radius:6px;width:60%;"></div></div></div>
+      <div class="food-card food-skeleton"><div class="food-card__img" style="background:rgba(255,255,255,0.06);"></div><div class="food-card__body"><div style="height:14px;background:rgba(255,255,255,0.08);border-radius:6px;margin-bottom:10px;"></div><div style="height:10px;background:rgba(255,255,255,0.05);border-radius:6px;width:60%;"></div></div></div>
+      <div class="food-card food-skeleton"><div class="food-card__img" style="background:rgba(255,255,255,0.06);"></div><div class="food-card__body"><div style="height:14px;background:rgba(255,255,255,0.08);border-radius:6px;margin-bottom:10px;"></div><div style="height:10px;background:rgba(255,255,255,0.05);border-radius:6px;width:60%;"></div></div></div>
+      <div class="food-card food-skeleton"><div class="food-card__img" style="background:rgba(255,255,255,0.06);"></div><div class="food-card__body"><div style="height:14px;background:rgba(255,255,255,0.08);border-radius:6px;margin-bottom:10px;"></div><div style="height:10px;background:rgba(255,255,255,0.05);border-radius:6px;width:60%;"></div></div></div>
+    </div>
+    <!-- Empty state (shown if no dishes yet) -->
+    <div id="food-empty" style="display:none;text-align:center;padding:48px 24px;color:rgba(255,255,255,0.45);">
+      <div style="font-size:2.5rem;margin-bottom:12px;">🍳</div>
+      <div style="font-family:Poppins,sans-serif;font-weight:700;font-size:1.1rem;color:rgba(255,255,255,0.65);margin-bottom:8px;">No listings yet</div>
+      <div style="font-size:0.88rem;">Be the first cook in your neighborhood — <a href="cook-register.html" style="color:var(--orange);text-decoration:none;font-weight:600;">register and list a dish</a></div>
     </div>
   </div>
 </section>
@@ -963,7 +914,94 @@
     });
   });
 </script>
-  <div id="cnd-chatbot"></div>
-  <script src="widget/chatbot.js"></script>
+<!-- Load live dish listings from Firestore -->
+<script type="module">
+  import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    initializeFirestore, persistentLocalCache,
+    collection, query, orderBy, limit, getDocs
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC3ynPUHYnPQ9msdLJNB5l-gM--CogrXAQ",
+    authDomain: "cooknextdoor-eedbe.firebaseapp.com",
+    projectId: "cooknextdoor-eedbe",
+    storageBucket: "cooknextdoor-eedbe.firebasestorage.app",
+    messagingSenderId: "924339275437",
+    appId: "1:924339275437:web:a97a0a2ba0089dd58e824"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  let db;
+  try {
+    db = initializeFirestore(app, { localCache: persistentLocalCache() });
+  } catch(e) {
+    const { getFirestore } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    db = getFirestore(app);
+  }
+
+  // Fallback demo cards shown if Firestore is empty
+  const DEMO = [
+    { dishName:'Chicken Biryani', cookName:'Auntie Siti', neighborhood:'Tampines', price:'$5', portions:'3 portions', imageUrl:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&h=340&fit=crop&q=80', isDemo:true },
+    { dishName:'Prawn Mee Soup',  cookName:'Uncle Tan',   neighborhood:'Bedok',    price:'$4', portions:'5 portions', imageUrl:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&h=340&fit=crop&q=80', isDemo:true },
+    { dishName:'Beef Rendang & Rice', cookName:'Mdm Lim', neighborhood:'Pasir Ris',price:'$6', portions:'2 portions', imageUrl:'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=340&fit=crop&q=80', isDemo:true },
+    { dishName:'Japanese Bento Box',  cookName:'Kenji',   neighborhood:'Hougang',  price:'$7', portions:'4 portions', imageUrl:'https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=600&h=340&fit=crop&q=80', isDemo:true },
+  ];
+
+  function buildCard(d) {
+    const card = document.createElement('div');
+    card.className = 'food-card';
+    const imgSrc = d.imageUrl || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=340&fit=crop&q=80';
+    const badge = d.portions ? '<div class="food-card__badge">' + d.portions.replace(' portions','') + ' left</div>' : '';
+    const demoTag = d.isDemo ? '<div style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.55);color:#fff;font-size:0.6rem;font-family:Poppins,sans-serif;font-weight:700;padding:3px 7px;border-radius:100px;letter-spacing:0.05em;">DEMO</div>' : '';
+    card.innerHTML =
+      '<div class="food-card__img">' +
+        '<img src="' + imgSrc + '" alt="' + d.dishName + '" loading="lazy"/>' +
+        badge + demoTag +
+        '<div class="food-card__dist">📍 ' + (d.neighborhood || 'Nearby') + '</div>' +
+      '</div>' +
+      '<div class="food-card__body">' +
+        '<div class="food-card__name">' + d.dishName + '</div>' +
+        '<div class="food-card__cook">👨‍🍳 ' + (d.cookName || 'Home Cook') + '</div>' +
+        '<div class="food-card__footer">' +
+          '<div><div class="food-card__price">' + (d.price || '–') + '</div><div class="food-card__portions">per portion</div></div>' +
+          '<button class="food-card__btn" onclick="window.location.href=\'cook-register.html\'">+</button>' +
+        '</div>' +
+      '</div>';
+    return card;
+  }
+
+  async function loadDishes() {
+    const grid  = document.getElementById('food-grid');
+    const empty = document.getElementById('food-empty');
+    try {
+      const q    = query(collection(db, 'dishes'), orderBy('createdAt', 'desc'), limit(8));
+      const snap = await getDocs(q);
+
+      grid.innerHTML = ''; // clear skeletons
+
+      if (snap.empty) {
+        // No real dishes yet — show demo cards
+        DEMO.forEach(d => grid.appendChild(buildCard(d)));
+      } else {
+        snap.forEach(doc => grid.appendChild(buildCard(doc.data())));
+        // If fewer than 4 real dishes, pad with demos (clearly marked)
+        if (snap.size < 4) {
+          DEMO.slice(0, 4 - snap.size).forEach(d => grid.appendChild(buildCard(d)));
+        }
+      }
+    } catch(err) {
+      console.warn('Could not load dishes from Firestore:', err.message);
+      // Fallback to demo cards on any error
+      grid.innerHTML = '';
+      DEMO.forEach(d => grid.appendChild(buildCard(d)));
+    }
+  }
+
+  loadDishes();
+</script>
+
+<div id="cnd-chatbot"></div>
+<script src="widget/chatbot.js"></script>
 </body>
 </html>
