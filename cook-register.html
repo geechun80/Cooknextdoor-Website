@@ -531,6 +531,23 @@
     <p class="terms">By submitting you confirm your food is prepared safely and you comply with our <a href="#">Cook Guidelines</a> and <a href="#">Community Standards</a>.</p>
   </div>
 
+  <!-- ALREADY REGISTERED — shown when returning cook has existing profile -->
+  <div class="card hidden" id="cook-existing-card" style="text-align:center;">
+    <div style="font-size:2.8rem;margin-bottom:12px;">👨‍🍳</div>
+    <h2 style="font-size:1.3rem;margin-bottom:6px;">You're already a <span>CookNextDoor Cook!</span></h2>
+    <p class="subtitle" style="margin-bottom:20px;">Your cook profile is live. Neighbors within 1 km can find your food.</p>
+    <div style="background:#F5FAF7;border:1px solid #C3E6CB;border-radius:14px;padding:16px;margin-bottom:20px;text-align:left;">
+      <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:var(--dark);margin-bottom:2px;" id="ex-cook-name">–</div>
+      <div style="font-size:0.8rem;color:var(--muted);" id="ex-cook-email">–</div>
+      <div style="margin-top:8px;font-size:0.78rem;color:#2D6444;font-family:'Poppins',sans-serif;font-weight:600;">✅ Profile active</div>
+    </div>
+    <a href="cook-list-dish.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;margin-bottom:10px;">🍽️ List a new dish →</a>
+    <a href="meetup-guide.html" style="display:block;text-align:center;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;color:var(--orange);text-decoration:none;margin-bottom:16px;">📋 Pickup guide</a>
+    <div style="border-top:1px solid #EBEBEB;padding-top:14px;">
+      <button onclick="cookSignOut()" style="background:none;border:none;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.82rem;color:var(--muted);cursor:pointer;">Sign out</button>
+    </div>
+  </div>
+
   <!-- STEP 8 — Success -->
   <div class="card hidden" id="step-8">
     <div class="success-card">
@@ -578,9 +595,9 @@
 <!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged }
+  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, serverTimestamp }
+  import { getFirestore, doc, setDoc, getDoc, serverTimestamp }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -597,9 +614,33 @@
   const db   = getFirestore(app);
   const provider = new GoogleAuthProvider();
 
-  // Pre-fill from existing session on page load
-  onAuthStateChanged(auth, user => {
-    if (user) prefillFromUser(user, false);
+  // Sign out
+  window.cookSignOut = async function() {
+    await signOut(auth);
+    // Reload page so form resets cleanly
+    window.location.reload();
+  };
+
+  // On page load: check if cook is already registered in Firestore
+  onAuthStateChanged(auth, async user => {
+    if (!user) return;
+
+    // Check if cook profile already exists
+    const cookSnap = await getDoc(doc(db, 'cooks', user.uid));
+    if (cookSnap.exists()) {
+      const data = cookSnap.data();
+      // Show "already registered" panel, hide the registration form
+      document.getElementById('cook-existing-card').classList.remove('hidden');
+      document.querySelector('.progress-header').style.display = 'none';
+      // Hide all step cards
+      document.querySelectorAll('.card:not(#cook-existing-card)').forEach(c => c.classList.add('hidden'));
+      // Populate info
+      document.getElementById('ex-cook-name').textContent  = data.cookName || user.displayName || '–';
+      document.getElementById('ex-cook-email').textContent = data.email    || user.email || '–';
+    } else {
+      // No cook profile yet — pre-fill form fields from auth user
+      prefillFromUser(user, false);
+    }
   });
 
   function prefillFromUser(user, isNewSignIn) {
@@ -681,7 +722,8 @@
         hasChefPhoto:   (document.getElementById('chefThumbs')?.children.length || 0) > 0,
         hasFoodPhotos:  (document.getElementById('foodThumbs')?.children.length || 0) > 0,
         isActive: true,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
       };
 
       await setDoc(doc(db, 'cooks', uid), data, { merge: true });
