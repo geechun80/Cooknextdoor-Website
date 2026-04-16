@@ -637,18 +637,28 @@
     t._tid = setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; }, ms);
   }
 
-  // Step 1 — Create cook account with email + password
+  // Step 1 — Create cook account (email/password) OR advance if already signed in
   window.createCookAccount = async function() {
+    const cookName = document.getElementById('inp-cookname')?.value.trim();
+    if (!cookName) { fbToast('⚠️ Please enter your cook/chef name.'); return; }
+
+    // ── Already authenticated (Google or returning user) ──
+    if (window._cndUid) {
+      // Google users have verified email → go to phone step
+      // Email users who backed up → go back to email verification
+      goToStep(window._cndEmailVerified ? 3 : 2);
+      return;
+    }
+
+    // ── Fresh email/password registration ──
     const first  = document.getElementById('inp-firstname')?.value.trim();
     const last   = document.getElementById('inp-lastname')?.value.trim();
     const email  = document.getElementById('inp-email')?.value.trim();
     const pw     = document.getElementById('cookPw')?.value;
-    const cookName = document.getElementById('inp-cookname')?.value.trim();
 
-    if (!first)                     { fbToast('⚠️ Please enter your first name.'); return; }
+    if (!first)                         { fbToast('⚠️ Please enter your first name.'); return; }
     if (!email || !email.includes('@')) { fbToast('⚠️ Please enter a valid email address.'); return; }
-    if (!pw || pw.length < 8)       { fbToast('⚠️ Password must be at least 8 characters.'); return; }
-    if (!cookName)                  { fbToast('⚠️ Please enter your cook/chef name.'); return; }
+    if (!pw || pw.length < 8)           { fbToast('⚠️ Password must be at least 8 characters.'); return; }
 
     const btn = document.querySelector('#step-1 .btn-primary');
     btn.disabled = true; btn.textContent = 'Creating account…';
@@ -664,13 +674,12 @@
       }, { merge: true });
       window._cndUid = cred.user.uid;
       window._cndEmailVerified = false;
-      // Show verified email address in step 2
       const display = document.getElementById('verify-email-display');
       if (display) display.textContent = email;
       goToStep(2);
     } catch (err) {
       const msgs = {
-        'auth/email-already-in-use': '⚠️ An account with that email already exists. Please sign in.',
+        'auth/email-already-in-use': '⚠️ An account with that email already exists. Please sign in instead.',
         'auth/invalid-email':        '⚠️ That email address doesn\'t look right.',
         'auth/weak-password':        '⚠️ Password is too weak — use 8+ characters.',
       };
