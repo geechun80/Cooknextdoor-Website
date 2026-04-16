@@ -818,68 +818,111 @@
   };
 
   window.submitProfile = async function() {
-    const el = (id) => document.getElementById(id);
+    const el  = (id) => document.getElementById(id);
     const btn = document.querySelector('#step-7 .btn-primary');
 
-    // Always use live auth.currentUser — never rely solely on window._cndUid
+    // Inline error panel inside step-7 so errors are always visible
+    function showSaveError(msg) {
+      let panel = document.getElementById('save-error-panel');
+      if (!panel) {
+        panel = document.createElement('div');
+        panel.id = 'save-error-panel';
+        panel.style.cssText = 'background:#FFF0F0;border:2px solid #F87171;border-radius:12px;padding:14px 16px;margin-top:12px;font-size:0.84rem;color:#991B1B;font-family:Inter,sans-serif;line-height:1.5;';
+        const actions = document.querySelector('#step-7 .btn-actions');
+        if (actions) actions.after(panel);
+        else document.getElementById('step-7').appendChild(panel);
+      }
+      panel.innerHTML = '<strong>❌ Save failed</strong><br>' + msg;
+      panel.style.display = 'block';
+    }
+    function hideSaveError() {
+      const p = document.getElementById('save-error-panel');
+      if (p) p.style.display = 'none';
+    }
+
+    function resetBtn() {
+      if (btn) { btn.disabled = false; btn.textContent = 'Submit & Go Live! 🚀'; }
+    }
+
+    // Auth check
     const user = auth.currentUser;
     if (!user) {
-      fbToast('⚠️ Session expired. Please go back to step 1 and sign in again.');
+      showSaveError('Your session expired. Please go back to Step 1 and sign in again.');
       return;
     }
 
-    btn.disabled = true;
-    btn.textContent = 'Saving…';
+    hideSaveError();
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
 
     try {
       const uid = user.uid;
+      console.log('[submitProfile] uid =', uid);
+
+      // Collect form data
       const categories     = [...document.querySelectorAll('#categoryChips .chip.selected')].map(c => c.textContent.trim());
       const dietary        = [...document.querySelectorAll('#step-5 .chip-grid .chip.selected')].filter(c => !c.closest('#categoryChips') && !c.closest('#mealTimeChips')).map(c => c.textContent.trim());
       const mealTimes      = [...document.querySelectorAll('#mealTimeChips .chip.selected')].map(c => c.textContent.trim());
       const availableDates = Array.from(window._selectedDates || []).sort();
-      const priceEl    = document.querySelector('.price-opt.selected .price-opt__range');
-      const isCustomPrice = priceEl?.textContent.trim() === 'Custom';
-
-      const prefix = el('inp-phone-prefix') ? el('inp-phone-prefix').value.replace(/[^+\d]/g,'') : '+65';
-      const phone  = (prefix + ' ' + (el('inp-phone-number')?.value || '')).trim();
+      const priceEl        = document.querySelector('.price-opt.selected .price-opt__range');
+      const isCustomPrice  = priceEl?.textContent.trim() === 'Custom';
+      const prefix         = el('inp-phone-prefix') ? el('inp-phone-prefix').value.replace(/[^+\d]/g,'') : '+65';
+      const phone          = (prefix + ' ' + (el('inp-phone-number')?.value || '')).trim();
 
       const data = {
         uid,
-        cookName:       el('inp-cookname')?.value || '',
-        email:          user.email || el('inp-email')?.value || '',
+        cookName:           el('inp-cookname')?.value || '',
+        email:              user.email || el('inp-email')?.value || '',
         phone,
-        block:          el('inp-block')?.value || '',
-        street:         el('inp-street')?.value || '',
-        postal:         el('inp-postal')?.value || '',
-        neighborhood:   el('inp-neighborhood')?.value || '',
+        block:              el('inp-block')?.value || '',
+        street:             el('inp-street')?.value || '',
+        postal:             el('inp-postal')?.value || '',
+        neighborhood:       el('inp-neighborhood')?.value || '',
         pickupInstructions: el('inp-pickup')?.value || '',
         categories,
         dietary,
         mealTimes,
         availableDates,
-        dishes:         el('inp-dishes')?.value || '',
-        portions:       el('inp-portions')?.value || '',
-        priceRange:     isCustomPrice
-                          ? (el('inp-custom-price')?.value.trim() || 'Custom')
-                          : (priceEl ? priceEl.textContent.trim() : ''),
-        description:    el('inp-description')?.value || '',
-        hasChefPhoto:   (document.getElementById('chefThumbs')?.children.length || 0) > 0,
-        hasFoodPhotos:  (document.getElementById('foodThumbs')?.children.length || 0) > 0,
-        isActive: true,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
+        dishes:             el('inp-dishes')?.value || '',
+        portions:           el('inp-portions')?.value || '',
+        priceRange:         isCustomPrice
+                              ? (el('inp-custom-price')?.value.trim() || 'Custom')
+                              : (priceEl ? priceEl.textContent.trim() : ''),
+        description:        el('inp-description')?.value || '',
+        hasChefPhoto:       (document.getElementById('chefThumbs')?.children.length || 0) > 0,
+        hasFoodPhotos:      (document.getElementById('foodThumbs')?.children.length || 0) > 0,
+        isActive:           true,
+        updatedAt:          serverTimestamp(),
       };
+      // Only set createdAt on first save (merge won't overwrite existing value
+      // but serverTimestamp on merge still overwrites — use conditional)
+      data.createdAt = serverTimestamp();
 
-      await setDoc(doc(db, 'cooks', uid), data, { merge: true });
-      // Wire the "View your live profile" button before showing step-8
+      console.log('[submitProfile] writing to Firestore cooks/' + uid + '…');
+
+      // Race the Firestore write against a 12-second timeout
+      await Promise.race([
+        setDoc(doc(db, 'cooks', uid), data, { merge: true }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error(
+            'Save timed out after 12 s. Check your internet connection and Firestore rules, then try again.'
+          )), 12000)
+        )
+      ]);
+
+      console.log('[submitProfile] ✅ Saved successfully');
+
+      // Wire "View live profile" link then show success screen
       const profileLink = document.getElementById('cook-profile-link');
       if (profileLink) profileLink.href = 'cook-profile.html?uid=' + uid;
       goToStep(8);
+
     } catch (err) {
-      console.error('submitProfile error:', err);
-      fbToast('⚠️ Could not save profile: ' + (err.message || 'Unknown error. Check console.'));
-      btn.disabled = false;
-      btn.textContent = 'Submit & Go Live! 🚀';
+      console.error('[submitProfile] ❌ error:', err);
+      const msg = err.code === 'permission-denied'
+        ? 'Firestore permission denied. Please check your Firebase security rules allow authenticated users to write to the <code>cooks</code> collection.'
+        : (err.message || 'Unknown error — open DevTools → Console for details.');
+      showSaveError(msg);
+      resetBtn();
     }
   };
 </script>
