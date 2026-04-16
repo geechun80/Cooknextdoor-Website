@@ -308,7 +308,8 @@
     <div class="form-row">
       <div class="form-group">
         <label>Postal code</label>
-        <input id="inp-postal" class="form-control" type="text" placeholder="e.g. 520123"/>
+        <input id="inp-postal" class="form-control" type="text" placeholder="e.g. 520123" maxlength="6" oninput="onPostalInput(this.value)"/>
+        <div class="helper" id="postal-status"></div>
       </div>
       <div class="form-group">
         <label>Neighborhood / Town</label>
@@ -776,7 +777,7 @@
       const result = await signInWithPopup(auth, provider);
       prefillFromUser(result.user, true);
     } catch (err) {
-      alert('Google sign-in failed: ' + (err.message || err));
+      fbToast('⚠️ Google sign-in failed. Please try again.');
       console.error(err);
     }
   };
@@ -784,11 +785,19 @@
   window.submitProfile = async function() {
     const el = (id) => document.getElementById(id);
     const btn = document.querySelector('#step-7 .btn-primary');
+
+    // Always use live auth.currentUser — never rely solely on window._cndUid
+    const user = auth.currentUser;
+    if (!user) {
+      fbToast('⚠️ Session expired. Please go back to step 1 and sign in again.');
+      return;
+    }
+
     btn.disabled = true;
     btn.textContent = 'Saving…';
 
     try {
-      const uid = window._cndUid || ('guest_' + Date.now());
+      const uid = user.uid;
       const categories = [...document.querySelectorAll('#categoryChips .chip.selected')].map(c => c.textContent.trim());
       const dietary    = [...document.querySelectorAll('#step-5 .chip-grid:last-of-type .chip.selected')].map(c => c.textContent.trim());
       const days       = [...document.querySelectorAll('.day-chip.selected')].map(c => c.textContent.trim());
@@ -796,13 +805,13 @@
       const isCustomPrice = priceEl?.textContent.trim() === 'Custom';
 
       const prefix = el('inp-phone-prefix') ? el('inp-phone-prefix').value.replace(/[^+\d]/g,'') : '+65';
-      const phone  = prefix + ' ' + (el('inp-phone-number')?.value || '');
+      const phone  = (prefix + ' ' + (el('inp-phone-number')?.value || '')).trim();
 
       const data = {
         uid,
         cookName:       el('inp-cookname')?.value || '',
-        email:          el('inp-email')?.value || '',
-        phone:          phone.trim(),
+        email:          user.email || el('inp-email')?.value || '',
+        phone,
         block:          el('inp-block')?.value || '',
         street:         el('inp-street')?.value || '',
         postal:         el('inp-postal')?.value || '',
@@ -827,8 +836,8 @@
       await setDoc(doc(db, 'cooks', uid), data, { merge: true });
       goToStep(8);
     } catch (err) {
-      alert('Failed to save profile: ' + (err.message || err));
-      console.error(err);
+      console.error('submitProfile error:', err);
+      fbToast('⚠️ Could not save profile: ' + (err.message || 'Unknown error. Check console.'));
       btn.disabled = false;
       btn.textContent = 'Submit & Go Live! 🚀';
     }
@@ -979,6 +988,57 @@
     el.classList.add('filled');
     const inputs = el.closest('.otp-row').querySelectorAll('.otp-input');
     if (el.value && idx < inputs.length - 1) inputs[idx + 1].focus();
+  }
+
+  // Singapore neighborhood keyword map for auto-select
+  const AREA_MAP = [
+    ['TAMPINES','Tampines'],['BEDOK','Bedok'],['PASIR RIS','Pasir Ris'],['CHANGI','Changi'],
+    ['JURONG','Jurong'],['CLEMENTI','Clementi'],['BUONA VISTA','Buona Vista'],['BUKIT BATOK','Bukit Batok'],['CHOA CHU KANG','Choa Chu Kang'],
+    ['WOODLANDS','Woodlands'],['YISHUN','Yishun'],['SEMBAWANG','Sembawang'],['ADMIRALTY','Admiralty'],
+    ['HOUGANG','Hougang'],['SENGKANG','Sengkang'],['PUNGGOL','Punggol'],['ANG MO KIO','Ang Mo Kio'],['SERANGOON','Serangoon'],
+    ['TOA PAYOH','Toa Payoh'],['BISHAN','Bishan'],['BUKIT TIMAH','Bukit Timah'],['QUEENSTOWN','Queenstown'],['NOVENA','Novena'],
+  ];
+
+  let _postalTimer = null;
+  function onPostalInput(v) {
+    const status = document.getElementById('postal-status');
+    clearTimeout(_postalTimer);
+    if (v.length < 6) { if (status) status.textContent = ''; return; }
+    if (status) status.textContent = '🔍 Looking up address…';
+    _postalTimer = setTimeout(() => lookupPostal(v), 400);
+  }
+
+  async function lookupPostal(postal) {
+    const status = document.getElementById('postal-status');
+    try {
+      const res  = await fetch('https://www.onemap.gov.sg/api/common/elastic/search?searchVal=' + postal + '&returnGeom=N&getAddrDetails=Y&pageNum=1');
+      const json = await res.json();
+      if (!json.results || json.results.length === 0) {
+        if (status) status.textContent = '⚠️ Postal code not found. Please fill in manually.';
+        return;
+      }
+      const r = json.results[0];
+      const blockEl  = document.getElementById('inp-block');
+      const streetEl = document.getElementById('inp-street');
+      if (blockEl)  blockEl.value  = r.BLK_NO ? 'Blk ' + r.BLK_NO : (blockEl.value || '');
+      if (streetEl) streetEl.value = r.ROAD_NAME || '';
+      const addr = (r.ROAD_NAME + ' ' + (r.ADDRESS || '')).toUpperCase();
+      const sel  = document.getElementById('inp-neighborhood');
+      if (sel && !sel.value) {
+        for (const [key, label] of AREA_MAP) {
+          if (addr.includes(key)) {
+            for (const opt of sel.options) {
+              if (opt.text === label) { sel.value = opt.value || label; break; }
+            }
+            break;
+          }
+        }
+      }
+      if (status) status.textContent = '✅ Address filled — please add your unit number above.';
+    } catch (e) {
+      if (status) status.textContent = '⚠️ Could not look up address. Please fill in manually.';
+      console.warn('Postal lookup error:', e);
+    }
   }
 
 function addThumb(input, containerId) {
