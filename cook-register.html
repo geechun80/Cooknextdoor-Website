@@ -836,7 +836,7 @@
       const categories     = [...document.querySelectorAll('#categoryChips .chip.selected')].map(c => c.textContent.trim());
       const dietary        = [...document.querySelectorAll('#step-5 .chip-grid .chip.selected')].filter(c => !c.closest('#categoryChips') && !c.closest('#mealTimeChips')).map(c => c.textContent.trim());
       const mealTimes      = [...document.querySelectorAll('#mealTimeChips .chip.selected')].map(c => c.textContent.trim());
-      const availableDates = Array.from(_selectedDates).sort();
+      const availableDates = Array.from(window._selectedDates || []).sort();
       const priceEl    = document.querySelector('.price-opt.selected .price-opt__range');
       const isCustomPrice = priceEl?.textContent.trim() === 'Custom';
 
