@@ -298,7 +298,7 @@
     <div class="form-row">
       <div class="form-group">
         <label>Price per portion</label>
-        <select class="form-control">
+        <select class="form-control" id="inp-price">
           <option value="">Select...</option>
           <option>$3</option><option>$4</option><option>$5</option><option>$6</option>
           <option>$7</option><option>$8</option><option>$10</option><option>$12</option>
@@ -307,7 +307,7 @@
       </div>
       <div class="form-group">
         <label>Portions available today</label>
-        <select class="form-control">
+        <select class="form-control" id="inp-portions">
           <option value="">Select...</option>
           <option>1 portion</option>
           <option>2 portions</option>
@@ -322,7 +322,7 @@
     <!-- Pickup time -->
     <div class="form-group">
       <label>Ready for pickup by</label>
-      <input class="form-control" type="time" value="12:00"/>
+      <input class="form-control" id="inp-pickup-time" type="time" value="12:00"/>
       <div class="helper">Buyers within 1 km will see this time on your listing.</div>
     </div>
 
@@ -345,7 +345,7 @@
     <!-- Short description -->
     <div class="form-group">
       <label>Short description <span class="opt">what makes your version special?</span></label>
-      <textarea class="form-control" placeholder="e.g. My grandmother's secret sambal recipe — slow-cooked for 2 hours with fresh lemongrass and coconut milk. Spicy but not overwhelming!"></textarea>
+      <textarea class="form-control" id="inp-description" placeholder="e.g. My grandmother's secret sambal recipe — slow-cooked for 2 hours with fresh lemongrass and coconut milk. Spicy but not overwhelming!"></textarea>
     </div>
 
     <div class="btn-actions">
@@ -494,9 +494,10 @@ Tips:
     </div>
 
     <div class="btn-actions" style="margin-top:8px;">
-      <button class="btn-primary" onclick="nextStep(3)">Publish listing 🚀</button>
+      <button class="btn-primary" id="publish-btn" onclick="publishDish()">Publish listing 🚀</button>
       <button class="btn-secondary" onclick="prevStep(3)">← Edit details</button>
     </div>
+    <div id="publish-error" style="display:none;background:#FFF0F0;border:2px solid #F87171;border-radius:12px;padding:12px 16px;margin-top:12px;font-size:0.83rem;color:#991B1B;"></div>
     <p class="terms">By publishing you confirm this food is freshly prepared and safe. You agree to our <a href="#">Cook Guidelines</a> and <a href="#">Community Standards</a>.</p>
   </div>
 
@@ -537,7 +538,8 @@ Tips:
         </div>
       </div>
       <div class="action-links">
-        <a href="cook-list-dish.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;">+ List another dish</a>
+        <a href="index.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;">🏠 See it on the home page</a>
+        <a href="cook-list-dish.html" class="link-plain">+ List another dish</a>
         <a href="meetup-guide.html" class="link-plain">📋 Read the pickup guide</a>
         <a href="index.html" class="link-plain" style="color:rgba(0,0,0,0.35);">← Back to home</a>
       </div>
@@ -579,7 +581,8 @@ const FOOD_LIBRARY = [
   {name:'Quinoa Power Bowl',   img:'https://upload.wikimedia.org/wikipedia/commons/e/ed/Vegan_Quinoa_Bowl_%2844040185371%29.jpg',                                                                                                                                                    tag:'Healthy'},
 ];
 
-let selectedLibItem = null;
+window.selectedLibItem = null;
+let selectedLibItem = null; // keep local alias for existing code
 let currentFilter   = 'All';
 
 /* ── Build library grid ── */
@@ -607,7 +610,7 @@ function filterLib(tagEl, tag) {
 function selectLibItem(food, el) {
   document.querySelectorAll('.lib-item').forEach(i => i.classList.remove('selected'));
   el.classList.add('selected');
-  selectedLibItem = food;
+  selectedLibItem = food; window.selectedLibItem = food;
   document.getElementById('previewImg').src    = food.img;
   document.getElementById('previewName').textContent = food.name;
   document.getElementById('previewTag').textContent  = food.tag;
@@ -618,7 +621,7 @@ function selectLibItem(food, el) {
 }
 
 function clearSelection() {
-  selectedLibItem = null;
+  selectedLibItem = null; window.selectedLibItem = null;
   document.getElementById('selectedPreview').classList.remove('visible');
   document.querySelectorAll('.lib-item').forEach(i => i.classList.remove('selected'));
 }
@@ -746,7 +749,123 @@ function updateProgress(step) {
 /* ── Init ── */
 buildLibGrid('All');
 </script>
-  <div id="cnd-chatbot"></div>
-  <script src="widget/chatbot.js"></script>
+<!-- Firebase — save dish to Firestore -->
+<script type="module">
+  import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    initializeFirestore, persistentLocalCache,
+    collection, addDoc, doc, getDoc, serverTimestamp, waitForPendingWrites
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC3ynPUHYnPQ9msdLJNB5l-gM--CogrXAQ",
+    authDomain: "cooknextdoor-eedbe.firebaseapp.com",
+    projectId: "cooknextdoor-eedbe",
+    storageBucket: "cooknextdoor-eedbe.firebasestorage.app",
+    messagingSenderId: "924339275437",
+    appId: "1:924339275437:web:a97a0a2ba0089dd58e824"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  let db;
+  try {
+    db = initializeFirestore(app, { localCache: persistentLocalCache() });
+  } catch(e) {
+    const { getFirestore } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    db = getFirestore(app);
+  }
+
+  // Load cook profile for this user on page load
+  let _cookProfile = null;
+  onAuthStateChanged(auth, async user => {
+    if (!user) return; // not logged in — still usable but won't have cook name
+    try {
+      const snap = await getDoc(doc(db, 'cooks', user.uid));
+      if (snap.exists()) _cookProfile = snap.data();
+    } catch(e) { console.warn('Could not load cook profile:', e.message); }
+  });
+
+  window.publishDish = async function() {
+    const btn   = document.getElementById('publish-btn');
+    const errEl = document.getElementById('publish-error');
+    errEl.style.display = 'none';
+
+    const user = auth.currentUser;
+    if (!user) {
+      errEl.textContent = '❌ You need to be signed in to publish. Please register or sign in first.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Publishing…';
+
+    try {
+      // Collect form values
+      const dishName    = document.getElementById('dishNameInput')?.value.trim() || '';
+      const price       = document.getElementById('inp-price')?.value || '';
+      const portions    = document.getElementById('inp-portions')?.value || '';
+      const pickupTime  = document.getElementById('inp-pickup-time')?.value || '';
+      const description = document.getElementById('inp-description')?.value.trim() || '';
+      const dietary     = [...document.querySelectorAll('#step-1 .chip.selected')].map(c => c.textContent.trim());
+      const youtubeUrl  = document.getElementById('ytInput')?.value.trim() || '';
+      const visibility  = document.getElementById('visPaid')?.classList.contains('selected') ? 'paid' : 'free';
+
+      // Extract YouTube video ID
+      let youtubeId = null;
+      const ytMatch = youtubeUrl.match(/(?:v=|\/shorts\/|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+      if (ytMatch) youtubeId = ytMatch[1];
+
+      // Image URL — use library image if selected, else null
+      const libImg = window.selectedLibItem ? window.selectedLibItem.img : null;
+
+      if (!dishName) {
+        errEl.textContent = '❌ Please enter a dish name.';
+        errEl.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Publish listing 🚀';
+        return;
+      }
+
+      const data = {
+        cookUid:      user.uid,
+        cookName:     _cookProfile?.cookName || user.displayName || 'Neighborhood Cook',
+        neighborhood: _cookProfile?.neighborhood || '',
+        email:        user.email || '',
+        dishName,
+        price,
+        portions,
+        pickupTime,
+        description,
+        dietary,
+        youtubeId,
+        imageUrl:     libImg,
+        recipeVisibility: visibility,
+        isActive:     true,
+        createdAt:    serverTimestamp(),
+      };
+
+      console.log('[publishDish] saving dish:', dishName);
+      const docRef = await addDoc(collection(db, 'dishes'), data);
+      console.log('[publishDish] ✅ saved as dishes/' + docRef.id);
+
+      // Background sync
+      waitForPendingWrites(db).catch(e => console.warn('Sync pending:', e.message));
+
+      // Advance to success step
+      nextStep(3);
+    } catch(err) {
+      console.error('[publishDish] error:', err);
+      errEl.textContent = '❌ Could not publish: ' + (err.message || 'Unknown error');
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Publish listing 🚀';
+    }
+  };
+</script>
+
+<div id="cnd-chatbot"></div>
+<script src="widget/chatbot.js"></script>
 </body>
 </html>
