@@ -430,15 +430,22 @@
     </div>
 
     <div class="form-group">
-      <label>Days you typically cook <span class="opt">approximate</span></label>
-      <div class="days-grid">
-        <div class="day-chip" onclick="toggleDay(this)">Mon</div>
-        <div class="day-chip" onclick="toggleDay(this)">Tue</div>
-        <div class="day-chip" onclick="toggleDay(this)">Wed</div>
-        <div class="day-chip" onclick="toggleDay(this)">Thu</div>
-        <div class="day-chip" onclick="toggleDay(this)">Fri</div>
-        <div class="day-chip" onclick="toggleDay(this)">Sat</div>
-        <div class="day-chip" onclick="toggleDay(this)">Sun</div>
+      <label>Meal times you cook <span class="opt">select all that apply</span></label>
+      <div class="chip-grid" id="mealTimeChips">
+        <div class="chip" onclick="toggleChip(this)">🌅 Breakfast (7–10am)</div>
+        <div class="chip" onclick="toggleChip(this)">☀️ Lunch (11am–2pm)</div>
+        <div class="chip" onclick="toggleChip(this)">🌆 Dinner (5–9pm)</div>
+        <div class="chip" onclick="toggleChip(this)">🌙 Supper (9–11pm)</div>
+        <div class="chip" onclick="toggleChip(this)">🕐 Flexible / On request</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Days available <span class="opt">approximate</span></label>
+      <div class="chip-grid" id="dayAvailChips">
+        <div class="chip" onclick="toggleChip(this)">📅 Weekdays (Mon–Fri)</div>
+        <div class="chip" onclick="toggleChip(this)">🏖️ Weekends (Sat–Sun)</div>
+        <div class="chip" onclick="toggleChip(this)">📆 Daily</div>
+        <div class="chip" onclick="toggleChip(this)">📋 By request only</div>
       </div>
     </div>
 
@@ -523,6 +530,7 @@
       <div class="review-item"><span class="review-label">Neighborhood</span><span class="review-value" id="rv-neighborhood">—</span></div>
       <div class="review-item"><span class="review-label">Categories</span><span class="review-value" id="rv-categories">—</span></div>
       <div class="review-item"><span class="review-label">Price range</span><span class="review-value" id="rv-price">—</span></div>
+      <div class="review-item"><span class="review-label">Schedule</span><span class="review-value" id="rv-schedule">—</span></div>
       <div class="review-item"><span class="review-label">Photos</span><span class="review-value" id="rv-photos">—</span></div>
     </div>
     <div class="btn-actions" style="margin-top:24px;">
@@ -542,7 +550,8 @@
       <div style="font-size:0.8rem;color:var(--muted);" id="ex-cook-email">–</div>
       <div style="margin-top:8px;font-size:0.78rem;color:#076653;font-family:'Poppins',sans-serif;font-weight:600;">✅ Profile active</div>
     </div>
-    <a href="cook-list-dish.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;margin-bottom:10px;">🍽️ List a new dish →</a>
+    <a id="ex-profile-link" href="cook-profile.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;margin-bottom:10px;">👀 View your live profile →</a>
+    <a href="cook-list-dish.html" style="display:block;text-align:center;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;color:var(--orange);text-decoration:none;margin-bottom:10px;">🍽️ List a new dish</a>
     <a href="meetup-guide.html" style="display:block;text-align:center;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;color:var(--orange);text-decoration:none;margin-bottom:16px;">📋 Pickup guide</a>
     <div style="border-top:1px solid #EBEBEB;padding-top:14px;">
       <button onclick="cookSignOut()" style="background:none;border:none;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.82rem;color:var(--muted);cursor:pointer;">Sign out</button>
@@ -585,8 +594,9 @@
           </div>
         </div>
       </div>
-      <a href="cook-list-dish.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;margin-bottom:12px;">🍽️ List your first dish →</a>
-      <a href="meetup-guide.html" style="display:block;text-align:center;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;color:var(--orange);text-decoration:none;margin-bottom:10px;">📋 Read the full pickup guide</a>
+      <a id="cook-profile-link" href="cook-profile.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;margin-bottom:12px;">👀 View your live profile →</a>
+      <a href="cook-list-dish.html" style="display:block;text-align:center;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;color:var(--orange);text-decoration:none;margin-bottom:10px;">🍽️ List your first dish</a>
+      <a href="meetup-guide.html" style="display:block;text-align:center;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;color:var(--orange);text-decoration:none;margin-bottom:10px;">📋 Read the pickup guide</a>
       <a href="index.html" style="display:block;text-align:center;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;color:rgba(255,255,255,0.45);text-decoration:none;">← Back to home</a>
     </div>
   </div>
@@ -799,8 +809,10 @@
     try {
       const uid = user.uid;
       const categories = [...document.querySelectorAll('#categoryChips .chip.selected')].map(c => c.textContent.trim());
-      const dietary    = [...document.querySelectorAll('#step-5 .chip-grid:last-of-type .chip.selected')].map(c => c.textContent.trim());
-      const days       = [...document.querySelectorAll('.day-chip.selected')].map(c => c.textContent.trim());
+      const dietary    = [...document.querySelectorAll('#step-5 .chip-grid .chip.selected')].filter(c => !c.closest('#categoryChips') && !c.closest('#mealTimeChips') && !c.closest('#dayAvailChips')).map(c => c.textContent.trim());
+      const mealTimes  = [...document.querySelectorAll('#mealTimeChips .chip.selected')].map(c => c.textContent.trim());
+      const dayAvail   = [...document.querySelectorAll('#dayAvailChips .chip.selected')].map(c => c.textContent.trim());
+      const schedule   = [...mealTimes, ...dayAvail];
       const priceEl    = document.querySelector('.price-opt.selected .price-opt__range');
       const isCustomPrice = priceEl?.textContent.trim() === 'Custom';
 
@@ -819,12 +831,12 @@
         pickupInstructions: el('inp-pickup')?.value || '',
         categories,
         dietary,
+        schedule,
         dishes:         el('inp-dishes')?.value || '',
         portions:       el('inp-portions')?.value || '',
         priceRange:     isCustomPrice
                           ? (el('inp-custom-price')?.value.trim() || 'Custom')
                           : (priceEl ? priceEl.textContent.trim() : ''),
-        days,
         description:    el('inp-description')?.value || '',
         hasChefPhoto:   (document.getElementById('chefThumbs')?.children.length || 0) > 0,
         hasFoodPhotos:  (document.getElementById('foodThumbs')?.children.length || 0) > 0,
@@ -834,6 +846,9 @@
       };
 
       await setDoc(doc(db, 'cooks', uid), data, { merge: true });
+      // Wire the "View your live profile" button before showing step-8
+      const profileLink = document.getElementById('cook-profile-link');
+      if (profileLink) profileLink.href = 'cook-profile.html?uid=' + uid;
       goToStep(8);
     } catch (err) {
       console.error('submitProfile error:', err);
@@ -938,8 +953,13 @@
     set('rv-email',        (val('inp-email') || '—') + ' ✅ Verified');
     set('rv-phone',        phone);
     set('rv-neighborhood', neighborhood);
+    const schedule = [
+      ...[...document.querySelectorAll('#mealTimeChips .chip.selected')].map(c => c.textContent.trim()),
+      ...[...document.querySelectorAll('#dayAvailChips .chip.selected')].map(c => c.textContent.trim()),
+    ];
     set('rv-categories',   cats.length ? cats.join(', ') : '—');
     set('rv-price',        price !== '—' ? price + ' per portion' : '—');
+    set('rv-schedule',     schedule.length ? schedule.join(' · ') : '—');
     set('rv-photos',       photoText);
   }
 
