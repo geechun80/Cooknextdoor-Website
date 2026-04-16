@@ -206,24 +206,25 @@
     </button>
     <div class="divider"><span>or create with email</span></div>
 
+    <div id="google-prefill-banner" style="display:none;background:#F0FAF3;border:1px solid #C3E6CB;border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:0.84rem;color:#2D6444;display:none;gap:8px;align-items:center;"><span>✅</span><span id="google-prefill-msg">Signed in with Google. Fields pre-filled below.</span></div>
     <div class="form-row">
       <div class="form-group">
         <label>First name</label>
-        <input class="form-control" type="text" placeholder="e.g. Siti"/>
+        <input id="inp-firstname" class="form-control" type="text" placeholder="e.g. Siti"/>
       </div>
       <div class="form-group">
         <label>Last name</label>
-        <input class="form-control" type="text" placeholder="e.g. Rahman"/>
+        <input id="inp-lastname" class="form-control" type="text" placeholder="e.g. Rahman"/>
       </div>
     </div>
     <div class="form-group">
       <label>Email address</label>
       <div class="input-icon">
         <span class="icon">📧</span>
-        <input class="form-control" type="email" placeholder="you@email.com"/>
+        <input id="inp-email" class="form-control" type="email" placeholder="you@email.com"/>
       </div>
     </div>
-    <div class="form-group">
+    <div class="form-group" id="pw-group">
       <label>Password</label>
       <div class="pw-wrap">
         <input class="form-control" type="password" id="cookPw" placeholder="Min. 8 characters"/>
@@ -233,7 +234,7 @@
     </div>
     <div class="form-group">
       <label>Cook/Chef name <span class="opt">(what customers will see)</span></label>
-      <input class="form-control" type="text" placeholder="e.g. Auntie Siti's Kitchen"/>
+      <input id="inp-cookname" class="form-control" type="text" placeholder="e.g. Auntie Siti's Kitchen"/>
     </div>
 
     <div class="btn-actions">
@@ -246,7 +247,7 @@
   <div class="card hidden" id="step-2">
     <h2>Step 2: <span>Verify your email</span> 📧</h2>
     <p class="subtitle">We've sent a 6-digit code to your email. This confirms your account is real.</p>
-    <div class="verify-info">Sent to: <strong>you@email.com</strong></div>
+    <div class="verify-info">Sent to: <strong id="verify-email-display">your email</strong></div>
     <div class="otp-row">
       <input class="otp-input" type="text" maxlength="1" oninput="otpNext(this,0,'email')"/>
       <input class="otp-input" type="text" maxlength="1" oninput="otpNext(this,1,'email')"/>
@@ -269,18 +270,18 @@
     <div class="form-group">
       <label>Mobile number</label>
       <div class="phone-row">
-        <select class="phone-prefix">
+        <select id="inp-phone-prefix" class="phone-prefix">
           <option>🇸🇬 +65</option><option>🇲🇾 +60</option><option>🇮🇩 +62</option>
           <option>🇵🇭 +63</option><option>🇹🇭 +66</option><option>🇻🇳 +84</option>
           <option>🇮🇳 +91</option><option>🇦🇺 +61</option><option>🇬🇧 +44</option><option>🇺🇸 +1</option>
         </select>
-        <input type="tel" class="form-control" placeholder="9123 4567"/>
+        <input id="inp-phone-number" type="tel" class="form-control" placeholder="9123 4567"/>
       </div>
     </div>
     <button class="btn-primary" id="sendPhoneBtn" onclick="showPhoneOtp()" style="margin-bottom:0;">Send SMS Code →</button>
 
     <div id="phoneOtp" style="display:none;margin-top:24px;">
-      <div class="verify-info">Code sent to: <strong>+65 9123 4567</strong></div>
+      <div class="verify-info">Code sent to: <strong id="verify-phone-display">your phone</strong></div>
       <div class="otp-row">
         <input class="otp-input" type="text" maxlength="1"/>
         <input class="otp-input" type="text" maxlength="1"/>
@@ -302,20 +303,20 @@
     <div class="info-box"><span class="icon">🔒</span><span>Your full address is kept private. Buyers will only see your neighborhood for the public listing. You share the exact pickup spot only after a reservation is made.</span></div>
     <div class="form-group">
       <label>Block / Unit number</label>
-      <input class="form-control" type="text" placeholder="e.g. Blk 123 #05-45"/>
+      <input id="inp-block" class="form-control" type="text" placeholder="e.g. Blk 123 #05-45"/>
     </div>
     <div class="form-group">
       <label>Street name</label>
-      <input class="form-control" type="text" placeholder="e.g. Tampines Street 81"/>
+      <input id="inp-street" class="form-control" type="text" placeholder="e.g. Tampines Street 81"/>
     </div>
     <div class="form-row">
       <div class="form-group">
         <label>Postal code</label>
-        <input class="form-control" type="text" placeholder="e.g. 520123"/>
+        <input id="inp-postal" class="form-control" type="text" placeholder="e.g. 520123"/>
       </div>
       <div class="form-group">
         <label>Neighborhood / Town</label>
-        <select class="form-control">
+        <select id="inp-neighborhood" class="form-control">
           <option value="">Select area...</option>
           <optgroup label="East">
             <option>Tampines</option><option>Bedok</option><option>Pasir Ris</option><option>Changi</option>
@@ -337,7 +338,7 @@
     </div>
     <div class="form-group">
       <label>Pickup instructions <span class="opt">shown to reserved buyers only</span></label>
-      <textarea class="form-control" placeholder="e.g. Come to the void deck, Block 123. I'll be at the bench near the lift. Look for my red tote bag!"></textarea>
+      <textarea id="inp-pickup" class="form-control" placeholder="e.g. Come to the void deck, Block 123. I'll be at the bench near the lift. Look for my red tote bag!"></textarea>
     </div>
     <div class="btn-actions">
       <button class="btn-primary" onclick="nextStep(4)">Continue →</button>
@@ -375,12 +376,12 @@
 
     <div class="form-group">
       <label>Signature dishes <span class="opt">list your best 3–5 dishes</span></label>
-      <textarea class="form-control" placeholder="e.g. Chicken Biryani, Mee Goreng, Sambal Udang, Nasi Lemak..."></textarea>
+      <textarea id="inp-dishes" class="form-control" placeholder="e.g. Chicken Biryani, Mee Goreng, Sambal Udang, Nasi Lemak..."></textarea>
     </div>
 
     <div class="form-group">
       <label>Typical portion sizes</label>
-      <select class="form-control">
+      <select id="inp-portions" class="form-control">
         <option value="">Select...</option>
         <option>1 portion only</option>
         <option>2–3 portions</option>
@@ -442,7 +443,7 @@
 
     <div class="form-group">
       <label>Short description <span class="opt">tell buyers about your cooking style</span></label>
-      <textarea class="form-control" placeholder="e.g. I'm a home cook from Tampines who learned from my grandmother. I specialize in authentic Malay dishes and cook with love every weekend!"></textarea>
+      <textarea id="inp-description" class="form-control" placeholder="e.g. I'm a home cook from Tampines who learned from my grandmother. I specialize in authentic Malay dishes and cook with love every weekend!"></textarea>
     </div>
 
     <div class="btn-actions">
@@ -515,16 +516,16 @@
     <h2>Almost there! <span>Review your profile</span> ✅</h2>
     <p class="subtitle">Check everything looks right before submitting.</p>
     <div>
-      <div class="review-item"><span class="review-label">Chef name</span><span class="review-value">Auntie Siti's Kitchen</span></div>
-      <div class="review-item"><span class="review-label">Email</span><span class="review-value">siti@email.com ✅ Verified</span></div>
-      <div class="review-item"><span class="review-label">Phone</span><span class="review-value">+65 9123 4567 ✅ Verified</span></div>
-      <div class="review-item"><span class="review-label">Neighborhood</span><span class="review-value">Tampines, East Singapore</span></div>
-      <div class="review-item"><span class="review-label">Categories</span><span class="review-value">Malay Food, Halal, Vegetarian</span></div>
-      <div class="review-item"><span class="review-label">Price range</span><span class="review-value">$5 – $8 per portion</span></div>
-      <div class="review-item"><span class="review-label">Photos</span><span class="review-value">Chef photo ✅ · Food photos ✅</span></div>
+      <div class="review-item"><span class="review-label">Chef name</span><span class="review-value" id="rv-name">—</span></div>
+      <div class="review-item"><span class="review-label">Email</span><span class="review-value" id="rv-email">—</span></div>
+      <div class="review-item"><span class="review-label">Phone</span><span class="review-value" id="rv-phone">—</span></div>
+      <div class="review-item"><span class="review-label">Neighborhood</span><span class="review-value" id="rv-neighborhood">—</span></div>
+      <div class="review-item"><span class="review-label">Categories</span><span class="review-value" id="rv-categories">—</span></div>
+      <div class="review-item"><span class="review-label">Price range</span><span class="review-value" id="rv-price">—</span></div>
+      <div class="review-item"><span class="review-label">Photos</span><span class="review-value" id="rv-photos">—</span></div>
     </div>
     <div class="btn-actions" style="margin-top:24px;">
-      <button class="btn-primary" onclick="nextStep(7)">Submit & Go Live! 🚀</button>
+      <button class="btn-primary" onclick="submitProfile()">Submit & Go Live! 🚀</button>
       <button class="btn-secondary" onclick="prevStep(7)">← Edit details</button>
     </div>
     <p class="terms">By submitting you confirm your food is prepared safely and you comply with our <a href="#">Cook Guidelines</a> and <a href="#">Community Standards</a>.</p>
@@ -577,7 +578,10 @@
 <!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC3ynPUHYnPQ9msdLJNB5l-gM--CogrXAQ",
@@ -585,51 +589,192 @@
     projectId: "cooknextdoor-eedbe",
     storageBucket: "cooknextdoor-eedbe.firebasestorage.app",
     messagingSenderId: "924339275437",
-    appId: "1:924339275437:web:a97a0a2bda0089dd58e824"
+    appId: "1:924339275437:web:a97a0a2ba0089dd58e824"
   };
 
-  const app = initializeApp(firebaseConfig);
+  const app  = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db   = getFirestore(app);
   const provider = new GoogleAuthProvider();
+
+  // Pre-fill from existing session on page load
+  onAuthStateChanged(auth, user => {
+    if (user) prefillFromUser(user, false);
+  });
+
+  function prefillFromUser(user, isNewSignIn) {
+    const parts = (user.displayName || '').split(' ');
+    const first = parts[0] || '';
+    const last  = parts.slice(1).join(' ') || '';
+    const el = (id) => document.getElementById(id);
+
+    el('inp-firstname').value = first;
+    el('inp-lastname').value  = last;
+    el('inp-email').value     = user.email || '';
+    if (!el('inp-cookname').value) el('inp-cookname').value = (user.displayName || '') + "'s Kitchen";
+
+    // Hide password field — not needed for Google users
+    const pwGroup = el('pw-group');
+    if (pwGroup) pwGroup.style.display = 'none';
+
+    // Show banner
+    const banner = el('google-prefill-banner');
+    if (banner) {
+      banner.style.display = 'flex';
+      el('google-prefill-msg').textContent =
+        'Signed in as ' + user.email + '. Fields pre-filled — just review and continue.';
+    }
+
+    // Store uid globally for Firestore save
+    window._cndUid = user.uid;
+    window._cndEmailVerified = user.emailVerified;
+
+    if (isNewSignIn) {
+      // Google auth = email already verified → skip step 2, go to step 3
+      goToStep(3);
+    }
+  }
 
   window.googleSignIn = async function() {
     try {
       const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      // Skip to final step on success
-      document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
-      const lastStep = document.getElementById('step-7');
-      if (lastStep) {
-        lastStep.classList.remove('hidden');
-        lastStep.scrollIntoView({behavior:'smooth', block:'start'});
-      }
+      prefillFromUser(result.user, true);
     } catch (err) {
-      alert('Google sign-in failed. Please try again.');
+      alert('Google sign-in failed: ' + (err.message || err));
       console.error(err);
+    }
+  };
+
+  window.submitProfile = async function() {
+    const el = (id) => document.getElementById(id);
+    const btn = document.querySelector('#step-7 .btn-primary');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+
+    try {
+      const uid = window._cndUid || ('guest_' + Date.now());
+      const categories = [...document.querySelectorAll('#categoryChips .chip.selected')].map(c => c.textContent.trim());
+      const dietary    = [...document.querySelectorAll('#step-5 .chip-grid:last-of-type .chip.selected')].map(c => c.textContent.trim());
+      const days       = [...document.querySelectorAll('.day-chip.selected')].map(c => c.textContent.trim());
+      const priceEl    = document.querySelector('.price-opt.selected .price-opt__range');
+
+      const prefix = el('inp-phone-prefix') ? el('inp-phone-prefix').value.replace(/[^+\d]/g,'') : '+65';
+      const phone  = prefix + ' ' + (el('inp-phone-number')?.value || '');
+
+      const data = {
+        uid,
+        cookName:       el('inp-cookname')?.value || '',
+        email:          el('inp-email')?.value || '',
+        phone:          phone.trim(),
+        block:          el('inp-block')?.value || '',
+        street:         el('inp-street')?.value || '',
+        postal:         el('inp-postal')?.value || '',
+        neighborhood:   el('inp-neighborhood')?.value || '',
+        pickupInstructions: el('inp-pickup')?.value || '',
+        categories,
+        dietary,
+        dishes:         el('inp-dishes')?.value || '',
+        portions:       el('inp-portions')?.value || '',
+        priceRange:     priceEl ? priceEl.textContent.trim() : '',
+        days,
+        description:    el('inp-description')?.value || '',
+        hasChefPhoto:   (document.getElementById('chefThumbs')?.children.length || 0) > 0,
+        hasFoodPhotos:  (document.getElementById('foodThumbs')?.children.length || 0) > 0,
+        isActive: true,
+        createdAt: serverTimestamp()
+      };
+
+      await setDoc(doc(db, 'cooks', uid), data, { merge: true });
+      goToStep(8);
+    } catch (err) {
+      alert('Failed to save profile: ' + (err.message || err));
+      console.error(err);
+      btn.disabled = false;
+      btn.textContent = 'Submit & Go Live! 🚀';
     }
   };
 </script>
 
 <script>
   let currentStep = 1;
-  const totalSteps = 7;
+  let _googleUser  = false;
 
-  function nextStep(from) {
-    const next = from + 1;
-    document.getElementById('step-' + from).classList.add('hidden');
-    document.getElementById('step-' + next).classList.remove('hidden');
-    document.getElementById('step-' + next).scrollIntoView({behavior:'smooth',block:'start'});
-    updateProgress(next);
-    currentStep = next;
+  function val(id) {
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : '';
   }
 
-  function prevStep(from) {
-    const prev = from - 1;
-    document.getElementById('step-' + from).classList.add('hidden');
-    document.getElementById('step-' + prev).classList.remove('hidden');
-    document.getElementById('step-' + prev).scrollIntoView({behavior:'smooth',block:'start'});
-    updateProgress(prev);
-    currentStep = prev;
+  function goToStep(n) {
+    document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
+    const el = document.getElementById('step-' + n);
+    if (!el) return;
+    el.classList.remove('hidden');
+    el.scrollIntoView({behavior:'smooth', block:'start'});
+    updateProgress(n);
+    currentStep = n;
+
+    // Populate dynamic content when entering certain steps
+    if (n === 2) {
+      const emailEl = document.getElementById('verify-email-display');
+      if (emailEl) emailEl.textContent = val('inp-email') || 'your email';
+    }
+    if (n === 3) {
+      const phoneEl = document.getElementById('verify-phone-display');
+      if (phoneEl) {
+        const prefix = document.getElementById('inp-phone-prefix')?.value.replace(/[^+\d]/g,'') || '+65';
+        const num    = val('inp-phone-number');
+        phoneEl.textContent = num ? prefix + ' ' + num : 'your phone';
+      }
+    }
+    if (n === 7) populateReview();
+  }
+
+  function nextStep(from) {
+    if (!validateStep(from)) return;
+    goToStep(from + 1);
+  }
+
+  function prevStep(from) { goToStep(from - 1); }
+
+  function validateStep(step) {
+    if (step === 1) {
+      if (!val('inp-firstname')) { alert('Please enter your first name.'); return false; }
+      if (!val('inp-email') || !val('inp-email').includes('@')) { alert('Please enter a valid email address.'); return false; }
+      if (!val('inp-cookname')) { alert('Please enter your cook/chef name.'); return false; }
+    }
+    if (step === 4) {
+      if (!document.getElementById('inp-neighborhood')?.value) { alert('Please select your neighborhood.'); return false; }
+    }
+    if (step === 5) {
+      const cats = document.querySelectorAll('#categoryChips .chip.selected');
+      if (cats.length === 0) { alert('Please select at least one food category.'); return false; }
+      if (!document.querySelector('.price-opt.selected')) { alert('Please select a price range.'); return false; }
+    }
+    return true;
+  }
+
+  function populateReview() {
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+    const prefix = document.getElementById('inp-phone-prefix')?.value.replace(/[^+\d]/g,'') || '+65';
+    const phoneNum = val('inp-phone-number');
+    const phone = phoneNum ? prefix + ' ' + phoneNum + ' ✅ Verified' : '—';
+
+    const cats = [...document.querySelectorAll('#categoryChips .chip.selected')].map(c => c.textContent.trim());
+    const price = document.querySelector('.price-opt.selected .price-opt__range')?.textContent || '—';
+    const neighborhood = document.getElementById('inp-neighborhood')?.value || '—';
+
+    const chefPhotos = (document.getElementById('chefThumbs')?.children.length || 0) > 0;
+    const foodPhotos = (document.getElementById('foodThumbs')?.children.length || 0) > 0;
+    const photoText = (chefPhotos ? 'Chef photo ✅' : 'No chef photo') + ' · ' + (foodPhotos ? 'Food photos ✅' : 'No food photos');
+
+    set('rv-name',         val('inp-cookname') || '—');
+    set('rv-email',        (val('inp-email') || '—') + ' ✅ Verified');
+    set('rv-phone',        phone);
+    set('rv-neighborhood', neighborhood);
+    set('rv-categories',   cats.length ? cats.join(', ') : '—');
+    set('rv-price',        price !== '—' ? price + ' per portion' : '—');
+    set('rv-photos',       photoText);
   }
 
   function updateProgress(step) {
@@ -655,13 +800,18 @@
     btn.textContent = el.type === 'password' ? '👁' : '🙈';
   }
 
-  function otpNext(el, idx, group) {
+  function otpNext(el, idx) {
     el.classList.add('filled');
     const inputs = el.closest('.otp-row').querySelectorAll('.otp-input');
     if (el.value && idx < inputs.length - 1) inputs[idx + 1].focus();
   }
 
   function showPhoneOtp() {
+    const prefix = document.getElementById('inp-phone-prefix')?.value.replace(/[^+\d]/g,'') || '+65';
+    const num    = val('inp-phone-number');
+    if (!num) { alert('Please enter your phone number first.'); return; }
+    const display = document.getElementById('verify-phone-display');
+    if (display) display.textContent = prefix + ' ' + num;
     document.getElementById('phoneOtp').style.display = 'block';
     document.getElementById('sendPhoneBtn').style.display = 'none';
   }
@@ -681,7 +831,7 @@
   }
 
   function playVideo(el) {
-    el.innerHTML = '<div style="color:#fff;font-family:Poppins,sans-serif;font-size:0.9rem;font-weight:600;opacity:0.7;text-align:center;padding:20px;">📹 Video player would load here<br/><span style="font-size:0.75rem;opacity:0.6;">Connect to your video hosting service (YouTube, Vimeo, etc.)</span></div>';
+    el.innerHTML = '<iframe width="100%" height="100%" src="https://www.youtube.com/embed/QD4JWVQBfgI?autoplay=1" frameborder="0" allow="autoplay;encrypted-media" allowfullscreen style="position:absolute;inset:0;border-radius:16px;"></iframe>';
   }
 </script>
   <div id="cnd-chatbot"></div>
