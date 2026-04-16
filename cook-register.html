@@ -98,11 +98,32 @@
     .photo-previews{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
     .photo-thumb{width:72px;height:72px;border-radius:10px;object-fit:cover;border:2px solid var(--green);}
 
-    /* Days available */
+    /* Days available (legacy chips — kept for safety) */
     .days-grid{display:flex;gap:8px;flex-wrap:wrap;}
     .day-chip{width:44px;height:44px;border-radius:50%;border:2px solid #E8E8E8;display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.75rem;cursor:pointer;transition:all 0.2s;color:var(--muted);}
     .day-chip.selected{background:var(--orange);border-color:var(--orange);color:var(--on-lime);}
     .day-chip:hover:not(.selected){border-color:var(--orange);color:var(--orange);}
+
+    /* ── Calendar picker ── */
+    .cal-wrap{background:#F8F9FA;border:2px solid #E8E8E8;border-radius:16px;padding:18px;margin-top:8px;}
+    .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    .cal-nav-btn{background:#fff;border:2px solid #E8E8E8;border-radius:10px;width:38px;height:38px;font-size:1.1rem;cursor:pointer;color:var(--dark);display:flex;align-items:center;justify-content:center;transition:border-color 0.2s;line-height:1;}
+    .cal-nav-btn:hover{border-color:var(--orange);}
+    .cal-month-label{font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:var(--dark);}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+    .cal-day-hdr{text-align:center;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.62rem;color:var(--muted);padding:6px 2px;text-transform:uppercase;}
+    .cal-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:8px;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.82rem;cursor:pointer;transition:all 0.15s;color:var(--dark);border:2px solid transparent;user-select:none;}
+    .cal-cell:not(.cal-empty):not(.cal-past):hover{background:#F0FAF3;border-color:var(--orange);}
+    .cal-cell.cal-selected{background:var(--orange)!important;color:var(--on-lime)!important;border-color:var(--orange)!important;}
+    .cal-cell.cal-past{color:#CCC;cursor:not-allowed;}
+    .cal-cell.cal-empty{cursor:default;}
+    .cal-cell.cal-today{border-color:var(--green);color:var(--green);font-weight:900;}
+    .cal-cell.cal-selected.cal-today{color:var(--on-lime)!important;}
+    .cal-info{margin-top:10px;font-size:0.78rem;color:var(--muted);text-align:center;min-height:18px;}
+    .cal-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+    .cal-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:#EAF7EC;border:1px solid #C3E6CB;border-radius:100px;font-size:0.73rem;font-family:'Poppins',sans-serif;font-weight:600;color:#076653;}
+    .cal-tag-x{cursor:pointer;opacity:0.6;font-size:0.85em;line-height:1;padding:0 1px;}
+    .cal-tag-x:hover{opacity:1;}
 
     /* Gmail button */
     .btn-gmail{width:100%;display:flex;align-items:center;justify-content:center;gap:12px;padding:13px;border:2px solid #E8E8E8;border-radius:12px;background:#fff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.92rem;color:var(--dark);cursor:pointer;transition:border 0.2s;text-decoration:none;margin-bottom:16px;}
@@ -440,12 +461,16 @@
       </div>
     </div>
     <div class="form-group">
-      <label>Days available <span class="opt">approximate</span></label>
-      <div class="chip-grid" id="dayAvailChips">
-        <div class="chip" onclick="toggleChip(this)">📅 Weekdays (Mon–Fri)</div>
-        <div class="chip" onclick="toggleChip(this)">🏖️ Weekends (Sat–Sun)</div>
-        <div class="chip" onclick="toggleChip(this)">📆 Daily</div>
-        <div class="chip" onclick="toggleChip(this)">📋 By request only</div>
+      <label>Dates you'll be cooking <span class="opt">tap to mark available days</span></label>
+      <div class="cal-wrap">
+        <div class="cal-nav">
+          <button class="cal-nav-btn" type="button" onclick="calPrev()">&#8249;</button>
+          <span class="cal-month-label" id="cal-month-label">Loading…</span>
+          <button class="cal-nav-btn" type="button" onclick="calNext()">&#8250;</button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-info" id="cal-info">Tap any date when you'll have food ready for pickup</div>
+        <div class="cal-tags" id="cal-tags"></div>
       </div>
     </div>
 
@@ -808,11 +833,10 @@
 
     try {
       const uid = user.uid;
-      const categories = [...document.querySelectorAll('#categoryChips .chip.selected')].map(c => c.textContent.trim());
-      const dietary    = [...document.querySelectorAll('#step-5 .chip-grid .chip.selected')].filter(c => !c.closest('#categoryChips') && !c.closest('#mealTimeChips') && !c.closest('#dayAvailChips')).map(c => c.textContent.trim());
-      const mealTimes  = [...document.querySelectorAll('#mealTimeChips .chip.selected')].map(c => c.textContent.trim());
-      const dayAvail   = [...document.querySelectorAll('#dayAvailChips .chip.selected')].map(c => c.textContent.trim());
-      const schedule   = [...mealTimes, ...dayAvail];
+      const categories     = [...document.querySelectorAll('#categoryChips .chip.selected')].map(c => c.textContent.trim());
+      const dietary        = [...document.querySelectorAll('#step-5 .chip-grid .chip.selected')].filter(c => !c.closest('#categoryChips') && !c.closest('#mealTimeChips')).map(c => c.textContent.trim());
+      const mealTimes      = [...document.querySelectorAll('#mealTimeChips .chip.selected')].map(c => c.textContent.trim());
+      const availableDates = Array.from(_selectedDates).sort();
       const priceEl    = document.querySelector('.price-opt.selected .price-opt__range');
       const isCustomPrice = priceEl?.textContent.trim() === 'Custom';
 
@@ -831,7 +855,8 @@
         pickupInstructions: el('inp-pickup')?.value || '',
         categories,
         dietary,
-        schedule,
+        mealTimes,
+        availableDates,
         dishes:         el('inp-dishes')?.value || '',
         portions:       el('inp-portions')?.value || '',
         priceRange:     isCustomPrice
@@ -890,6 +915,7 @@
         phoneEl.textContent = num ? prefix + ' ' + num : 'your phone';
       }
     }
+    if (n === 5) renderCalendar();
     if (n === 7) populateReview();
   }
 
@@ -953,13 +979,17 @@
     set('rv-email',        (val('inp-email') || '—') + ' ✅ Verified');
     set('rv-phone',        phone);
     set('rv-neighborhood', neighborhood);
-    const schedule = [
-      ...[...document.querySelectorAll('#mealTimeChips .chip.selected')].map(c => c.textContent.trim()),
-      ...[...document.querySelectorAll('#dayAvailChips .chip.selected')].map(c => c.textContent.trim()),
-    ];
+    const mealTimes = [...document.querySelectorAll('#mealTimeChips .chip.selected')].map(c => c.textContent.trim());
+    const datesArr  = Array.from(_selectedDates).sort();
+    let scheduleText = '';
+    if (mealTimes.length) scheduleText += mealTimes.join(', ');
+    if (datesArr.length) {
+      if (scheduleText) scheduleText += ' · ';
+      scheduleText += datesArr.length + ' date' + (datesArr.length > 1 ? 's' : '') + ' selected';
+    }
     set('rv-categories',   cats.length ? cats.join(', ') : '—');
     set('rv-price',        price !== '—' ? price + ' per portion' : '—');
-    set('rv-schedule',     schedule.length ? schedule.join(' · ') : '—');
+    set('rv-schedule',     scheduleText || '—');
     set('rv-photos',       photoText);
   }
 
@@ -974,6 +1004,118 @@
 
   function toggleChip(el) { el.classList.toggle('selected'); }
   function toggleDay(el)  { el.classList.toggle('selected'); }
+
+  // ── Calendar picker ──────────────────────────────────────────
+  var _calViewDate = (function(){ var d = new Date(); d.setDate(1); return d; })();
+  var _selectedDates = new Set(); // Set of 'YYYY-MM-DD' strings
+  var _CAL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var _CAL_DAYS   = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+  function renderCalendar() {
+    var year  = _calViewDate.getFullYear();
+    var month = _calViewDate.getMonth(); // 0-based
+
+    var label = document.getElementById('cal-month-label');
+    if (label) label.textContent = _CAL_MONTHS[month] + ' ' + year;
+
+    var grid = document.getElementById('cal-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    // Day headers
+    _CAL_DAYS.forEach(function(d) {
+      var hdr = document.createElement('div');
+      hdr.className = 'cal-day-hdr';
+      hdr.textContent = d;
+      grid.appendChild(hdr);
+    });
+
+    var today = new Date(); today.setHours(0,0,0,0);
+    var firstDow    = new Date(year, month, 1).getDay(); // 0=Sun
+    var daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // Empty leading cells
+    for (var i = 0; i < firstDow; i++) {
+      var empty = document.createElement('div');
+      empty.className = 'cal-cell cal-empty';
+      grid.appendChild(empty);
+    }
+
+    // Date cells
+    for (var day = 1; day <= daysInMonth; day++) {
+      var cellDate = new Date(year, month, day);
+      var mm   = String(month + 1).padStart(2, '0');
+      var dd   = String(day).padStart(2, '0');
+      var dateStr = year + '-' + mm + '-' + dd;
+
+      var cell = document.createElement('div');
+      cell.className = 'cal-cell';
+      cell.textContent = day;
+
+      if (cellDate < today) {
+        cell.classList.add('cal-past');
+      } else {
+        if (cellDate.getTime() === today.getTime()) cell.classList.add('cal-today');
+        if (_selectedDates.has(dateStr))            cell.classList.add('cal-selected');
+        // Closure to capture dateStr
+        cell.addEventListener('click', (function(ds) {
+          return function() { toggleCalDate(ds); };
+        })(dateStr));
+      }
+      grid.appendChild(cell);
+    }
+
+    updateCalTags();
+  }
+
+  function toggleCalDate(dateStr) {
+    if (_selectedDates.has(dateStr)) {
+      _selectedDates.delete(dateStr);
+    } else {
+      _selectedDates.add(dateStr);
+    }
+    renderCalendar();
+  }
+
+  function calPrev() {
+    _calViewDate.setMonth(_calViewDate.getMonth() - 1);
+    renderCalendar();
+  }
+
+  function calNext() {
+    _calViewDate.setMonth(_calViewDate.getMonth() + 1);
+    renderCalendar();
+  }
+
+  function updateCalTags() {
+    var count = _selectedDates.size;
+    var info  = document.getElementById('cal-info');
+    if (info) {
+      info.textContent = count === 0
+        ? 'Tap any date when you\'ll have food ready for pickup'
+        : count + ' date' + (count > 1 ? 's' : '') + ' selected';
+    }
+
+    var tagsEl = document.getElementById('cal-tags');
+    if (!tagsEl) return;
+    tagsEl.innerHTML = '';
+
+    var sorted = Array.from(_selectedDates).sort();
+    sorted.forEach(function(ds) {
+      var parts = ds.split('-');
+      var d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+      var label = d.toLocaleDateString('en-SG', { weekday:'short', day:'numeric', month:'short' });
+      var tag = document.createElement('span');
+      tag.className = 'cal-tag';
+      tag.innerHTML = label + ' <span class="cal-tag-x" data-date="' + ds + '">&#x2715;</span>';
+      tag.querySelector('.cal-tag-x').addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleCalDate(this.getAttribute('data-date'));
+      });
+      tagsEl.appendChild(tag);
+    });
+  }
+  // ──────────────────────────────────────────────────────────────
 
   function selectPrice(el) {
     document.querySelectorAll('.price-opt').forEach(p => p.classList.remove('selected'));
