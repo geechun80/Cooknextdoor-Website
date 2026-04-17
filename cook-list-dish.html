@@ -298,12 +298,8 @@
     <div class="form-row">
       <div class="form-group">
         <label>Price per portion</label>
-        <select class="form-control" id="inp-price">
-          <option value="">Select...</option>
-          <option>$3</option><option>$4</option><option>$5</option><option>$6</option>
-          <option>$7</option><option>$8</option><option>$10</option><option>$12</option>
-          <option>$15</option><option>Negotiate with buyer</option>
-        </select>
+        <input class="form-control" id="inp-price" type="text" placeholder="e.g. $5 or Negotiate"/>
+        <div class="helper">Type a price (e.g. $4.50) or write "Negotiate"</div>
       </div>
       <div class="form-group">
         <label>Portions available today</label>
@@ -319,12 +315,18 @@
       </div>
     </div>
 
-    <!-- Pickup time -->
-    <div class="form-group">
-      <label>Ready for pickup by</label>
-      <input class="form-control" id="inp-pickup-time" type="time" value="12:00"/>
-      <div class="helper">Buyers within 1 km will see this time on your listing.</div>
+    <!-- Pickup date + time -->
+    <div class="form-row">
+      <div class="form-group">
+        <label>Pickup date</label>
+        <input class="form-control" id="inp-pickup-date" type="date"/>
+      </div>
+      <div class="form-group">
+        <label>Ready for pickup by</label>
+        <input class="form-control" id="inp-pickup-time" type="time" value="12:00"/>
+      </div>
     </div>
+    <div class="helper" style="margin-top:-16px;margin-bottom:22px;">Buyers within 1 km will see this date and time on your listing.</div>
 
     <!-- Dietary -->
     <div class="form-group">
@@ -469,22 +471,22 @@ Tips:
     <h2>Step 3: <span>Review your listing</span> ✅</h2>
     <p class="subtitle">Check everything looks right before publishing to your neighborhood.</p>
 
-    <img id="reviewPhoto" src="https://upload.wikimedia.org/wikipedia/commons/7/71/Hainanese_Chicken_Rice.jpg" alt="Dish photo" class="review-photo"/>
+    <img id="reviewPhoto" src="" alt="Dish photo" class="review-photo" style="display:none;"/>
 
     <div>
-      <div class="review-item"><span class="review-label">Dish name</span><span class="review-value" id="reviewName">Hainanese Chicken Rice</span></div>
-      <div class="review-item"><span class="review-label">Photo</span><span class="review-value" id="reviewPhotoType">Platform photo</span></div>
-      <div class="review-item"><span class="review-label">Price per portion</span><span class="review-value">$5</span></div>
-      <div class="review-item"><span class="review-label">Portions available</span><span class="review-value">3 portions</span></div>
-      <div class="review-item"><span class="review-label">Pickup ready by</span><span class="review-value">12:00</span></div>
-      <div class="review-item"><span class="review-label">Dietary</span><span class="review-value">Halal · Contains egg</span></div>
+      <div class="review-item"><span class="review-label">Dish name</span><span class="review-value" id="reviewName">–</span></div>
+      <div class="review-item"><span class="review-label">Photo</span><span class="review-value" id="reviewPhotoType">–</span></div>
+      <div class="review-item"><span class="review-label">Price per portion</span><span class="review-value" id="reviewPrice">–</span></div>
+      <div class="review-item"><span class="review-label">Portions available</span><span class="review-value" id="reviewPortions">–</span></div>
+      <div class="review-item"><span class="review-label">Pickup date &amp; time</span><span class="review-value" id="reviewPickup">–</span></div>
+      <div class="review-item"><span class="review-label">Dietary</span><span class="review-value" id="reviewDietary">–</span></div>
       <div class="review-item">
         <span class="review-label">Cooking video</span>
-        <span class="review-value" id="reviewYT"><span class="badge badge-yt">YouTube linked ✓</span></span>
+        <span class="review-value" id="reviewYT">–</span>
       </div>
       <div class="review-item">
         <span class="review-label">Recipe</span>
-        <span class="review-value" id="reviewRecipe"><span class="badge badge-free">Free for everyone</span></span>
+        <span class="review-value" id="reviewRecipe">–</span>
       </div>
     </div>
 
@@ -698,6 +700,7 @@ function addThumb(input, containerId) {
   Array.from(input.files).forEach(file => {
     const reader = new FileReader();
     reader.onload = e => {
+      window._uploadedPhotoDataUrl = e.target.result; // track for review
       const img = document.createElement('img');
       img.src = e.target.result;
       img.className = 'photo-thumb';
@@ -711,14 +714,59 @@ function addThumb(input, containerId) {
 let currentStep = 1;
 
 function nextStep(from) {
-  // Sync review data from step 1
+  // Populate review when advancing to step 3
   if (from === 2) {
-    const name = document.getElementById('dishNameInput').value || 'Hainanese Chicken Rice';
+    // Dish name
+    const name = document.getElementById('dishNameInput')?.value.trim() || '–';
     document.getElementById('reviewName').textContent = name;
-    if (selectedLibItem) {
-      document.getElementById('reviewPhoto').src = selectedLibItem.img;
-      document.getElementById('reviewPhotoType').textContent = 'Platform photo';
+
+    // Photo — prefer uploaded, then library
+    const reviewImg = document.getElementById('reviewPhoto');
+    if (window._uploadedPhotoDataUrl) {
+      reviewImg.src = window._uploadedPhotoDataUrl;
+      reviewImg.style.display = 'block';
+      document.getElementById('reviewPhotoType').textContent = 'Your uploaded photo';
+    } else if (selectedLibItem) {
+      reviewImg.src = selectedLibItem.img;
+      reviewImg.style.display = 'block';
+      document.getElementById('reviewPhotoType').textContent = 'Platform photo — ' + selectedLibItem.name;
+    } else {
+      reviewImg.style.display = 'none';
+      document.getElementById('reviewPhotoType').textContent = 'No photo selected';
     }
+
+    // Price & portions
+    document.getElementById('reviewPrice').textContent   = document.getElementById('inp-price')?.value.trim()    || '–';
+    document.getElementById('reviewPortions').textContent = document.getElementById('inp-portions')?.value         || '–';
+
+    // Pickup date + time
+    const pickDate = document.getElementById('inp-pickup-date')?.value || '';
+    const pickTime = document.getElementById('inp-pickup-time')?.value || '';
+    let pickupStr = '–';
+    if (pickDate && pickTime) {
+      const d = new Date(pickDate + 'T' + pickTime);
+      pickupStr = d.toLocaleDateString('en-SG', {weekday:'short',day:'numeric',month:'short'}) +
+                  ' at ' + d.toLocaleTimeString('en-SG', {hour:'2-digit',minute:'2-digit',hour12:true});
+    } else if (pickTime) {
+      pickupStr = 'Today at ' + pickTime;
+    }
+    document.getElementById('reviewPickup').textContent = pickupStr;
+
+    // Dietary chips
+    const chips = [...document.querySelectorAll('#step-1 .chip.selected')].map(c => c.textContent.trim());
+    document.getElementById('reviewDietary').textContent = chips.length ? chips.join(' · ') : 'None specified';
+
+    // YouTube
+    const ytVal = document.getElementById('ytInput')?.value.trim();
+    document.getElementById('reviewYT').innerHTML = ytVal
+      ? '<span class="badge badge-yt">YouTube linked ✓</span>'
+      : '<span style="color:#999;">No video</span>';
+
+    // Recipe visibility
+    const isPaid = document.getElementById('visPaid')?.classList.contains('selected');
+    document.getElementById('reviewRecipe').innerHTML = isPaid
+      ? '<span class="badge" style="background:#FFF3CD;color:#92400E;border-radius:100px;padding:3px 10px;font-size:0.72rem;font-weight:700;">Paid on request</span>'
+      : '<span class="badge badge-free">Free for everyone</span>';
   }
   const next = from + 1;
   document.getElementById('step-' + from).classList.add('hidden');
@@ -748,6 +796,16 @@ function updateProgress(step) {
 
 /* ── Init ── */
 buildLibGrid('All');
+// Default pickup date to today
+(function() {
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  const el = document.getElementById('inp-pickup-date');
+  if (el) el.value = yyyy+'-'+mm+'-'+dd;
+  el.min = yyyy+'-'+mm+'-'+dd; // can't pick past dates
+})();
 </script>
 <!-- Firebase — save dish to Firestore -->
 <script type="module">
@@ -799,8 +857,9 @@ buildLibGrid('All');
     try {
       // Collect form values
       const dishName    = document.getElementById('dishNameInput')?.value.trim() || '';
-      const price       = document.getElementById('inp-price')?.value || '';
+      const price       = document.getElementById('inp-price')?.value.trim() || '';
       const portions    = document.getElementById('inp-portions')?.value || '';
+      const pickupDate  = document.getElementById('inp-pickup-date')?.value || '';
       const pickupTime  = document.getElementById('inp-pickup-time')?.value || '';
       const description = document.getElementById('inp-description')?.value.trim() || '';
       const dietary     = [...document.querySelectorAll('#step-1 .chip.selected')].map(c => c.textContent.trim());
@@ -812,8 +871,9 @@ buildLibGrid('All');
       const ytMatch = youtubeUrl.match(/(?:v=|\/shorts\/|youtu\.be\/)([A-Za-z0-9_-]{11})/);
       if (ytMatch) youtubeId = ytMatch[1];
 
-      // Image URL — use library image if selected, else null
-      const libImg = window.selectedLibItem ? window.selectedLibItem.img : null;
+      // Image — prefer uploaded photo (data URL), then library image URL
+      const libImg = window.selectedLibItem ? window.selectedLibItem.img
+                   : (window._uploadedPhotoDataUrl || null);
 
       if (!dishName) {
         errEl.textContent = '❌ Please enter a dish name.';
@@ -830,6 +890,7 @@ buildLibGrid('All');
         dishName,
         price,
         portions,
+        pickupDate,
         pickupTime,
         description,
         dietary,
