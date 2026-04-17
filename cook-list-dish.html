@@ -754,8 +754,8 @@ buildLibGrid('All');
   import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import {
-    initializeFirestore, persistentLocalCache,
-    collection, addDoc, doc, getDoc, serverTimestamp, waitForPendingWrites
+    getFirestore,
+    collection, addDoc, doc, getDoc, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -769,13 +769,7 @@ buildLibGrid('All');
 
   const app  = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  let db;
-  try {
-    db = initializeFirestore(app, { localCache: persistentLocalCache() });
-  } catch(e) {
-    const { getFirestore } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-    db = getFirestore(app);
-  }
+  const db   = getFirestore(app);
 
   // Load cook profile for this user on page load
   let _cookProfile = null;
@@ -846,21 +840,9 @@ buildLibGrid('All');
         createdAt:    serverTimestamp(),
       };
 
-      console.log('[publishDish] saving dish:', dishName);
+      console.log('[publishDish] saving dish to Firestore server…');
       const docRef = await addDoc(collection(db, 'dishes'), data);
-      console.log('[publishDish] ✅ local save as dishes/' + docRef.id);
-
-      // Wait for server confirmation (up to 10 s) before showing success
-      try {
-        await Promise.race([
-          waitForPendingWrites(db),
-          new Promise((_, rej) => setTimeout(() => rej(new Error('Server sync timeout')), 10000))
-        ]);
-        console.log('[publishDish] ✅ synced to Firestore server');
-      } catch (syncErr) {
-        console.warn('[publishDish] server sync issue:', syncErr.message);
-        // Still advance — dish is saved locally; sync will retry automatically
-      }
+      console.log('[publishDish] ✅ saved to server as dishes/' + docRef.id);
 
       // Advance to success step
       nextStep(3);
