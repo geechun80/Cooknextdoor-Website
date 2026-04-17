@@ -366,7 +366,7 @@
         </div>
         <a href="index.html#listings" class="btn-primary" style="display:block;text-align:center;text-decoration:none;">🍜 Browse food near me</a>
         <div style="margin-top:14px;text-align:center;">
-          <a href="cook-register.html" style="font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:var(--orange);text-decoration:none;">Are you a cook? Register here →</a>
+          <a id="cook-action-link" href="cook-register.html" style="font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:var(--orange);text-decoration:none;">Are you a cook? Register here →</a>
         </div>
         <div style="margin-top:18px;text-align:center;border-top:1px solid #EBEBEB;padding-top:16px;">
           <button onclick="doSignOut()" style="background:none;border:none;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.82rem;color:var(--muted);cursor:pointer;transition:color 0.2s;" onmouseover="this.style.color='#c0392b'" onmouseout="this.style.color=''">Sign out</button>
@@ -386,7 +386,7 @@
     updateProfile, sendPasswordResetEmail, sendEmailVerification
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import {
-    getFirestore, doc, setDoc, serverTimestamp
+    getFirestore, doc, setDoc, getDoc, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -410,13 +410,26 @@
     setTimeout(() => t.classList.remove('show'), durationMs);
   }
 
-  function showSuccess(name, email) {
+  async function showSuccess(name, email) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     document.getElementById('panel-5').classList.add('active');
     const nameEl  = document.getElementById('success-name');
     const emailEl = document.getElementById('success-email');
     if (nameEl)  nameEl.textContent  = name  || 'neighbor';
     if (emailEl) emailEl.textContent = email || '';
+
+    // Check if this user already has a cook profile → show correct link
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        const cookSnap = await getDoc(doc(db, 'cooks', user.uid));
+        const cookLink = document.getElementById('cook-action-link');
+        if (cookSnap.exists() && cookLink) {
+          cookLink.href        = 'cook-profile.html?uid=' + user.uid;
+          cookLink.textContent = '👨‍🍳 View your cook profile →';
+        }
+      }
+    } catch(e) { /* silent — non-blocking */ }
   }
 
   async function saveUserToFirestore(user, extra = {}) {
