@@ -976,12 +976,15 @@
     const empty = document.getElementById('food-empty');
     try {
       const q    = query(collection(db, 'dishes'), orderBy('createdAt', 'desc'), limit(8));
+      console.log('[loadDishes] querying Firestore dishes collection…');
       const snap = await getDocs(q);
+      console.log('[loadDishes] got', snap.size, 'dishes from Firestore');
 
       grid.innerHTML = ''; // clear skeletons
 
       if (snap.empty) {
         // No real dishes yet — show demo cards
+        console.warn('[loadDishes] dishes collection empty — showing DEMO cards');
         DEMO.forEach(d => grid.appendChild(buildCard(d)));
       } else {
         snap.forEach(doc => grid.appendChild(buildCard(doc.data())));
@@ -991,7 +994,7 @@
         }
       }
     } catch(err) {
-      console.warn('Could not load dishes from Firestore:', err.message);
+      console.warn('[loadDishes] error:', err.code, err.message);
       // Fallback to demo cards on any error
       grid.innerHTML = '';
       DEMO.forEach(d => grid.appendChild(buildCard(d)));
