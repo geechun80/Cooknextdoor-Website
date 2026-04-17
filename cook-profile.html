@@ -273,6 +273,8 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, doc, getDoc }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC3ynPUHYnPQ9msdLJNB5l-gM--CogrXAQ",
@@ -283,15 +285,25 @@
     appId: "1:924339275437:web:a97a0a2ba0089dd58e824"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
+  const app  = initializeApp(firebaseConfig);
+  const db   = getFirestore(app);
+  const auth = getAuth(app);
 
   async function loadProfile() {
     const params = new URLSearchParams(window.location.search);
     const uid    = params.get('uid');
 
     if (!uid) {
-      showError();
+      // No uid in URL — check if user is signed in and redirect to their own profile
+      onAuthStateChanged(auth, user => {
+        if (user) {
+          // Redirect to their own profile
+          window.location.replace('cook-profile.html?uid=' + user.uid);
+        } else {
+          // Not signed in — send to register page
+          window.location.replace('cook-register.html');
+        }
+      });
       return;
     }
 
