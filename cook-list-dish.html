@@ -634,6 +634,9 @@ function switchTab(tab) {
   document.getElementById('tabUpload').classList.toggle('active', tab === 'upload');
   document.getElementById('libraryPanel').style.display = tab === 'library' ? 'block' : 'none';
   document.getElementById('uploadPanel').style.display  = tab === 'upload'  ? 'block' : 'none';
+  // Clear the other source when switching so they don't conflict
+  if (tab === 'upload') { clearSelection(); }
+  if (tab === 'library') { window._uploadedPhotoDataUrl = null; }
 }
 
 /* ── Dish name suggestions ── */
@@ -654,12 +657,7 @@ function handleDishInput(val) {
 function pickSuggestion(name, idx) {
   document.getElementById('dishNameInput').value = name;
   document.getElementById('suggBox').classList.remove('visible');
-  // Auto-select in library
-  selectLibItem(FOOD_LIBRARY[idx], { classList: { add:()=>{}, remove:()=>{} } });
-  // Re-render grid with item selected
-  buildLibGrid(currentFilter);
-  // Make sure library tab is active
-  switchTab('library');
+  // Do NOT auto-select library photo or switch tab — let user choose their photo separately
 }
 
 document.addEventListener('click', e => {
