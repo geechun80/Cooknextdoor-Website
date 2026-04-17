@@ -236,15 +236,14 @@
     <h2>Step 1: <span>Dish Details</span></h2>
     <p class="subtitle">Tell neighbors what you're cooking today — name, photo, price, and portions available.</p>
 
-    <!-- Dish name with suggestions -->
+    <!-- Dish name -->
     <div class="form-group">
-      <label>Dish name</label>
+      <label>What dish are you selling today?</label>
       <div class="dish-name-wrap">
-        <input class="form-control" type="text" id="dishNameInput" placeholder="e.g. Chicken Biryani, Nasi Lemak..." oninput="handleDishInput(this.value)" autocomplete="off"/>
-        <span class="search-icon">🔍</span>
+        <input class="form-control" type="text" id="dishNameInput" placeholder="Type your dish name, e.g. Mee Goreng, Nasi Lemak..." oninput="handleDishInput(this.value)" autocomplete="off" style="font-size:1rem;padding:14px 16px;"/>
         <div class="suggestions" id="suggBox"></div>
       </div>
-      <div class="helper">Start typing to search our food library, or type your own dish name.</div>
+      <div class="helper">Type any name — or pick from the photo library below to auto-fill.</div>
     </div>
 
     <!-- Photo source -->
@@ -556,34 +555,46 @@ Tips:
 <script>
 /* ── Food library ── */
 const FOOD_LIBRARY = [
-  {name:'Chicken Biryani',     img:'https://upload.wikimedia.org/wikipedia/commons/5/5a/%22Hyderabadi_Dum_Biryani%22.jpg',                                                                                                                                                                  tag:'Indian'},
-  {name:'Hainanese Chicken Rice', img:'https://upload.wikimedia.org/wikipedia/commons/7/71/Hainanese_Chicken_Rice.jpg',                                                                                                                                                                    tag:'Chinese'},
-  {name:'Nasi Lemak',          img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Nasi_Lemak_dengan_Chili_Nasi_Lemak_dan_Sotong_Pedas%2C_di_Penang_Summer_Restaurant.jpg/800px-Nasi_Lemak_dengan_Chili_Nasi_Lemak_dan_Sotong_Pedas%2C_di_Penang_Summer_Restaurant.jpg',       tag:'Malay'},
-  {name:'Beef Rendang',        img:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Rendang_daging_sapi_asli_Padang.JPG/800px-Rendang_daging_sapi_asli_Padang.JPG',                                                                                                              tag:'Malay'},
-  {name:'Nyonya Laksa',        img:'https://upload.wikimedia.org/wikipedia/commons/1/1c/Nyonya_Laksa.jpg',                                                                                                                                                                               tag:'Chinese'},
-  {name:'Bak Kut Teh',         img:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Song_Fa_Bak_Kut_Teh%2C_New_Bridge_Rd%2C_Singapore_%282023%29_06.jpg/800px-Song_Fa_Bak_Kut_Teh%2C_New_Bridge_Rd%2C_Singapore_%282023%29_06.jpg',                                              tag:'Chinese'},
-  {name:'Char Kway Teow',      img:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Char_kway_teow.jpg/800px-Char_kway_teow.jpg',                                                                                                                                                tag:'Chinese'},
-  {name:'Fish Head Curry',     img:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Fisheadcurry.JPG/800px-Fisheadcurry.JPG',                                                                                                                                                    tag:'Indian'},
-  {name:'Yong Tau Foo',        img:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Hakka_yong_tau_foo_with_noodles.jpg/800px-Hakka_yong_tau_foo_with_noodles.jpg',                                                                                                              tag:'Chinese'},
-  {name:'Roti John',           img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Roti_John_-_served.jpg/800px-Roti_John_-_served.jpg',                                                                                                                                        tag:'Malay'},
-  {name:'Kaya Toast',          img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Kaya_toast_on_a_plate.jpg/800px-Kaya_toast_on_a_plate.jpg',                                                                                                                                  tag:'Chinese'},
-  {name:'Sayur Lodeh',         img:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Lodeh.jpg/800px-Lodeh.jpg',                                                                                                                                                                  tag:'Malay'},
-  {name:'Prawn Mee Soup',      img:'https://upload.wikimedia.org/wikipedia/commons/7/75/Newton_HokkienMee.JPG',                                                                                                                                                                           tag:'Chinese'},
-  {name:'Butter Prawns',       img:'https://upload.wikimedia.org/wikipedia/commons/b/bd/Butter_prawn.jpg',                                                                                                                                                                                 tag:'Chinese'},
-  {name:'Congee / Bubur Ayam', img:'https://upload.wikimedia.org/wikipedia/commons/5/58/Chinese_rice_congee.jpg',                                                                                                                                                                          tag:'Chinese'},
-  {name:'Tom Yum Noodles',     img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Tom_yam_kung_maenam.jpg/800px-Tom_yam_kung_maenam.jpg',                                                                                                                                      tag:'Thai'},
-  {name:'Thai Papaya Salad',   img:'https://upload.wikimedia.org/wikipedia/commons/3/34/2013_Tam_Lao.jpg',                                                                                                                                                                                 tag:'Thai'},
-  {name:'Japanese Bento',      img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Bento_box_from_a_grocery_store.jpg/800px-Bento_box_from_a_grocery_store.jpg',                                                                                                                tag:'Japanese'},
-  {name:'Temaki Sushi',        img:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Sushi_platter.jpg/800px-Sushi_platter.jpg',                                                                                                                                                  tag:'Japanese'},
-  {name:'Homemade Carbonara',  img:'https://upload.wikimedia.org/wikipedia/commons/3/33/Espaguetis_carbonara.jpg',                                                                                                                                                                         tag:'Western'},
-  {name:'Portuguese Egg Tart', img:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Pasteis_de_belem1.jpg/800px-Pasteis_de_belem1.jpg',                                                                                                                                         tag:'Dessert'},
-  {name:'Falafel Bowl',        img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Falafels_2.jpg/800px-Falafels_2.jpg',                                                                                                                                                        tag:'Middle Eastern'},
-  {name:'Nonya Kueh',          img:'https://upload.wikimedia.org/wikipedia/commons/7/79/Nonya_kueh_4.jpg',                                                                                                                                                                                 tag:'Dessert'},
-  {name:'Pandan Chiffon Cake', img:'https://upload.wikimedia.org/wikipedia/commons/b/b7/Sifon_pandan.JPG',                                                                                                                                                                                tag:'Dessert'},
-  {name:'Ondeh-Ondeh',         img:'https://upload.wikimedia.org/wikipedia/commons/5/50/Klepon_Khas_Tulungagung.jpg',                                                                                                                                                               tag:'Dessert'},
-  {name:'Kueh Lapis',          img:'https://upload.wikimedia.org/wikipedia/commons/9/98/Kue_Lapis.jpg',                                                                                                                                                                                    tag:'Dessert'},
-  {name:'Chocolate Lava Cake', img:'https://upload.wikimedia.org/wikipedia/commons/6/6b/Chocolate_Fondant.jpg',                                                                                                                                                                            tag:'Dessert'},
-  {name:'Quinoa Power Bowl',   img:'https://upload.wikimedia.org/wikipedia/commons/e/ed/Vegan_Quinoa_Bowl_%2844040185371%29.jpg',                                                                                                                                                    tag:'Healthy'},
+  // Malay
+  {name:'Nasi Lemak',          img:'food_images/nasi-lemak.jpg',       tag:'Malay'},
+  {name:'Beef Rendang',        img:'food_images/rendang.jpg',          tag:'Malay'},
+  {name:'Mee Rebus',           img:'food_images/mee-rebus.jpg',        tag:'Malay'},
+  {name:'Mee Soto',            img:'food_images/mee-soto.jpg',         tag:'Malay'},
+  {name:'Murtabak',            img:'food_images/murtabak.jpg',         tag:'Malay'},
+  {name:'Roti John',           img:'food_images/roti-john.jpg',        tag:'Malay'},
+  {name:'Satay',               img:'food_images/satay.jpg',            tag:'Malay'},
+  {name:'Otak-Otak',           img:'food_images/otak-otak.jpg',        tag:'Malay'},
+  {name:'Popiah',              img:'food_images/popiah.jpg',           tag:'Malay'},
+  // Chinese
+  {name:'Hainanese Chicken Rice', img:'food_images/chicken-rice.jpg',  tag:'Chinese'},
+  {name:'Nyonya Laksa',        img:'food_images/laksa.jpg',            tag:'Chinese'},
+  {name:'Bak Kut Teh',         img:'food_images/bak-kut-teh.jpg',      tag:'Chinese'},
+  {name:'Char Kway Teow',      img:'food_images/char-kway-teow.jpg',   tag:'Chinese'},
+  {name:'Yong Tau Foo',        img:'food_images/yong-tau-foo.jpg',     tag:'Chinese'},
+  {name:'Kaya Toast',          img:'food_images/kaya-toast.jpg',       tag:'Chinese'},
+  {name:'Prawn Mee Soup',      img:'food_images/prawn-mee.jpg',        tag:'Chinese'},
+  {name:'Butter Prawns',       img:'food_images/butter-prawns.jpg',    tag:'Chinese'},
+  {name:'Congee / Bubur Ayam', img:'food_images/congee.jpg',           tag:'Chinese'},
+  {name:'Fishball Noodles',    img:'food_images/fishball-noodle.jpg',  tag:'Chinese'},
+  {name:'Tau Huey',            img:'food_images/tau-huey.jpg',         tag:'Chinese'},
+  // Indian
+  {name:'Chicken Biryani',     img:'food_images/biryani.jpg',          tag:'Indian'},
+  {name:'Fish Head Curry',     img:'food_images/fish-head-curry.jpg',  tag:'Indian'},
+  {name:'Thosai / Dosa',       img:'food_images/thosai.jpg',           tag:'Indian'},
+  // Thai
+  {name:'Tom Yum Noodles',     img:'food_images/tom-yum.jpg',          tag:'Thai'},
+  {name:'Thai Papaya Salad',   img:'food_images/papaya-salad.jpg',     tag:'Thai'},
+  // Japanese
+  {name:'Japanese Bento',      img:'food_images/bento.jpg',            tag:'Japanese'},
+  // Western
+  {name:'Chicken Soup',        img:'food_images/chicken-soup.jpg',     tag:'Western'},
+  // Healthy
+  {name:'Egg Tart',            img:'food_images/egg-tart.jpg',         tag:'Dessert'},
+  {name:'Nonya Kueh',          img:'food_images/nonya-kueh.jpg',       tag:'Dessert'},
+  {name:'Pandan Chiffon Cake', img:'food_images/pandan-cake.jpg',      tag:'Dessert'},
+  {name:'Ondeh-Ondeh',         img:'food_images/ondeh-ondeh.jpg',      tag:'Dessert'},
+  {name:'Kueh Lapis',          img:'food_images/kueh-lapis.jpg',       tag:'Dessert'},
+  {name:'Chocolate Lava Cake', img:'food_images/chocolate-lava.jpg',   tag:'Dessert'},
 ];
 
 window.selectedLibItem = null;
