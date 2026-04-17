@@ -240,14 +240,27 @@
     </div>
   </div>
 
+  <!-- Owner quick-action panel (shown only to the cook themselves) -->
+  <div id="owner-panel" style="display:none;background:rgba(227,239,38,0.07);border:1.5px solid rgba(227,239,38,0.25);border-radius:20px;padding:20px 24px;margin-bottom:16px;">
+    <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.78rem;color:var(--orange);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:14px;">👨‍🍳 Your cook dashboard</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <a href="cook-list-dish.html" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--orange);color:#06231D;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;padding:14px 20px;border-radius:14px;text-decoration:none;transition:transform 0.2s;box-shadow:0 4px 16px rgba(227,239,38,0.25);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+        🍽️ Add New Dish
+      </a>
+      <a href="cook-register.html" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.80);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;padding:12px 20px;border-radius:14px;text-decoration:none;border:1px solid rgba(255,255,255,0.15);">
+        ✏️ Edit profile
+      </a>
+    </div>
+  </div>
+
   <!-- Share row -->
   <div class="share-row">
     <button class="share-btn" onclick="copyLink()">🔗 Copy link</button>
     <a class="share-btn" id="wa-share-btn" href="#" target="_blank" rel="noopener">💬 Share on WhatsApp</a>
   </div>
 
-  <!-- Sticky CTA -->
-  <div class="cta-section">
+  <!-- Sticky CTA (shown to visitors; hidden for the cook owner) -->
+  <div class="cta-section" id="cta-section">
     <div class="cta-card">
       <div class="cta-info">
         <div class="cta-price" id="cta-price">–</div>
@@ -331,6 +344,13 @@
 
     // Page title
     document.title = (data.cookName || 'Cook') + ' – CookNextDoor';
+
+    // Show owner dashboard if the signed-in user is viewing their own profile
+    const currentUser = auth.currentUser;
+    if (currentUser && currentUser.uid === uid) {
+      document.getElementById('owner-panel').style.display = 'block';
+      document.getElementById('cta-section').style.display = 'none'; // hide "Reserve" CTA for owner
+    }
 
     // Avatar (emoji placeholder; photos coming later)
     // data.hasChefPhoto could be used to load from Storage in the future
