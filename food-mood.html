@@ -238,7 +238,7 @@
   <a href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:206px;height:128px;object-fit:contain;display:block;"/></a>
   <div class="nav__links">
     <a href="index.html">Home</a>
-    <a href="#" class="active-link">🎭 Food Mood</a>
+    <a href="food-mood.html" class="active-link">🎭 Food Mood</a>
     <a href="news.html">📰 News</a>
     <a href="meetup-guide.html">How it works</a>
     <a href="user-auth.html" class="btn-nav">Find food →</a>
@@ -851,8 +851,115 @@ window.showScreen = function(name) {
   if (name === 'craving' && selectedMood) populateCravings(selectedMood.key);
 };
 
+// Mood → dish name keyword mapping for Firestore matching
+const MOOD_KEYWORDS = {
+  happy:     ['biryani','chicken rice','satay','kueh','bento','prawn','cake','mee','laksa','nasi lemak'],
+  comfort:   ['soup','congee','bak kut teh','mee soto','porridge','kaya','fishball','chicken soup','stew'],
+  tired:     ['bento','salad','egg','economic rice','toast','noodle','wrap','popiah','simple'],
+  excited:   ['japanese','fusion','korean','spicy','rendang','tom yam','curry','sushi','naan','dhal'],
+  stressed:  ['congee','soup','plain','rice','simple','kaya toast','teh','porridge','light'],
+  hungry:    ['biryani','rendang','nasi lemak','laksa','mee goreng','briyani','fried','big','full'],
+  healthy:   ['salad','veggie','tofu','fish','grilled','steamed','salad','vegetarian','fruits'],
+  social:    ['satay','steamboat','sharing','platter','tapas','mixed','bbq','mee','assorted'],
+  nostalgic: ['kaya','chicken rice','laksa','lor mee','prata','roti','mee rebus','char kway'],
+  spontaneous:[]
+};
+
+// Live Firestore dishes loaded at startup
+window._liveListings = [];
+
+function matchesMood(dish, moodKey) {
+  const name = (dish.dishName || '').toLowerCase();
+  const cats = (dish.categories || []).join(' ').toLowerCase();
+  const keywords = MOOD_KEYWORDS[moodKey] || [];
+  return keywords.some(kw => name.includes(kw) || cats.includes(kw));
+}
+
+function firestoreDishToResult(dish) {
+  return {
+    emoji:  '🍽️',
+    name:   dish.dishName  || 'Home-cooked dish',
+    cook:   dish.cookName  || 'Home Cook',
+    price:  dish.price     || '–',
+    dist:   dish.neighborhood || 'Nearby',
+    why:    'Fresh listing from a neighbor near you',
+    img:    dish.imageUrl  || '',
+    _score: 88 + Math.floor(Math.random() * 8),
+    _live:  true,
+    _cookUid: dish.cookUid || null,
+    time:   ['any'],
+    wx:     ['any']
+  };
+}
+
+// Patch buildResults to blend live Firestore data
+const _origBuildResults = buildResults;
+window.buildResults = function(data) {
+  // Find matching live dishes for this mood
+  const moodKey = selectedMood ? selectedMood.key : 'happy';
+  const matched = _liveListings
+    .filter(d => matchesMood(d, moodKey))
+    .map(firestoreDishToResult)
+    .slice(0, 2); // blend at most 2 live dishes into top results
+
+  if (matched.length > 0) {
+    // Temporarily prepend live dishes to data.results so scoring/sorting picks them up
+    const augmented = { ...data, results: [...matched, ...data.results] };
+    _origBuildResults(augmented);
+
+    // After render: update live dish cards with clickable profile links
+    const cards = document.querySelectorAll('#resultsGrid .result-card');
+    matched.forEach((dish, i) => {
+      if (cards[i] && dish._cookUid) {
+        cards[i].onclick = () => window.location.href = 'cook-profile.html?uid=' + dish._cookUid;
+        const btn = cards[i].querySelector('.result-card__btn');
+        if (btn) btn.textContent = 'View cook →';
+        // Add a "LIVE" badge
+        const imgWrap = cards[i].querySelector('.result-card__img');
+        if (imgWrap) {
+          const tag = document.createElement('div');
+          tag.style.cssText = 'position:absolute;top:10px;left:10px;background:#E3EF26;color:#06231D;font-size:0.62rem;font-family:Poppins,sans-serif;font-weight:800;padding:3px 8px;border-radius:100px;letter-spacing:0.05em;z-index:2;';
+          tag.textContent = 'LIVE';
+          imgWrap.style.position = 'relative';
+          imgWrap.appendChild(tag);
+        }
+      }
+    });
+  } else {
+    _origBuildResults(data);
+  }
+};
+
 // Init
 showScreen('intro');
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, query, where, orderBy, limit, getDocs }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app = initializeApp({
+    apiKey:"AIzaSyC3ynPUHYnPQ9msdLJNB5l-gM--CogrXAQ",
+    authDomain:"cooknextdoor-eedbe.firebaseapp.com",
+    projectId:"cooknextdoor-eedbe",
+    storageBucket:"cooknextdoor-eedbe.firebasestorage.app",
+    messagingSenderId:"924339275437",
+    appId:"1:924339275437:web:a97a0a2ba0089dd58e824"
+  });
+  const db = getFirestore(app);
+
+  // Pre-load live listings in the background so they're ready when user finishes quiz
+  (async function() {
+    try {
+      const q    = query(collection(db, 'dishes'), where('isActive','==',true), orderBy('createdAt','desc'), limit(20));
+      const snap = await getDocs(q);
+      snap.forEach(d => window._liveListings.push(d.data()));
+      console.log('[FoodMood] loaded', window._liveListings.length, 'live dishes from Firestore');
+    } catch(e) {
+      console.warn('[FoodMood] could not load live listings:', e.message);
+    }
+  })();
 </script>
   <div id="cnd-chatbot"></div>
   <script src="widget/chatbot.js"></script>
