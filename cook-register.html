@@ -573,7 +573,12 @@
     <div style="background:#F5FAF7;border:1px solid #C3E6CB;border-radius:14px;padding:16px;margin-bottom:20px;text-align:left;">
       <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:var(--dark);margin-bottom:2px;" id="ex-cook-name">–</div>
       <div style="font-size:0.8rem;color:var(--muted);" id="ex-cook-email">–</div>
-      <div style="margin-top:8px;font-size:0.78rem;color:#076653;font-family:'Poppins',sans-serif;font-weight:600;">✅ Profile active</div>
+      <div id="ex-status-badge" style="margin-top:8px;font-size:0.78rem;font-family:'Poppins',sans-serif;font-weight:600;">✅ Profile active</div>
+    </div>
+    <div id="ex-inactive-panel" style="display:none;background:#FFF3CD;border:1px solid #FBBF24;border-radius:12px;padding:14px;margin-bottom:16px;text-align:left;">
+      <div style="font-weight:700;font-size:0.88rem;color:#92400E;margin-bottom:4px;">⚠️ Your profile is currently inactive</div>
+      <div style="font-size:0.8rem;color:#78350F;margin-bottom:10px;">Neighbors cannot see your listing. Tap below to reactivate your profile.</div>
+      <button onclick="reactivateProfile()" style="background:var(--lime,#E3EF26);border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.85rem;color:#06231D;padding:9px 18px;cursor:pointer;width:100%;">✅ Reactivate my profile</button>
     </div>
     <a id="ex-profile-link" href="cook-profile.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;margin-bottom:10px;">👀 View your live profile →</a>
     <a href="cook-list-dish.html" style="display:block;text-align:center;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;color:var(--orange);text-decoration:none;margin-bottom:10px;">🍽️ List a new dish</a>
@@ -779,6 +784,21 @@
       // Populate info
       document.getElementById('ex-cook-name').textContent  = data.cookName || user.displayName || '–';
       document.getElementById('ex-cook-email').textContent = data.email    || user.email || '–';
+      // Set profile link with uid param
+      document.getElementById('ex-profile-link').href = 'cook-profile.html?uid=' + user.uid;
+      // Show active / inactive status
+      const isActive = data.isActive !== false; // treat missing as active
+      const badge = document.getElementById('ex-status-badge');
+      const inactivePanel = document.getElementById('ex-inactive-panel');
+      if (isActive) {
+        badge.textContent = '✅ Profile active';
+        badge.style.color = '#076653';
+        inactivePanel.style.display = 'none';
+      } else {
+        badge.textContent = '❌ Profile inactive';
+        badge.style.color = '#B91C1C';
+        inactivePanel.style.display = 'block';
+      }
     } else {
       // No cook profile yet — pre-fill form fields from auth user
       prefillFromUser(user, false);
@@ -825,6 +845,27 @@
     } catch (err) {
       fbToast('⚠️ Google sign-in failed. Please try again.');
       console.error(err);
+    }
+  };
+
+  window.reactivateProfile = async function() {
+    const btn = document.querySelector('#ex-inactive-panel button');
+    if (btn) { btn.textContent = 'Reactivating…'; btn.disabled = true; }
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error('Not signed in');
+      const { updateDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      await updateDoc(doc(db, 'cooks', user.uid), { isActive: true, updatedAt: serverTimestamp() });
+      // Update UI
+      document.getElementById('ex-inactive-panel').style.display = 'none';
+      const badge = document.getElementById('ex-status-badge');
+      badge.textContent = '✅ Profile active';
+      badge.style.color = '#076653';
+      fbToast('✅ Profile reactivated! You\'re visible to neighbors again.');
+    } catch (err) {
+      console.error('Reactivate error:', err);
+      if (btn) { btn.textContent = '✅ Reactivate my profile'; btn.disabled = false; }
+      fbToast('⚠️ Could not reactivate. Please try again.');
     }
   };
 
