@@ -848,10 +848,19 @@ buildLibGrid('All');
 
       console.log('[publishDish] saving dish:', dishName);
       const docRef = await addDoc(collection(db, 'dishes'), data);
-      console.log('[publishDish] ✅ saved as dishes/' + docRef.id);
+      console.log('[publishDish] ✅ local save as dishes/' + docRef.id);
 
-      // Background sync
-      waitForPendingWrites(db).catch(e => console.warn('Sync pending:', e.message));
+      // Wait for server confirmation (up to 10 s) before showing success
+      try {
+        await Promise.race([
+          waitForPendingWrites(db),
+          new Promise((_, rej) => setTimeout(() => rej(new Error('Server sync timeout')), 10000))
+        ]);
+        console.log('[publishDish] ✅ synced to Firestore server');
+      } catch (syncErr) {
+        console.warn('[publishDish] server sync issue:', syncErr.message);
+        // Still advance — dish is saved locally; sync will retry automatically
+      }
 
       // Advance to success step
       nextStep(3);
