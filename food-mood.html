@@ -803,7 +803,7 @@ function buildResults(data) {
   grid.innerHTML = '';
   picked.forEach(r => {
     grid.innerHTML += `
-      <div class="result-card" onclick="location.href='user-auth.html'">
+      <div class="result-card" onclick="location.href='index.html#listings'">
         <div class="result-card__img">
           <img src="${r.img}" alt="${r.name}" loading="lazy" onerror="imgError(this,'${r.emoji}')" />
           <div class="result-card__match">${Math.min(99, r._score)}% match</div>
@@ -825,7 +825,7 @@ function buildResults(data) {
   const shuffledTry = [...data.alsoTry].sort(() => (CTX.seed % 3) - 1.2);
   const also = document.getElementById('alsoTryPills');
   also.innerHTML = shuffledTry.map(t =>
-    `<div class="try-pill" onclick="location.href='user-auth.html'">${t}</div>`
+    `<div class="try-pill" onclick="location.href='index.html#listings'">${t}</div>`
   ).join('');
 
   const rs = document.getElementById('screen-results');

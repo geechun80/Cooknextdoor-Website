@@ -651,15 +651,15 @@ function goPage(n) {
   window.scrollTo({top: document.querySelector('.filter-wrap').offsetTop - 80, behavior:'smooth'});
 }
 
-/* ── Newsletter ── */
-function subscribeNewsletter(e) {
+/* ── Newsletter (handled by module script below) ── */
+window.subscribeNewsletter = window.subscribeNewsletter || function(e) {
   e.preventDefault();
   const btn = e.target.querySelector('button');
   btn.textContent = '✓ You\'re in!';
   btn.style.background = '#076653';
   e.target.querySelector('input').disabled = true;
   btn.disabled = true;
-}
+};
 
 /* ── Load news-data.json ── */
 async function loadNews() {
@@ -713,5 +713,45 @@ loadNews();
       tick();
     })();
   </script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC3ynPUHYnPQ9msdLJNB5l-gM--CogrXAQ",
+    authDomain: "cooknextdoor-eedbe.firebaseapp.com",
+    projectId: "cooknextdoor-eedbe",
+    storageBucket: "cooknextdoor-eedbe.firebasestorage.app",
+    messagingSenderId: "924339275437",
+    appId: "1:924339275437:web:a97a0a2ba0089dd58e824"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  window.subscribeNewsletter = async function(e) {
+    e.preventDefault();
+    const input = e.target.querySelector('input');
+    const btn   = e.target.querySelector('button');
+    const email = input.value.trim();
+    if (!email) return;
+
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    try {
+      await addDoc(collection(db, 'newsletter'), {
+        email,
+        subscribedAt: serverTimestamp(),
+        source: 'news-page'
+      });
+      btn.textContent = '✓ You\'re in!';
+      btn.style.background = '#076653';
+      input.disabled = true;
+    } catch(err) {
+      console.error(err);
+      btn.disabled = false;
+      btn.textContent = 'Notify me';
+    }
+  };
+</script>
 </body>
 </html>
