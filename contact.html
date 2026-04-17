@@ -67,8 +67,9 @@
   <a href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:206px;height:128px;object-fit:contain;display:block;"/></a>
   <div class="nav__links">
     <a href="index.html">Home</a>
+    <a href="food-mood.html">Food Mood</a>
+    <a href="news.html">News</a>
     <a href="about.html">About</a>
-    <a href="press.html">Press</a>
     <a href="user-auth.html" class="btn-nav">Find food</a>
   </div>
 </nav>
@@ -128,15 +129,15 @@
     <h2>Send us a <span>message</span></h2>
     <div class="field">
       <label>Your name</label>
-      <input type="text" placeholder="Jane Tan"/>
+      <input id="contact-name" type="text" placeholder="Jane Tan"/>
     </div>
     <div class="field">
       <label>Email address</label>
-      <input type="email" placeholder="jane@email.com"/>
+      <input id="contact-email" type="email" placeholder="jane@email.com"/>
     </div>
     <div class="field">
       <label>Topic</label>
-      <select>
+      <select id="contact-topic">
         <option value="">Select a topic…</option>
         <option>General question</option>
         <option>I'm a home cook</option>
@@ -148,9 +149,10 @@
     </div>
     <div class="field">
       <label>Message</label>
-      <textarea rows="5" placeholder="Tell us what's on your mind…"></textarea>
+      <textarea id="contact-msg" rows="5" placeholder="Tell us what's on your mind…"></textarea>
     </div>
-    <button class="btn-submit">Send message →</button>
+    <button class="btn-submit" id="contact-submit" onclick="submitContact()">Send message →</button>
+    <div id="contact-feedback" style="display:none;margin-top:12px;padding:12px 16px;border-radius:10px;font-size:0.85rem;font-family:'Poppins',sans-serif;font-weight:600;"></div>
     <p class="form-note">By submitting you agree to our <a href="privacy.html" style="color:var(--orange);text-decoration:none;">Privacy Policy</a>. We never share your data.</p>
   </div>
 
@@ -160,5 +162,64 @@
   <p>© 2025 CookNextDoor · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="contact.html">Contact</a></p>
 </footer>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC3ynPUHYnPQ9msdLJNB5l-gM--CogrXAQ",
+    authDomain: "cooknextdoor-eedbe.firebaseapp.com",
+    projectId: "cooknextdoor-eedbe",
+    storageBucket: "cooknextdoor-eedbe.firebasestorage.app",
+    messagingSenderId: "924339275437",
+    appId: "1:924339275437:web:a97a0a2ba0089dd58e824"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  window.submitContact = async function() {
+    const name  = document.getElementById('contact-name').value.trim();
+    const email = document.getElementById('contact-email').value.trim();
+    const topic = document.getElementById('contact-topic').value;
+    const msg   = document.getElementById('contact-msg').value.trim();
+    const fb    = document.getElementById('contact-feedback');
+    const btn   = document.getElementById('contact-submit');
+
+    if (!name)  { showFeedback('Please enter your name.', false); return; }
+    if (!email) { showFeedback('Please enter your email.', false); return; }
+    if (!topic) { showFeedback('Please select a topic.', false); return; }
+    if (!msg)   { showFeedback('Please write a message.', false); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    try {
+      await addDoc(collection(db, 'contacts'), {
+        name, email, topic, message: msg,
+        submittedAt: serverTimestamp()
+      });
+      showFeedback('✓ Message sent! We\'ll reply within 1–2 business days.', true);
+      btn.textContent = 'Sent ✓';
+      document.getElementById('contact-name').value  = '';
+      document.getElementById('contact-email').value = '';
+      document.getElementById('contact-topic').value = '';
+      document.getElementById('contact-msg').value   = '';
+    } catch (err) {
+      console.error(err);
+      showFeedback('Something went wrong. Please email us directly at hello@cooknextdoor.org', false);
+      btn.disabled = false;
+      btn.textContent = 'Send message →';
+    }
+
+    function showFeedback(text, success) {
+      fb.textContent = text;
+      fb.style.display = 'block';
+      fb.style.background = success ? 'rgba(7,102,83,0.25)' : 'rgba(248,113,113,0.15)';
+      fb.style.color = success ? '#E2FBCE' : '#FCA5A5';
+      fb.style.border = success ? '1px solid rgba(226,251,206,0.3)' : '1px solid rgba(252,165,165,0.3)';
+    }
+  };
+</script>
 </body>
 </html>

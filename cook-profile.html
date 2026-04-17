@@ -316,8 +316,8 @@
           // Redirect to their own profile
           window.location.replace('cook-profile.html?uid=' + user.uid);
         } else {
-          // Not signed in — send to register page
-          window.location.replace('cook-register.html');
+          // Not signed in and no uid — send to home page
+          window.location.replace('index.html');
         }
       });
       return;

@@ -951,6 +951,13 @@
   function buildCard(d) {
     const card = document.createElement('div');
     card.className = 'food-card';
+    if (d.cookUid && !d.isDemo) {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', function(e) {
+        if (e.target.classList.contains('food-card__btn')) return;
+        window.location.href = 'cook-profile.html?uid=' + d.cookUid;
+      });
+    }
     const imgSrc = d.imageUrl || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=340&fit=crop&q=80';
     const badge = d.portions ? '<div class="food-card__badge">' + d.portions.replace(' portions','') + ' left</div>' : '';
     const demoTag = d.isDemo ? '<div style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.55);color:#fff;font-size:0.6rem;font-family:Poppins,sans-serif;font-weight:700;padding:3px 7px;border-radius:100px;letter-spacing:0.05em;">DEMO</div>' : '';
@@ -965,7 +972,7 @@
         '<div class="food-card__cook">👨‍🍳 ' + (d.cookName || 'Home Cook') + '</div>' +
         '<div class="food-card__footer">' +
           '<div><div class="food-card__price">' + (d.price || '–') + '</div><div class="food-card__portions">per portion</div></div>' +
-          '<button class="food-card__btn" onclick="window.location.href=\'cook-register.html\'">+</button>' +
+          '<button class="food-card__btn" onclick="window.location.href=\'' + (d.cookUid ? 'cook-profile.html?uid=' + d.cookUid : 'user-auth.html') + '\'">+</button>' +
         '</div>' +
       '</div>';
     return card;

@@ -542,10 +542,10 @@ Tips:
         </div>
       </div>
       <div class="action-links">
-        <a href="index.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;">🏠 See it on the home page</a>
+        <a id="view-profile-link" href="index.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;">👨‍🍳 View your cook profile</a>
+        <a href="index.html" class="link-plain">🏠 See it on the home page</a>
         <a href="cook-list-dish.html" class="link-plain">+ List another dish</a>
         <a href="meetup-guide.html" class="link-plain">📋 Read the pickup guide</a>
-        <a href="index.html" class="link-plain" style="color:rgba(0,0,0,0.35);">← Back to home</a>
       </div>
     </div>
   </div>
@@ -917,7 +917,11 @@ buildLibGrid('All');
       const docRef = await addDoc(collection(db, 'dishes'), data);
       console.log('[publishDish] ✅ saved to server as dishes/' + docRef.id);
 
-      // Advance to success step
+      // Set profile link dynamically then advance to success step
+      const profileLink = document.getElementById('view-profile-link');
+      if (profileLink && user.uid) {
+        profileLink.href = 'cook-profile.html?uid=' + user.uid;
+      }
       nextStep(3);
     } catch(err) {
       console.error('[publishDish] error:', err);
