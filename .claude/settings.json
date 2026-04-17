@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"https://en.wikipedia.org/wiki/Hainanese_chicken_rice\")",
+      "Bash(curl -s \"https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=pandan+chiffon+layer+cake+green&srnamespace=6&format=json&srlimit=8\")",
+      "Bash(node -e \"const chunks=[]; process.stdin.on\\(''''data'''',c=>chunks.push\\(c\\)\\); process.stdin.on\\(''''end'''',\\(\\)=>{const d=JSON.parse\\(chunks.join\\(''''''''\\)\\); d.query.search.forEach\\(r=>console.log\\(r.title\\)\\);}\\);\")",
+      "Bash(node -e \":*)"
+    ]
+  }
+}
