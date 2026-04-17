@@ -78,6 +78,7 @@
     <a href="index.html">Home</a>
     <a href="food-mood.html">Food Mood</a>
     <a href="news.html">News</a>
+    <a href="meetup-guide.html">How it works</a>
     <a href="about.html">About</a>
     <a href="contact.html">Contact</a>
     <a href="user-auth.html" class="btn-nav">Find food</a>
@@ -106,7 +107,7 @@
         <div class="post-meta">Community · 12 Apr 2025</div>
         <div class="post-title lg">How one auntie in Clementi turned her weekend cooking into a neighbourhood institution</div>
         <div class="post-excerpt">Mdm Siti has been cooking nasi lemak for 30 years. When her kids grew up and moved out, she had too much food and not enough people to feed. CookNextDoor changed that.</div>
-        <a href="#" class="post-link">Read the story →</a>
+        <a href="news.html" class="post-link">Read the story →</a>
       </div>
     </div>
   </div>
@@ -120,7 +121,7 @@
         <div class="post-meta">Tips · 8 Apr 2025</div>
         <div class="post-title">5 things every new home cook should know before listing their first dish</div>
         <div class="post-excerpt">From pricing to portions — a practical guide to getting started.</div>
-        <a href="#" class="post-link">Read more →</a>
+        <a href="news.html" class="post-link">Read more →</a>
       </div>
     </div>
     <div class="post-card">
@@ -129,7 +130,7 @@
         <div class="post-meta">Culture · 5 Apr 2025</div>
         <div class="post-title">Why Malaysian food deserves its own hyperlocal platform</div>
         <div class="post-excerpt">From nasi kandar to laksa — the case for keeping food culture local.</div>
-        <a href="#" class="post-link">Read more →</a>
+        <a href="news.html" class="post-link">Read more →</a>
       </div>
     </div>
     <div class="post-card">
@@ -138,7 +139,7 @@
         <div class="post-meta">Sustainability · 1 Apr 2025</div>
         <div class="post-title">How sharing extra portions reduces food waste one plate at a time</div>
         <div class="post-excerpt">Singapore wastes 665,000 tonnes of food yearly. We want to change that.</div>
-        <a href="#" class="post-link">Read more →</a>
+        <a href="news.html" class="post-link">Read more →</a>
       </div>
     </div>
     <div class="post-card">
@@ -147,7 +148,7 @@
         <div class="post-meta">Community · 28 Mar 2025</div>
         <div class="post-title">From stranger to regular: how food builds trust between neighbours</div>
         <div class="post-excerpt">Real stories of friendships that started with a shared bowl of soup.</div>
-        <a href="#" class="post-link">Read more →</a>
+        <a href="news.html" class="post-link">Read more →</a>
       </div>
     </div>
     <div class="post-card">
@@ -156,7 +157,7 @@
         <div class="post-meta">Finance · 24 Mar 2025</div>
         <div class="post-title">How much can a home cook realistically earn in a month?</div>
         <div class="post-excerpt">We ran the numbers. The results might surprise you.</div>
-        <a href="#" class="post-link">Read more →</a>
+        <a href="news.html" class="post-link">Read more →</a>
       </div>
     </div>
     <div class="post-card">
@@ -165,7 +166,7 @@
         <div class="post-meta">Platform · 20 Mar 2025</div>
         <div class="post-title">Why CookNextDoor will never charge commission — ever</div>
         <div class="post-excerpt">Our commitment to the community and why the zero-fee model works.</div>
-        <a href="#" class="post-link">Read more →</a>
+        <a href="news.html" class="post-link">Read more →</a>
       </div>
     </div>
   </div>
@@ -174,8 +175,8 @@
     <h3>Get new stories in your inbox</h3>
     <p>Fresh articles, cook spotlights, and community news — no spam, ever.</p>
     <div class="newsletter-form">
-      <input type="email" placeholder="your@email.com"/>
-      <button>Subscribe</button>
+      <input id="blog-nl-email" type="email" placeholder="your@email.com"/>
+      <button id="blog-nl-btn" onclick="blogSubscribe()">Subscribe</button>
     </div>
   </div>
 
@@ -185,5 +186,24 @@
   <p>© 2025 CookNextDoor · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="contact.html">Contact</a></p>
 </footer>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  const app = initializeApp({ apiKey:"AIzaSyC3ynPUHYnPQ9msdLJNB5l-gM--CogrXAQ", authDomain:"cooknextdoor-eedbe.firebaseapp.com", projectId:"cooknextdoor-eedbe", storageBucket:"cooknextdoor-eedbe.firebasestorage.app", messagingSenderId:"924339275437", appId:"1:924339275437:web:a97a0a2ba0089dd58e824" });
+  const db = getFirestore(app);
+  window.blogSubscribe = async function() {
+    const input = document.getElementById('blog-nl-email');
+    const btn   = document.getElementById('blog-nl-btn');
+    const email = input.value.trim();
+    if (!email || !email.includes('@')) { btn.textContent = 'Enter a valid email'; setTimeout(() => btn.textContent = 'Subscribe', 2000); return; }
+    btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      await addDoc(collection(db, 'newsletter'), { email, subscribedAt: serverTimestamp(), source: 'blog-page' });
+      btn.textContent = '✓ You\'re in!'; btn.style.background = '#076653'; input.disabled = true;
+    } catch(err) {
+      console.error(err); btn.disabled = false; btn.textContent = 'Try again';
+    }
+  };
+</script>
 </body>
 </html>

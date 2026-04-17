@@ -266,7 +266,7 @@
         <div class="cta-price" id="cta-price">–</div>
         <div class="cta-label" id="cta-cook-name">per portion · self pickup</div>
       </div>
-      <button class="btn-reserve" onclick="openReserveModal()">Reserve a pickup →</button>
+      <button class="btn-reserve" onclick="openReserveModal()">💬 Reserve via WhatsApp →</button>
     </div>
   </div>
 
@@ -276,11 +276,12 @@
 <div id="reserve-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;">
   <div style="background:#0C342C;border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:32px;max-width:420px;width:100%;text-align:center;position:relative;">
     <button onclick="closeReserveModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.2rem;color:rgba(255,255,255,0.5);cursor:pointer;">✕</button>
-    <div style="font-size:2.5rem;margin-bottom:12px;">🤝</div>
-    <div style="font-family:Poppins,sans-serif;font-weight:800;font-size:1.2rem;color:#fff;margin-bottom:8px;">Contact this cook</div>
-    <div style="font-size:0.85rem;color:rgba(255,255,255,0.55);margin-bottom:24px;line-height:1.6;">Direct reservations are coming soon. For now, reach out via WhatsApp to enquire about availability and arrange pickup.</div>
-    <a id="modal-wa-btn" href="#" target="_blank" rel="noopener" style="display:block;background:var(--orange);color:var(--on-lime);font-family:Poppins,sans-serif;font-weight:700;font-size:0.95rem;padding:14px 24px;border-radius:14px;text-decoration:none;margin-bottom:10px;">💬 Chat on WhatsApp</a>
-    <a href="user-auth.html" style="display:block;font-family:Poppins,sans-serif;font-weight:600;font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;margin-top:8px;">Sign in / Register as a buyer →</a>
+    <div style="font-size:2.5rem;margin-bottom:12px;">💬</div>
+    <div style="font-family:Poppins,sans-serif;font-weight:800;font-size:1.2rem;color:#fff;margin-bottom:8px;">Reserve a pickup</div>
+    <div style="font-size:0.85rem;color:rgba(255,255,255,0.55);margin-bottom:24px;line-height:1.6;">Message this cook on WhatsApp to ask about availability, confirm your portion, and arrange a pickup time and spot. It's that simple — no middleman.</div>
+    <a id="modal-wa-btn" href="#" target="_blank" rel="noopener" style="display:block;background:#25D366;color:#fff;font-family:Poppins,sans-serif;font-weight:700;font-size:0.95rem;padding:14px 24px;border-radius:14px;text-decoration:none;margin-bottom:10px;">💬 Message on WhatsApp</a>
+    <div style="font-size:0.75rem;color:rgba(255,255,255,0.30);margin-top:4px;margin-bottom:16px;">Pay directly via PayNow, PayLah or cash — CookNextDoor takes zero commission.</div>
+    <a href="user-auth.html" style="display:block;font-family:Poppins,sans-serif;font-weight:600;font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;">New here? Create a free account →</a>
   </div>
 </div>
 
@@ -442,14 +443,24 @@
       show('prof-dietary-card');
     }
 
-    // WhatsApp share links (general — cook's phone is private until reserved)
+    // WhatsApp links
     const profileUrl = window.location.href;
-    const waMsg = encodeURIComponent('Hey! Check out ' + (data.cookName || 'this cook') + ' on CookNextDoor 🍳\n' + profileUrl);
-    const waLink = 'https://wa.me/?text=' + waMsg;
-    const waBtn  = document.getElementById('wa-share-btn');
-    if (waBtn) waBtn.href = waLink;
+    const shareMsg  = encodeURIComponent('Hey! Check out ' + (data.cookName || 'this cook') + ' on CookNextDoor 🍳\n' + profileUrl);
+    const waShareLink = 'https://wa.me/?text=' + shareMsg;
+    const waBtn = document.getElementById('wa-share-btn');
+    if (waBtn) waBtn.href = waShareLink;
+
+    // Reserve modal: direct chat to cook's number if stored, else share link
     const modalWaBtn = document.getElementById('modal-wa-btn');
-    if (modalWaBtn) modalWaBtn.href = waLink;
+    if (modalWaBtn) {
+      const cookPhone = (data.phone || '').replace(/\D/g, '');
+      const reserveMsg = encodeURIComponent(
+        'Hi ' + (data.cookName || 'there') + '! I saw your listing on CookNextDoor and would like to reserve a portion. Are you available?'
+      );
+      modalWaBtn.href = cookPhone
+        ? 'https://wa.me/' + cookPhone + '?text=' + reserveMsg
+        : 'https://wa.me/?text=' + shareMsg;
+    }
 
     // Store for copy function
     window._profileUrl = profileUrl;
