@@ -784,8 +784,14 @@
       // Populate info
       document.getElementById('ex-cook-name').textContent  = data.cookName || user.displayName || '–';
       document.getElementById('ex-cook-email').textContent = data.email    || user.email || '–';
-      // Set profile link with uid param
+      // Set profile link with uid param (also stored on window for the click handler)
+      window._cndUid = user.uid;
       document.getElementById('ex-profile-link').href = 'cook-profile.html?uid=' + user.uid;
+      // Re-sync profile to Firestore server (in case it was only saved to local IndexedDB)
+      try {
+        await setDoc(doc(db, 'cooks', user.uid), { ...data, _syncedAt: serverTimestamp() }, { merge: true });
+        waitForPendingWrites(db).catch(() => {});
+      } catch (syncErr) { console.warn('Profile sync:', syncErr); }
       // Show active / inactive status
       const isActive = data.isActive !== false; // treat missing as active
       const badge = document.getElementById('ex-status-badge');
