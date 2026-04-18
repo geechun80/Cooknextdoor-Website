@@ -116,10 +116,10 @@
 
     /* ── Success Stories ── */
     .stories-section{padding:60px 0 48px;background:rgba(0,0,0,0.2);border-bottom:1px solid rgba(255,255,255,0.06);}
-    .section-header{max-width:980px;margin:0 auto 32px;padding:0 24px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;}
-    .section-header h2{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.4rem,3vw,2rem);line-height:1.15;}
+    .section-header{max-width:980px;margin:0 auto 32px;padding:0 24px;}
+    .section-header h2{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.4rem,3vw,2rem);line-height:1.15;margin-bottom:12px;}
     .section-header h2 span{color:var(--orange);}
-    .section-header p{color:rgba(255,255,255,0.50);font-size:0.88rem;max-width:420px;line-height:1.6;}
+    .section-header p{color:rgba(255,255,255,0.50);font-size:0.88rem;max-width:560px;line-height:1.6;margin-bottom:8px;}
     .section-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(7,102,83,0.15);border:1px solid rgba(7,102,83,0.30);color:var(--green);font-family:'Poppins',sans-serif;font-weight:700;font-size:0.68rem;letter-spacing:0.10em;text-transform:uppercase;padding:5px 12px;border-radius:100px;margin-bottom:10px;}
     .stories-scroll{max-width:980px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
     @media(max-width:768px){.stories-scroll{grid-template-columns:repeat(2,1fr);}}
@@ -217,13 +217,11 @@
 <!-- ══════════════════════════════════════════════════════════ -->
 <div class="stories-section">
   <div class="section-header">
-    <div>
-      <div class="section-tag">🌟 Community Spotlight</div>
-      <h2>Neighbourhood Cook<br/><span>Inspiration Stories</span></h2>
-    </div>
+    <div class="section-tag">🌟 Community Spotlight</div>
+    <h2>Neighbourhood Cook<br/><span>Inspiration Stories</span></h2>
     <p>The kind of impact we're building toward — stories that show what home cooking can mean for a neighbourhood.</p>
+    <p style="font-size:0.76rem;color:rgba(255,255,255,0.30);font-style:italic;">✦ Illustrative examples — the kind of stories we're here to make happen.</p>
   </div>
-  <p style="font-size:0.78rem;color:rgba(255,255,255,0.30);margin-bottom:20px;font-style:italic;">✦ Illustrative examples — the kind of stories we're here to make happen.</p>
   <div class="stories-scroll" id="storiesGrid">
 
     <!-- Story 1 -->
