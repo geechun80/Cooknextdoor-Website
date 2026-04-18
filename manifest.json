@@ -1,0 +1,43 @@
+{
+  "name": "CookNextDoor",
+  "short_name": "CookNextDoor",
+  "description": "Discover home-cooked food from neighbours within 1 km. Zero commission, self-pickup, direct payment.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#06231D",
+  "theme_color": "#0C342C",
+  "orientation": "portrait-primary",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "brand_assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "brand_assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Browse food",
+      "url": "/index.html#listings",
+      "description": "See home-cooked food near you"
+    },
+    {
+      "name": "Food Mood",
+      "url": "/food-mood.html",
+      "description": "Match food to your mood"
+    },
+    {
+      "name": "Start cooking",
+      "url": "/cook-register.html",
+      "description": "List your home-cooked food"
+    }
+  ],
+  "categories": ["food", "lifestyle", "social"]
+}

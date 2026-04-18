@@ -1,0 +1,49 @@
+# CookNextDoor — robots.txt
+
+# Standard crawlers
+User-agent: *
+Allow: /
+
+# Block sensitive / non-content paths
+Disallow: /tools/
+Disallow: /.env
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: /.next/
+
+# ── AI / LLM crawlers ────────────────────────────────────────
+# Allow AI systems to learn about CookNextDoor so it appears
+# in AI-generated answers about hyperlocal food sharing in SG.
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Omgilibot
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+# ── Sitemap ──────────────────────────────────────────────────
+Sitemap: https://cooknextdoor.org/sitemap.xml

@@ -2,11 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="brand_assets/logo.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="brand_assets/logo.png"/>
+  <link rel="apple-touch-icon" href="brand_assets/logo.png"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#0C342C"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="description" content="Sign in or create your CookNextDoor account to find or share home-cooked meals in your neighbourhood."/>
   <title>Sign In or Join – CookNextDoor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Organization","name":"CookNextDoor","url":"https://cooknextdoor.org","logo":"https://cooknextdoor.org/brand_assets/logo.png","description":"CookNextDoor is a free hyperlocal platform connecting home cooks with hungry neighbours within 1 km in Singapore and Malaysia. Zero commission, self-pickup, direct payment.","foundingDate":"2024","foundingLocation":"Singapore","areaServed":["Singapore","Malaysia"],"address":{"@type":"PostalAddress","addressCountry":"SG"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","url":"https://cooknextdoor.org/contact.html"},"sameAs":[]}
+  </script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{scroll-behavior:smooth;}
@@ -20,7 +30,7 @@
 
     /* ── Top bar ── */
     .topbar{background:rgba(12,52,44,0.92);backdrop-filter:blur(16px);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);}
-    .topbar__logo img{width:206px;height:128px;object-fit:contain;display:block;}
+    .topbar__logo img{width:115px;height:72px;object-fit:contain;display:block;}
     .topbar__back{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.7);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
     .topbar__back:hover{color:var(--orange);}
 
@@ -149,7 +159,7 @@
 
 <!-- Top bar -->
 <div class="topbar">
-  <a class="topbar__logo" href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:206px;height:128px;object-fit:contain;display:block;"/></a>
+  <a class="topbar__logo" href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:115px;height:72px;object-fit:contain;display:block;"/></a>
   <a class="topbar__back" href="index.html">← Back to home</a>
 </div>
 
@@ -386,7 +396,7 @@
     updateProfile, sendPasswordResetEmail, sendEmailVerification
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import {
-    getFirestore, doc, setDoc, getDoc, serverTimestamp
+    getFirestore, doc, setDoc, getDoc, updateDoc, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -433,6 +443,7 @@
   }
 
   async function saveUserToFirestore(user, extra = {}) {
+    const now = serverTimestamp();
     await setDoc(doc(db, 'users', user.uid), {
       uid:        user.uid,
       name:       user.displayName || extra.name || '',
@@ -440,9 +451,14 @@
       phone:      extra.phone || '',
       photoURL:   user.photoURL || '',
       provider:   extra.provider || 'email',
-      createdAt:  serverTimestamp(),
-      updatedAt:  serverTimestamp()
+      lastSeen:   now,
+      createdAt:  now,
+      updatedAt:  now
     }, { merge: true });
+    // Also update lastSeen on cook document if it exists
+    try {
+      await updateDoc(doc(db, 'cooks', user.uid), { lastSeen: serverTimestamp() });
+    } catch(e) { /* cook doc may not exist yet */ }
   }
 
   /* ── Google Sign-In ── */
@@ -465,6 +481,11 @@
     if (!email || !pw) { showToast('⚠️ Please enter your email and password.'); return; }
     try {
       const cred = await signInWithEmailAndPassword(auth, email, pw);
+      // Update lastSeen on sign-in
+      try {
+        await updateDoc(doc(db, 'users', cred.user.uid), { lastSeen: serverTimestamp() });
+        await updateDoc(doc(db, 'cooks', cred.user.uid), { lastSeen: serverTimestamp() });
+      } catch(e) { /* non-blocking */ }
       showSuccess(cred.user.displayName || email.split('@')[0], cred.user.email);
     } catch (err) {
       const msgs = {

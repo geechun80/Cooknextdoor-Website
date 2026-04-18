@@ -2,11 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="brand_assets/logo.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="brand_assets/logo.png"/>
+  <link rel="apple-touch-icon" href="brand_assets/logo.png"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#0C342C"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="description" content="Not sure what to eat? Try Food Mood — tell us your vibe and we'll suggest the perfect home-cooked dish from your neighbourhood."/>
   <title>Food Mood – CookNextDoor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Organization","name":"CookNextDoor","url":"https://cooknextdoor.org","logo":"https://cooknextdoor.org/brand_assets/logo.png","description":"CookNextDoor is a free hyperlocal platform connecting home cooks with hungry neighbours within 1 km in Singapore and Malaysia. Zero commission, self-pickup, direct payment.","foundingDate":"2024","foundingLocation":"Singapore","areaServed":["Singapore","Malaysia"],"address":{"@type":"PostalAddress","addressCountry":"SG"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","url":"https://cooknextdoor.org/contact.html"},"sameAs":[]}
+  </script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{scroll-behavior:smooth;}
@@ -20,7 +30,7 @@
 
     /* ── Nav ── */
     nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(12,52,44,0.90);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,0.07);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;}
-    .nav__logo img{width:206px;height:128px;object-fit:contain;display:block;}
+    .nav__logo img{width:115px;height:72px;object-fit:contain;display:block;}
     .nav__links{display:flex;align-items:center;gap:20px;}
     .nav__links a{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.70);text-decoration:none;transition:color 0.2s;}
     .nav__links a:hover{color:var(--orange);}
@@ -235,12 +245,13 @@
 
 <!-- Nav -->
 <nav>
-  <a href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:206px;height:128px;object-fit:contain;display:block;"/></a>
+  <a href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:115px;height:72px;object-fit:contain;display:block;"/></a>
   <div class="nav__links">
     <a href="index.html">Home</a>
     <a href="food-mood.html" class="active-link">🎭 Food Mood</a>
     <a href="news.html">📰 News</a>
     <a href="meetup-guide.html">How it works</a>
+    <a href="about.html">About</a>
     <a href="user-auth.html" class="btn-nav">Find food →</a>
   </div>
 </nav>
@@ -399,6 +410,11 @@
   <!-- Results grid -->
   <div class="results-grid" id="resultsGrid">
     <!-- populated by JS -->
+  </div>
+  <div style="font-size:0.75rem;color:rgba(255,255,255,0.28);margin-bottom:24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+    <span><span style="background:#E3EF26;color:#06231D;font-weight:800;font-size:0.62rem;padding:2px 7px;border-radius:100px;">LIVE</span> Real listing from a home cook near you</span>
+    <span style="opacity:0.5;">·</span>
+    <span>All other suggestions are curated examples to inspire your order</span>
   </div>
 
   <!-- Also try -->
@@ -807,7 +823,7 @@ function buildResults(data) {
         <div class="result-card__img">
           <img src="${r.img}" alt="${r.name}" loading="lazy" onerror="imgError(this,'${r.emoji}')" />
           <div class="result-card__match">${Math.min(99, r._score)}% match</div>
-          <div class="result-card__dist">📍 ${r.dist}</div>
+          <div class="result-card__dist">📍 ${r.dist || 'Nearby'}</div>
         </div>
         <div class="result-card__body">
           <div class="result-card__name">${r.name}</div>

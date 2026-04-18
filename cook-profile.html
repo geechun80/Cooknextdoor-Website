@@ -2,14 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="brand_assets/logo.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="brand_assets/logo.png"/>
+  <link rel="apple-touch-icon" href="brand_assets/logo.png"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#0C342C"/>
+  <link rel="manifest" href="manifest.json"/>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
   <meta http-equiv="Expires" content="0"/>
+  <meta name="description" content="View this cook's profile, dishes, and reviews on CookNextDoor — Singapore and Malaysia's hyperlocal home-cooking community."/>
   <title>Cook Profile – CookNextDoor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Organization","name":"CookNextDoor","url":"https://cooknextdoor.org","logo":"https://cooknextdoor.org/brand_assets/logo.png","description":"CookNextDoor is a free hyperlocal platform connecting home cooks with hungry neighbours within 1 km in Singapore and Malaysia. Zero commission, self-pickup, direct payment.","foundingDate":"2024","foundingLocation":"Singapore","areaServed":["Singapore","Malaysia"],"address":{"@type":"PostalAddress","addressCountry":"SG"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","url":"https://cooknextdoor.org/contact.html"},"sameAs":[]}
+  </script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{scroll-behavior:smooth;}
@@ -37,7 +47,7 @@
     @keyframes spin{to{transform:rotate(360deg);}}
 
     /* ── Page layout ── */
-    .page{max-width:700px;margin:0 auto;padding:86px 20px 140px;}
+    .page{max-width:700px;margin:0 auto;padding:160px 20px 140px;}
 
     /* ── Hero header ── */
     .cook-hero{position:relative;background:linear-gradient(135deg,#0C342C 0%,#076653 60%,#0C342C 100%);border-radius:24px;padding:36px 32px 32px;margin-bottom:20px;overflow:hidden;}
@@ -126,6 +136,27 @@
     /* ── Divider ── */
     .section-divider{border:none;border-top:1px solid rgba(255,255,255,0.07);margin:8px 0;}
 
+    /* ── Reviews ── */
+    .review-item{padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.07);}
+    .review-item:last-child{border-bottom:none;padding-bottom:0;}
+    .review-item__header{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
+    .review-item__name{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.85rem;color:#fff;}
+    .review-item__stars{color:#F59E0B;font-size:0.82rem;letter-spacing:1px;}
+    .review-item__date{font-size:0.70rem;color:rgba(255,255,255,0.30);}
+    .review-item__text{font-size:0.85rem;color:rgba(255,255,255,0.68);line-height:1.6;}
+    .avg-rating-wrap{display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(227,239,38,0.06);border:1px solid rgba(227,239,38,0.15);border-radius:14px;margin-bottom:16px;}
+    .avg-rating-num{font-family:'Poppins',sans-serif;font-weight:900;font-size:2.2rem;color:var(--orange);line-height:1;}
+    .avg-rating-stars{color:#F59E0B;font-size:1rem;display:block;margin-bottom:2px;}
+    .avg-rating-count{font-size:0.75rem;color:rgba(255,255,255,0.40);}
+    .review-stars-input{display:flex;gap:4px;cursor:pointer;margin-bottom:10px;}
+    .review-star{font-size:1.8rem;color:rgba(255,255,255,0.18);transition:color 0.15s;user-select:none;line-height:1;}
+    .review-star.active,.review-star:hover~.review-star+.review-star,.review-star.hov{color:#F59E0B;}
+    .review-textarea{width:100%;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.12);border-radius:12px;padding:12px 16px;color:#fff;font-family:'Inter',sans-serif;font-size:0.85rem;resize:vertical;min-height:76px;outline:none;margin-top:4px;transition:border-color 0.2s;}
+    .review-textarea:focus{border-color:var(--orange);}
+    .review-textarea::placeholder{color:rgba(255,255,255,0.28);}
+    .review-submit-btn{margin-top:10px;background:var(--orange);color:#06231D;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.85rem;padding:11px 22px;border-radius:100px;border:none;cursor:pointer;transition:transform 0.2s;}
+    .review-submit-btn:hover{transform:translateY(-2px);}
+
     /* ── Not found ── */
     #profile-content{display:none;}
     #loading-state{display:block;}
@@ -145,7 +176,7 @@
 
 <!-- Nav -->
 <nav>
-  <a class="nav__logo" href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:206px;height:128px;object-fit:contain;display:block;"/></a>
+  <a class="nav__logo" href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor"/></a>
   <a class="nav__back" href="index.html">← Home</a>
 </nav>
 
@@ -238,6 +269,28 @@
     <div id="prof-listings-list"></div>
   </div>
 
+  <!-- Reviews -->
+  <div class="info-card" id="prof-reviews-card">
+    <h3>⭐ Reviews</h3>
+    <div id="prof-reviews-avg" style="display:none;"></div>
+    <div id="prof-reviews-list">
+      <div style="font-size:0.85rem;color:rgba(255,255,255,0.32);font-style:italic;">No reviews yet — be the first to share your experience!</div>
+    </div>
+    <!-- Leave a review (shown only to signed-in non-owners) -->
+    <div id="prof-review-form" style="display:none;margin-top:20px;border-top:1px solid rgba(255,255,255,0.07);padding-top:20px;">
+      <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.78rem;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:12px;">Leave a review</div>
+      <div class="review-stars-input" id="review-stars-input" data-selected="0">
+        <span class="review-star" data-v="1">★</span>
+        <span class="review-star" data-v="2">★</span>
+        <span class="review-star" data-v="3">★</span>
+        <span class="review-star" data-v="4">★</span>
+        <span class="review-star" data-v="5">★</span>
+      </div>
+      <textarea id="review-text" class="review-textarea" placeholder="Share your experience with this cook…"></textarea>
+      <button class="review-submit-btn" onclick="window.submitReview()">Submit review</button>
+    </div>
+  </div>
+
   <!-- Pickup info -->
   <div class="info-card">
     <h3>📦 How pickup works</h3>
@@ -290,7 +343,7 @@
 </div>
 
 <!-- Reserve modal (placeholder) -->
-<div id="reserve-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;">
+<div id="reserve-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);z-index:1000;align-items:center;justify-content:center;padding:20px;">
   <div style="background:#0C342C;border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:32px;max-width:420px;width:100%;text-align:center;position:relative;">
     <button onclick="closeReserveModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.2rem;color:rgba(255,255,255,0.5);cursor:pointer;">✕</button>
     <div style="font-size:2.5rem;margin-bottom:12px;">💬</div>
@@ -305,7 +358,7 @@
 <!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, getDoc, collection, query, where, orderBy, getDocs }
+  import { getFirestore, doc, getDoc, updateDoc, collection, query, where, orderBy, getDocs, addDoc, serverTimestamp }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getAuth, onAuthStateChanged }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -346,6 +399,7 @@
       if (!snap.exists()) { showError(); return; }
       renderProfile(snap.data(), uid);
       loadCookDishes(uid);
+      loadReviews(uid);
     } catch (err) {
       console.error('Profile load error:', err);
       showError();
@@ -365,23 +419,52 @@
     document.title = (data.cookName || 'Cook') + ' – CookNextDoor';
 
     // Show owner dashboard if the signed-in user is viewing their own profile
+    onAuthStateChanged(auth, user => {
+      if (user && user.uid === uid) {
+        document.getElementById('owner-panel').style.display = 'block';
+        document.getElementById('cta-section').style.display = 'none';
+      } else if (user && user.uid !== uid) {
+        // Non-owner logged in — expose reviewer info for the review form
+        window._reviewCookUid  = uid;
+        window._reviewerUid    = user.uid;
+        window._reviewerName   = user.displayName || 'Neighbour';
+        const form = document.getElementById('prof-review-form');
+        if (form) form.style.display = 'block';
+      }
+    });
     const currentUser = auth.currentUser;
     if (currentUser && currentUser.uid === uid) {
       document.getElementById('owner-panel').style.display = 'block';
-      document.getElementById('cta-section').style.display = 'none'; // hide "Reserve" CTA for owner
+      document.getElementById('cta-section').style.display = 'none';
     }
 
-    // Avatar (emoji placeholder; photos coming later)
-    // data.hasChefPhoto could be used to load from Storage in the future
+    // Avatar — show profile photo if uploaded, else keep emoji
+    if (data.profilePhotoUrl) {
+      const avatar = document.getElementById('prof-avatar');
+      if (avatar) {
+        avatar.innerHTML = '<img src="' + data.profilePhotoUrl + '" alt="' + (data.cookName || 'Cook') + '" loading="lazy"/>';
+      }
+    }
 
     // Name + location
     setText('prof-name',         data.cookName || 'Neighborhood Cook');
     setText('prof-neighborhood', data.neighborhood || 'Singapore');
 
-    // Active badge
+    // Active badge + lastSeen
     if (data.isActive === false) {
       const badge = document.getElementById('prof-active-badge');
       if (badge) { badge.textContent = 'Currently inactive'; badge.style.color = 'rgba(255,255,255,0.35)'; }
+    } else if (data.lastSeen) {
+      const seenDate = data.lastSeen.toDate ? data.lastSeen.toDate() : new Date(data.lastSeen);
+      const diffDays = Math.floor((Date.now() - seenDate.getTime()) / (1000 * 60 * 60 * 24));
+      const label    = diffDays === 0 ? '🟢 Active today'
+                     : diffDays === 1 ? 'Active yesterday'
+                     : 'Active ' + diffDays + ' days ago';
+      const badge = document.getElementById('prof-active-badge');
+      if (badge) {
+        badge.textContent = label;
+        badge.style.color = diffDays === 0 ? 'var(--orange)' : diffDays <= 3 ? 'rgba(255,255,255,0.65)' : 'rgba(255,255,255,0.40)';
+      }
     }
 
     // Food categories as chips
@@ -605,10 +688,137 @@
     }
   }
 
+  async function loadReviews(cookUid) {
+    try {
+      const q    = query(collection(db, 'reviews'), where('cookUid','==',cookUid), orderBy('createdAt','desc'));
+      const snap = await getDocs(q);
+      const list = document.getElementById('prof-reviews-list');
+      const avgWrap = document.getElementById('prof-reviews-avg');
+      if (!list) return;
+
+      if (snap.empty) return; // keep default "no reviews yet" message
+
+      let total = 0, count = 0;
+      list.innerHTML = '';
+      snap.forEach(d => {
+        const r = d.data();
+        if (r.rating) { total += r.rating; count++; }
+        const stars = '★'.repeat(r.rating || 0) + '☆'.repeat(5 - (r.rating || 0));
+        const date  = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString('en-SG',{month:'short',year:'numeric'}) : '';
+        list.innerHTML += `
+          <div class="review-item">
+            <div class="review-item__header">
+              <div>
+                <span class="review-item__name">${escHtml(r.reviewerName || 'Neighbour')}</span>
+                <span class="review-item__stars" style="margin-left:8px;">${stars}</span>
+              </div>
+              <span class="review-item__date">${date}</span>
+            </div>
+            ${r.text ? '<div class="review-item__text">' + escHtml(r.text) + '</div>' : ''}
+          </div>`;
+      });
+
+      // Show average rating summary
+      if (count > 0 && avgWrap) {
+        const avg = (total / count).toFixed(1);
+        const filledStars = '★'.repeat(Math.round(total/count)) + '☆'.repeat(5 - Math.round(total/count));
+        avgWrap.innerHTML = `
+          <div class="avg-rating-wrap">
+            <div class="avg-rating-num">${avg}</div>
+            <div>
+              <span class="avg-rating-stars">${filledStars}</span>
+              <span class="avg-rating-count">${count} review${count > 1 ? 's' : ''}</span>
+            </div>
+          </div>`;
+        avgWrap.style.display = 'block';
+      }
+
+      // Show review form if user is signed in and is not the cook
+      const currentUser = auth.currentUser;
+      if (currentUser && currentUser.uid !== cookUid) {
+        const form = document.getElementById('prof-review-form');
+        if (form) form.style.display = 'block';
+        window._reviewCookUid      = cookUid;
+        window._reviewerUid        = currentUser.uid;
+        window._reviewerName       = currentUser.displayName || 'Neighbour';
+      }
+    } catch(err) {
+      console.warn('loadReviews error:', err.message);
+    }
+  }
+
+  // Expose db + auth for the review submit function
+  window._cndDb   = db;
+  window._cndAuth = auth;
+
   loadProfile();
 </script>
 
 <script>
+  // ── Star rating picker ─────────────────────────────────
+  (function() {
+    document.addEventListener('DOMContentLoaded', function() {
+      const wrap = document.getElementById('review-stars-input');
+      if (!wrap) return;
+      const stars = wrap.querySelectorAll('.review-star');
+      stars.forEach(function(star) {
+        star.addEventListener('mouseover', function() {
+          const v = parseInt(this.dataset.v);
+          stars.forEach(function(s) { s.classList.toggle('active', parseInt(s.dataset.v) <= v); });
+        });
+        star.addEventListener('mouseout', function() {
+          const sel = parseInt(wrap.dataset.selected || '0');
+          stars.forEach(function(s) { s.classList.toggle('active', parseInt(s.dataset.v) <= sel); });
+        });
+        star.addEventListener('click', function() {
+          wrap.dataset.selected = this.dataset.v;
+          const v = parseInt(this.dataset.v);
+          stars.forEach(function(s) { s.classList.toggle('active', parseInt(s.dataset.v) <= v); });
+        });
+      });
+    });
+  })();
+
+  window.submitReview = async function() {
+    const rating = parseInt(document.getElementById('review-stars-input')?.dataset.selected || '0');
+    const text   = (document.getElementById('review-text')?.value || '').trim();
+    if (!rating) { alert('Please select a star rating.'); return; }
+
+    const btn = document.querySelector('.review-submit-btn');
+    if (btn) { btn.textContent = 'Submitting…'; btn.disabled = true; }
+
+    try {
+      const db      = window._cndDb;
+      const cookUid = window._reviewCookUid || '';
+      const { addDoc, collection, query: q, where, getDocs, updateDoc, doc: docRef, serverTimestamp } =
+        await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      await addDoc(collection(db, 'reviews'), {
+        cookUid,
+        reviewerUid:  window._reviewerUid    || '',
+        reviewerName: window._reviewerName   || 'Neighbour',
+        rating,
+        text,
+        createdAt: serverTimestamp()
+      });
+      // Write back avgRating to cook document
+      if (cookUid) {
+        try {
+          const snap = await getDocs(q(collection(db, 'reviews'), where('cookUid', '==', cookUid)));
+          const ratings = snap.docs.map(d => d.data().rating).filter(r => typeof r === 'number');
+          if (ratings.length > 0) {
+            const avg = ratings.reduce((s, r) => s + r, 0) / ratings.length;
+            await updateDoc(docRef(db, 'cooks', cookUid), { avgRating: Math.round(avg * 10) / 10, reviewCount: ratings.length });
+          }
+        } catch(e) { console.warn('avgRating write-back:', e.message); }
+      }
+      const form = document.getElementById('prof-review-form');
+      if (form) form.innerHTML = '<div style="color:var(--orange);font-family:Poppins,sans-serif;font-weight:600;font-size:0.88rem;padding:12px 0;">✓ Review submitted — thank you!</div>';
+    } catch(err) {
+      console.warn('submitReview error:', err);
+      if (btn) { btn.textContent = 'Submit review'; btn.disabled = false; }
+    }
+  };
+
   // Toast helper
   function toast(msg, ms) {
     ms = ms || 3500;

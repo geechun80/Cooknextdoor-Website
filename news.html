@@ -2,11 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="brand_assets/logo.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="brand_assets/logo.png"/>
+  <link rel="apple-touch-icon" href="brand_assets/logo.png"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#0C342C"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="description" content="CookNextDoor news, community milestones, and stories from home cooks and their hungry neighbours across Singapore and Malaysia."/>
   <title>News – CookNextDoor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Organization","name":"CookNextDoor","url":"https://cooknextdoor.org","logo":"https://cooknextdoor.org/brand_assets/logo.png","description":"CookNextDoor is a free hyperlocal platform connecting home cooks with hungry neighbours within 1 km in Singapore and Malaysia. Zero commission, self-pickup, direct payment.","foundingDate":"2024","foundingLocation":"Singapore","areaServed":["Singapore","Malaysia"],"address":{"@type":"PostalAddress","addressCountry":"SG"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","url":"https://cooknextdoor.org/contact.html"},"sameAs":[]}
+  </script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{scroll-behavior:smooth;}
@@ -16,7 +26,7 @@
 
     /* ── Nav ── */
     nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(12,52,44,0.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,0.07);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;}
-    .nav__logo img{width:206px;height:128px;object-fit:contain;display:block;}
+    .nav__logo img{width:115px;height:72px;object-fit:contain;display:block;}
     .nav__links{display:flex;align-items:center;gap:20px;}
     .nav__links a{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.70);text-decoration:none;transition:color 0.2s;}
     .nav__links a:hover{color:var(--orange);}
@@ -183,12 +193,13 @@
 
 <!-- Nav -->
 <nav>
-  <a href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:206px;height:128px;object-fit:contain;display:block;"/></a>
+  <a href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:115px;height:72px;object-fit:contain;display:block;"/></a>
   <div class="nav__links">
     <a href="index.html">Home</a>
     <a href="food-mood.html">🎭 Food Mood</a>
     <a href="news.html" class="active-link">📰 News</a>
     <a href="meetup-guide.html">How it works</a>
+    <a href="about.html">About</a>
     <a href="user-auth.html" class="btn-nav">Find food →</a>
   </div>
 </nav>
@@ -208,10 +219,11 @@
   <div class="section-header">
     <div>
       <div class="section-tag">🌟 Community Spotlight</div>
-      <h2>Neighbourhood Cook<br/><span>Success Stories</span></h2>
+      <h2>Neighbourhood Cook<br/><span>Inspiration Stories</span></h2>
     </div>
-    <p>Real home cooks from your area — turning passion into portions, one neighbour at a time.</p>
+    <p>The kind of impact we're building toward — stories that show what home cooking can mean for a neighbourhood.</p>
   </div>
+  <p style="font-size:0.78rem;color:rgba(255,255,255,0.30);margin-bottom:20px;font-style:italic;">✦ Illustrative examples — the kind of stories we're here to make happen.</p>
   <div class="stories-scroll" id="storiesGrid">
 
     <!-- Story 1 -->
@@ -337,10 +349,10 @@
 <div class="testimonials-section">
   <div class="section-header" style="margin-bottom:28px;">
     <div>
-      <div class="section-tag" style="background:rgba(227,239,38,0.12);border-color:rgba(227,239,38,0.28);color:var(--orange);">💬 What People Say</div>
-      <h2>Voices from the <span>Neighbourhood</span></h2>
+      <div class="section-tag" style="background:rgba(227,239,38,0.12);border-color:rgba(227,239,38,0.28);color:var(--orange);">💬 Community Voices</div>
+      <h2>The Impact We're <span>Building Toward</span></h2>
     </div>
-    <p>From buyers who found their new favourite meal, to cooks who found their community.</p>
+    <p>Illustrative quotes that capture the kind of experience we're creating — real food, real neighbours, real community.</p>
   </div>
 
   <div class="testimonials-track-wrap">
@@ -531,28 +543,13 @@ const CAT_EMOJI = { business:'🏠', charity:'🤝', culture:'🍜' };
 const CAT_LABEL = { business:'Home Biz', charity:'Charity', culture:'Food Culture' };
 const REGION_FLAG = { SG:'🇸🇬', MY:'🇲🇾' };
 
-/* ── Category image pools (local food_mood_images) ── */
-const IMG_BASE = 'food_mood_images/';
-const CAT_IMGS = {
-  business: ['chicken-rice.jpg','char-kway-teow.jpg','nasi-lemak.jpg','laksa.jpg','economic-rice.jpg',
-             'biryani.jpg','butter-prawns.jpg','satay.jpg','murtabak.jpg','prawn-mee.jpg',
-             'rendang.jpg','wonton-mee.jpg','fishball-noodle.jpg','roti-john.jpg','bento.jpg'],
-  charity:  ['congee.jpg','sayur-lodeh.jpg','chicken-soup.jpg','mee-rebus.jpg','mee-soto.jpg',
-             'economic-rice.jpg','thosai.jpg','otak-otak.jpg','popiah.jpg','yong-tau-foo.jpg',
-             'fishball-noodle.jpg','laksa.jpg','biryani.jpg','steamed-fish.jpg','nasi-lemak.jpg'],
-  culture:  ['bak-kut-teh.jpg','nonya-kueh.jpg','kueh-lapis.jpg','ondeh-ondeh.jpg','pandan-cake.jpg',
-             'kaya-toast.jpg','otak-otak.jpg','popiah.jpg','yong-tau-foo.jpg','chendol.jpg',
-             'tau-huey.jpg','devil-curry.jpg','murtabak.jpg','fish-head-curry.jpg','rendang.jpg'],
+/* ── Category icon placeholders (no unrelated food photos) ── */
+const CAT_ICON = { business:'🏠', charity:'🤝', culture:'🍜' };
+const CAT_BG   = {
+  business: 'linear-gradient(135deg,rgba(227,239,38,0.15),rgba(7,102,83,0.20))',
+  charity:  'linear-gradient(135deg,rgba(7,102,83,0.20),rgba(52,211,153,0.15))',
+  culture:  'linear-gradient(135deg,rgba(80,130,200,0.18),rgba(227,239,38,0.10))',
 };
-const DEFAULT_IMGS = ['chicken-rice.jpg','nasi-lemak.jpg','laksa.jpg','rendang.jpg','satay.jpg'];
-
-function pickImg(category, id) {
-  const pool = CAT_IMGS[category] || DEFAULT_IMGS;
-  // Deterministic selection based on article id hash
-  let h = 0;
-  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) & 0xffff;
-  return IMG_BASE + pool[h % pool.length];
-}
 
 /* ── Time formatting ── */
 function timeAgo(iso) {
@@ -603,12 +600,18 @@ function buildCard(a, featured) {
   const catClass = 'cat-' + (a.category || 'culture');
   const catLabel = CAT_LABEL[a.category] || a.category;
   const flag     = REGION_FLAG[a.region] || '';
-  const imgSrc   = pickImg(a.category, a.id || a.title);
+  const icon     = CAT_ICON[a.category] || '📰';
+  const bg       = CAT_BG[a.category]   || CAT_BG.culture;
+
+  // Clean title: strip trailing " - Source Name" pattern
+  let cleanTitle = a.title || '';
+  const lastDash = cleanTitle.lastIndexOf(' - ');
+  if (lastDash > 30) cleanTitle = cleanTitle.slice(0, lastDash);
 
   return `
     <div class="news-card${featured?' news-card--featured':''}" onclick="window.open('${escHtml(a.url)}','_blank')">
-      <div class="card-img">
-        <img src="${imgSrc}" alt="" loading="lazy" onerror="this.style.display='none'"/>
+      <div class="card-img" style="background:${bg};">
+        <div class="card-img-inner" style="font-size:${featured?'4.5':'3'}rem;">${icon}</div>
         <div class="card-cat ${catClass}">${catLabel}</div>
         ${flag ? `<div class="region-badge">${flag} ${a.region}</div>` : ''}
       </div>
@@ -618,8 +621,8 @@ function buildCard(a, featured) {
           <span class="dot"></span>
           <span>${timeAgo(a.publishedAt)}</span>
         </div>
-        <div class="card-title">${escHtml(a.title)}</div>
-        ${a.summary ? `<div class="card-summary">${escHtml(a.summary.slice(0,130))}...</div>` : ''}
+        <div class="card-title">${escHtml(cleanTitle)}</div>
+        ${a.summary ? `<div class="card-summary">${escHtml(a.summary.slice(0,140))}...</div>` : ''}
         <div class="card-footer">
           <span class="card-date">${new Date(a.publishedAt).toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'})}</span>
           <a class="card-link" href="${escHtml(a.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Read more →</a>
