@@ -2,11 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="brand_assets/logo.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="brand_assets/logo.png"/>
+  <link rel="apple-touch-icon" href="brand_assets/logo.png"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Get in touch with the CookNextDoor team. We'd love to hear from home cooks, food lovers, and press enquiries."/>
   <title>Contact – CookNextDoor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Organization","name":"CookNextDoor","url":"https://cooknextdoor.org","logo":"https://cooknextdoor.org/brand_assets/logo.png","description":"CookNextDoor is a free hyperlocal platform connecting home cooks with hungry neighbours within 1 km in Singapore and Malaysia. Zero commission, self-pickup, direct payment.","foundingDate":"2024","foundingLocation":"Singapore","areaServed":["Singapore","Malaysia"],"address":{"@type":"PostalAddress","addressCountry":"SG"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","url":"https://cooknextdoor.org/contact.html"},"sameAs":[]}
+  </script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{scroll-behavior:smooth;}
@@ -14,7 +22,7 @@
     :root{--orange:#E3EF26;--on-lime:#06231D;--green:#E2FBCE;--mid:#0C342C;--light:#076653;}
 
     nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(12,52,44,0.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,0.07);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;}
-    .nav__logo img{width:206px;height:128px;object-fit:contain;display:block;}
+    .nav__logo img{width:115px;height:72px;object-fit:contain;display:block;}
     .nav__links{display:flex;align-items:center;gap:20px;}
     .nav__links a{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.70);text-decoration:none;transition:color 0.2s;}
     .nav__links a:hover{color:var(--orange);}
@@ -55,6 +63,20 @@
     .btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(227,239,38,0.35);}
     .form-note{font-size:0.72rem;color:rgba(255,255,255,0.30);text-align:center;margin-top:12px;line-height:1.6;}
 
+    /* Feedback form */
+    .feedback-wrap{max-width:860px;margin:0 auto;padding:0 24px 80px;}
+    .feedback-card{background:rgba(227,239,38,0.05);border:1px solid rgba(227,239,38,0.15);border-radius:20px;padding:36px 32px;}
+    .feedback-card__header{display:flex;align-items:center;gap:14px;margin-bottom:24px;}
+    .feedback-card__icon{font-size:2rem;}
+    .feedback-card__header h2{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.1rem;color:#fff;margin-bottom:2px;}
+    .feedback-card__header p{font-size:0.82rem;color:rgba(255,255,255,0.50);}
+    .fb-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    @media(max-width:560px){.fb-grid{grid-template-columns:1fr;}}
+    .fb-stars{display:flex;gap:6px;margin-bottom:20px;}
+    .fb-star{font-size:1.8rem;cursor:pointer;opacity:0.35;transition:opacity 0.15s,transform 0.15s;line-height:1;}
+    .fb-star.lit,.fb-star:hover{opacity:1;transform:scale(1.15);}
+    .fb-star-label{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.75rem;color:rgba(255,255,255,0.45);margin-bottom:10px;}
+
     footer{background:#040D09;padding:32px 24px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);}
     footer p{font-size:0.8rem;color:rgba(255,255,255,0.25);}
     footer a{color:rgba(255,255,255,0.40);text-decoration:none;transition:color 0.2s;}
@@ -64,7 +86,7 @@
 <body>
 
 <nav>
-  <a href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:206px;height:128px;object-fit:contain;display:block;"/></a>
+  <a href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:115px;height:72px;object-fit:contain;display:block;"/></a>
   <div class="nav__links">
     <a href="index.html">Home</a>
     <a href="food-mood.html">Food Mood</a>
@@ -87,8 +109,8 @@
     <div class="channel">
       <div class="ch-icon">📧</div>
       <div>
-        <div class="ch-label">General enquiries</div>
-        <div class="ch-value">hello@cooknextdoor.org</div>
+        <div class="ch-label">All enquiries</div>
+        <div class="ch-value">service@cooknextdoor.org</div>
         <div class="ch-note">We reply within 1–2 business days</div>
       </div>
     </div>
@@ -96,7 +118,7 @@
       <div class="ch-icon">📰</div>
       <div>
         <div class="ch-label">Press & media</div>
-        <div class="ch-value">press@cooknextdoor.org</div>
+        <div class="ch-value">service@cooknextdoor.org</div>
         <div class="ch-note">Interview requests & press kits</div>
       </div>
     </div>
@@ -104,16 +126,16 @@
       <div class="ch-icon">🤝</div>
       <div>
         <div class="ch-label">Partnerships</div>
-        <div class="ch-value">partners@cooknextdoor.org</div>
+        <div class="ch-value">service@cooknextdoor.org</div>
         <div class="ch-note">Community orgs, brands & NGOs</div>
       </div>
     </div>
     <div class="channel">
       <div class="ch-icon">🐛</div>
       <div>
-        <div class="ch-label">Report a bug</div>
-        <div class="ch-value">support@cooknextdoor.org</div>
-        <div class="ch-note">Technical issues & feedback</div>
+        <div class="ch-label">Bug reports & feedback</div>
+        <div class="ch-value">service@cooknextdoor.org</div>
+        <div class="ch-note">Technical issues & suggestions</div>
       </div>
     </div>
     <div class="channel">
@@ -142,6 +164,7 @@
         <option value="">Select a topic…</option>
         <option>General question</option>
         <option>I'm a home cook</option>
+        <option>Feedback & suggestion</option>
         <option>Press / media</option>
         <option>Partnership</option>
         <option>Bug report</option>
@@ -159,8 +182,58 @@
 
 </div>
 
+<!-- ── Feedback Form ──────────────────────────── -->
+<div class="feedback-wrap">
+  <div class="feedback-card">
+    <div class="feedback-card__header">
+      <div class="feedback-card__icon">💡</div>
+      <div>
+        <h2>Share your feedback</h2>
+        <p>Help us make CookNextDoor better — every suggestion counts</p>
+      </div>
+    </div>
+    <div class="fb-grid">
+      <div class="field">
+        <label>Your name</label>
+        <input id="fb-name" type="text" placeholder="Jane Tan"/>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input id="fb-email" type="email" placeholder="jane@email.com"/>
+      </div>
+    </div>
+    <div class="field">
+      <label>I am a…</label>
+      <select id="fb-role">
+        <option value="">Select…</option>
+        <option>Home cook listing food</option>
+        <option>Buyer / food hunter</option>
+        <option>Just exploring</option>
+        <option>Prefer not to say</option>
+      </select>
+    </div>
+    <div class="field">
+      <div class="fb-star-label">Overall experience (optional)</div>
+      <div class="fb-stars" id="fb-stars">
+        <span class="fb-star" data-v="1">★</span>
+        <span class="fb-star" data-v="2">★</span>
+        <span class="fb-star" data-v="3">★</span>
+        <span class="fb-star" data-v="4">★</span>
+        <span class="fb-star" data-v="5">★</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>Your feedback or suggestion</label>
+      <textarea id="fb-msg" rows="4" placeholder="What could be better? What do you love? What's missing?…"></textarea>
+    </div>
+    <button class="btn-submit" id="fb-submit" onclick="submitFeedback()">Send feedback →</button>
+    <div id="fb-result" style="display:none;margin-top:12px;padding:12px 16px;border-radius:10px;font-size:0.85rem;font-family:'Poppins',sans-serif;font-weight:600;"></div>
+    <p class="form-note">Sent to <strong style="color:rgba(255,255,255,0.55);">service@cooknextdoor.org</strong> · We read every message.</p>
+  </div>
+</div>
+
 <footer>
-  <p>© 2025 CookNextDoor · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="contact.html">Contact</a></p>
+  <p>© 2026 CookNextDoor · <a href="terms.html">Terms</a> · <a href="privacy.html">Privacy</a> · <a href="contact.html">Contact</a></p>
 </footer>
 
 <script type="module">
@@ -208,7 +281,7 @@
       document.getElementById('contact-msg').value   = '';
     } catch (err) {
       console.error(err);
-      showFeedback('Something went wrong. Please email us directly at hello@cooknextdoor.org', false);
+      showFeedback('Something went wrong. Please email us directly at service@cooknextdoor.org', false);
       btn.disabled = false;
       btn.textContent = 'Send message →';
     }
@@ -219,6 +292,61 @@
       fb.style.background = success ? 'rgba(7,102,83,0.25)' : 'rgba(248,113,113,0.15)';
       fb.style.color = success ? '#E2FBCE' : '#FCA5A5';
       fb.style.border = success ? '1px solid rgba(226,251,206,0.3)' : '1px solid rgba(252,165,165,0.3)';
+    }
+  };
+
+  // ── Star picker for feedback form ─────────────────────────
+  let _fbRating = 0;
+  document.querySelectorAll('.fb-star').forEach(star => {
+    star.addEventListener('mouseenter', () => {
+      const v = parseInt(star.dataset.v);
+      document.querySelectorAll('.fb-star').forEach(s => s.classList.toggle('lit', parseInt(s.dataset.v) <= v));
+    });
+    star.addEventListener('mouseleave', () => {
+      document.querySelectorAll('.fb-star').forEach(s => s.classList.toggle('lit', parseInt(s.dataset.v) <= _fbRating));
+    });
+    star.addEventListener('click', () => {
+      _fbRating = parseInt(star.dataset.v);
+      document.querySelectorAll('.fb-star').forEach(s => s.classList.toggle('lit', parseInt(s.dataset.v) <= _fbRating));
+    });
+  });
+
+  // ── Feedback form submit ──────────────────────────────────
+  window.submitFeedback = async function() {
+    const name  = document.getElementById('fb-name').value.trim();
+    const email = document.getElementById('fb-email').value.trim();
+    const role  = document.getElementById('fb-role').value;
+    const msg   = document.getElementById('fb-msg').value.trim();
+    const res   = document.getElementById('fb-result');
+    const btn   = document.getElementById('fb-submit');
+
+    if (!name)  { showRes('Please enter your name.', false); return; }
+    if (!email) { showRes('Please enter your email.', false); return; }
+    if (!msg)   { showRes('Please write your feedback.', false); return; }
+
+    btn.disabled = true; btn.textContent = 'Sending…';
+    try {
+      await addDoc(collection(db, 'feedback'), {
+        name, email, role, rating: _fbRating || null, message: msg,
+        submittedAt: serverTimestamp()
+      });
+      showRes('✓ Thank you! Your feedback has been sent to service@cooknextdoor.org', true);
+      btn.textContent = 'Sent ✓';
+      ['fb-name','fb-email','fb-msg'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      document.getElementById('fb-role').value = '';
+      _fbRating = 0;
+      document.querySelectorAll('.fb-star').forEach(s => s.classList.remove('lit'));
+    } catch(err) {
+      console.error(err);
+      showRes('Something went wrong. Please email service@cooknextdoor.org directly.', false);
+      btn.disabled = false; btn.textContent = 'Send feedback →';
+    }
+
+    function showRes(text, success) {
+      res.textContent = text; res.style.display = 'block';
+      res.style.background = success ? 'rgba(7,102,83,0.25)' : 'rgba(248,113,113,0.15)';
+      res.style.color = success ? '#E2FBCE' : '#FCA5A5';
+      res.style.border = success ? '1px solid rgba(226,251,206,0.3)' : '1px solid rgba(252,165,165,0.3)';
     }
   };
 </script>

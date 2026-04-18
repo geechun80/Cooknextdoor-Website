@@ -2,14 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="brand_assets/logo.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="brand_assets/logo.png"/>
+  <link rel="apple-touch-icon" href="brand_assets/logo.png"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
   <meta http-equiv="Expires" content="0"/>
+  <meta name="description" content="List your home-cooked dish on CookNextDoor. Set your price, portion size, allergens, and pickup schedule. Free — zero commission."/>
   <title>List a Dish – CookNextDoor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Organization","name":"CookNextDoor","url":"https://cooknextdoor.org","logo":"https://cooknextdoor.org/brand_assets/logo.png","description":"CookNextDoor is a free hyperlocal platform connecting home cooks with hungry neighbours within 1 km in Singapore and Malaysia. Zero commission, self-pickup, direct payment.","foundingDate":"2024","foundingLocation":"Singapore","areaServed":["Singapore","Malaysia"],"address":{"@type":"PostalAddress","addressCountry":"SG"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","url":"https://cooknextdoor.org/contact.html"},"sameAs":[]}
+  </script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{scroll-behavior:smooth;}
@@ -23,7 +31,7 @@
 
     /* ── Top bar ── */
     .topbar{background:rgba(12,52,44,0.95);backdrop-filter:blur(16px);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:100;}
-    .topbar__logo img{width:206px;height:128px;object-fit:contain;display:block;}
+    .topbar__logo img{width:115px;height:72px;object-fit:contain;display:block;}
     .topbar__back{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.7);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
     .topbar__back:hover{color:var(--orange);}
 
@@ -175,6 +183,29 @@
     .why-item{display:flex;align-items:flex-start;gap:9px;font-size:0.79rem;color:var(--dark);}
     .why-item span:first-child{flex-shrink:0;margin-top:1px;}
 
+    /* ── Batch panel ── */
+    .batch-wrap{display:none;background:rgba(255,255,255,0.06);border:1.5px solid rgba(227,239,38,0.30);border-radius:20px;padding:18px 18px 14px;margin-bottom:20px;}
+    .batch-wrap.visible{display:block;}
+    .batch-hdr{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.82rem;color:#E3EF26;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+    .batch-list{display:flex;flex-direction:column;gap:8px;margin-bottom:4px;}
+    .batch-item{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.06);border-radius:12px;padding:10px 12px;}
+    .batch-img{width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;}
+    .batch-img-ph{width:44px;height:44px;border-radius:8px;flex-shrink:0;background:rgba(255,255,255,0.10);display:flex;align-items:center;justify-content:center;font-size:1.4rem;}
+    .batch-info{flex:1;min-width:0;}
+    .batch-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.87rem;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .batch-meta{font-size:0.72rem;color:rgba(255,255,255,0.50);margin-top:2px;}
+    .batch-rm{background:rgba(255,80,80,0.12);border:none;border-radius:8px;width:30px;height:30px;cursor:pointer;color:#F87171;font-size:0.95rem;flex-shrink:0;transition:background 0.2s;display:flex;align-items:center;justify-content:center;}
+    .batch-rm:hover{background:rgba(255,80,80,0.30);}
+    .batch-add-btn{width:100%;margin-top:12px;padding:12px;background:transparent;border:1.5px dashed rgba(227,239,38,0.35);border-radius:12px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.84rem;color:#E3EF26;cursor:pointer;transition:all 0.2s;}
+    .batch-add-btn:hover:not(:disabled){background:rgba(227,239,38,0.07);border-color:#E3EF26;}
+    .batch-add-btn:disabled{opacity:0.4;cursor:not-allowed;}
+    /* ── Batch review summary ── */
+    .batch-review-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+    .batch-review-item{display:flex;align-items:center;gap:12px;background:#F7F7F5;border-radius:12px;padding:10px 14px;}
+    .batch-review-num{width:26px;height:26px;border-radius:50%;background:var(--orange);color:var(--on-lime);font-family:'Poppins',sans-serif;font-weight:800;font-size:0.78rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .batch-review-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.88rem;color:var(--dark);}
+    .batch-review-sub{font-size:0.74rem;color:var(--muted);margin-top:2px;}
+
     /* ── Buttons ── */
     .btn-primary{width:100%;padding:15px;background:var(--orange);color:var(--on-lime);border:none;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 4px 16px rgba(227,239,38,0.28);}
     .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(227,239,38,0.35);}
@@ -214,7 +245,7 @@
 
 <!-- Top bar -->
 <div class="topbar">
-  <a class="topbar__logo" href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:206px;height:128px;object-fit:contain;display:block;"/></a>
+  <a class="topbar__logo" href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:115px;height:72px;object-fit:contain;display:block;"/></a>
   <a class="topbar__back" href="cook-register.html">← Cook profile</a>
 </div>
 
@@ -223,12 +254,18 @@
   <!-- Header & progress -->
   <div class="progress-header">
     <h1>🍽️ List a <span style="color:var(--orange)">Dish</span></h1>
-    <p>Add a dish to your profile — with photo, recipe, and cooking video.</p>
+    <p>Add a food listing to sell. Recipe &amp; video sharing is completely optional.</p>
     <div class="progress-bar" id="progressBar">
-      <div class="prog-step active" data-step="1"><div class="prog-dot">1</div><div class="prog-label">Dish</div></div>
-      <div class="prog-step" data-step="2"><div class="prog-dot">2</div><div class="prog-label">Recipe & Video</div></div>
+      <div class="prog-step active" data-step="1"><div class="prog-dot">1</div><div class="prog-label">Food listing</div></div>
+      <div class="prog-step" data-step="2"><div class="prog-dot">2</div><div class="prog-label">Recipe (optional)</div></div>
       <div class="prog-step" data-step="3"><div class="prog-dot">3</div><div class="prog-label">Review</div></div>
     </div>
+  </div>
+
+  <!-- Dish batch queue panel -->
+  <div class="batch-wrap" id="batchWrap">
+    <div class="batch-hdr">📋 Queued for publishing &nbsp;·&nbsp; <span id="batchCount">0</span> / 5 dishes</div>
+    <div class="batch-list" id="batchList"></div>
   </div>
 
   <!-- ─────────────── STEP 1 — Dish Details ─────────────── -->
@@ -352,15 +389,43 @@
       <textarea class="form-control" id="inp-description" placeholder="e.g. My grandmother's secret sambal recipe — slow-cooked for 2 hours with fresh lemongrass and coconut milk. Spicy but not overwhelming!"></textarea>
     </div>
 
-    <div class="btn-actions">
-      <button class="btn-primary" onclick="nextStep(1)">Continue → Recipe & Video</button>
+    <!-- Add to batch -->
+    <div style="margin-top:28px;padding-top:24px;border-top:1px solid #E8E8E8;">
+      <button id="addAnotherBtn" onclick="addToBatch()" class="batch-add-btn">+ Save this dish &amp; add another (up to 5 dishes)</button>
+      <div style="text-align:center;font-size:0.74rem;color:var(--muted);margin:16px 0 14px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;">— or choose what to do next —</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+
+        <!-- Path A: publish now -->
+        <button onclick="skipToReview()" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;background:rgba(227,239,38,0.07);border:2px solid rgba(227,239,38,0.35);border-radius:16px;cursor:pointer;transition:border-color 0.2s,background 0.2s;text-align:center;" onmouseover="this.style.borderColor='#E3EF26';this.style.background='rgba(227,239,38,0.13)'" onmouseout="this.style.borderColor='rgba(227,239,38,0.35)';this.style.background='rgba(227,239,38,0.07)'">
+          <span style="font-size:1.5rem;">🚀</span>
+          <span style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.80rem;color:#E3EF26;line-height:1.3;">Publish all now</span>
+          <span style="font-size:0.70rem;color:rgba(255,255,255,0.45);line-height:1.4;">No recipe needed.<br>Buyers can message you.</span>
+        </button>
+
+        <!-- Path B: add recipe -->
+        <button onclick="nextStep(1)" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;background:#E3EF26;border:2px solid #E3EF26;border-radius:16px;cursor:pointer;transition:opacity 0.2s;text-align:center;" onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
+          <span style="font-size:1.5rem;">📖</span>
+          <span style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.80rem;color:#06231D;line-height:1.3;">Add recipe & video</span>
+          <span style="font-size:0.70rem;color:rgba(6,35,29,0.65);line-height:1.4;">Share your recipe to<br>attract more buyers.</span>
+        </button>
+
+      </div>
     </div>
   </div>
 
   <!-- ─────────────── STEP 2 — Recipe & Video ─────────────── -->
   <div class="card hidden" id="step-2">
-    <h2>Step 2: <span>Recipe & Cooking Video</span></h2>
-    <p class="subtitle">Share your recipe and cooking video with neighbors. This builds trust, earns you followers — and you can even earn from it.</p>
+    <h2>Step 2: <span>Recipe & Video</span> <span style="font-size:0.7rem;font-weight:600;background:rgba(227,239,38,0.15);color:#E3EF26;border:1px solid rgba(227,239,38,0.30);padding:4px 10px;border-radius:100px;vertical-align:middle;letter-spacing:0.05em;">OPTIONAL</span></h2>
+    <p class="subtitle">Sharing your recipe and video builds trust and gets more reservations — but you can skip this and publish your food listing right away.</p>
+
+    <!-- Skip shortcut -->
+    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.04);border:1px dashed rgba(255,255,255,0.15);border-radius:14px;padding:14px 18px;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.88rem;color:#fff;">Just want to sell food?</div>
+        <div style="font-size:0.78rem;color:rgba(255,255,255,0.45);margin-top:2px;">Skip the recipe — you can always add it later from your profile.</div>
+      </div>
+      <button onclick="skipToReview()" style="background:var(--orange);color:var(--on-lime);font-family:'Poppins',sans-serif;font-weight:700;font-size:0.82rem;padding:10px 18px;border-radius:100px;border:none;cursor:pointer;white-space:nowrap;">Skip → Publish food now</button>
+    </div>
 
     <!-- YouTube encourage -->
     <div class="encourage-box">
@@ -470,26 +535,27 @@ Tips:
 
   <!-- ─────────────── STEP 3 — Review ─────────────── -->
   <div class="card hidden" id="step-3">
-    <h2>Step 3: <span>Review your listing</span> ✅</h2>
-    <p class="subtitle">Check everything looks right before publishing to your neighborhood.</p>
+    <h2>Step 3: <span>Review &amp; Publish</span> ✅</h2>
+    <p class="subtitle" id="reviewSubtitle">Check everything looks right before publishing to your neighborhood.</p>
 
-    <img id="reviewPhoto" src="" alt="Dish photo" class="review-photo" style="display:none;"/>
+    <!-- Single dish review (shown when batch has 1 dish) -->
+    <div id="singleReview">
+      <img id="reviewPhoto" src="" alt="Dish photo" class="review-photo" style="display:none;"/>
+      <div>
+        <div class="review-item"><span class="review-label">Dish name</span><span class="review-value" id="reviewName">–</span></div>
+        <div class="review-item"><span class="review-label">Photo</span><span class="review-value" id="reviewPhotoType">–</span></div>
+        <div class="review-item"><span class="review-label">Price per portion</span><span class="review-value" id="reviewPrice">–</span></div>
+        <div class="review-item"><span class="review-label">Portions available</span><span class="review-value" id="reviewPortions">–</span></div>
+        <div class="review-item"><span class="review-label">Pickup date &amp; time</span><span class="review-value" id="reviewPickup">–</span></div>
+        <div class="review-item"><span class="review-label">Dietary</span><span class="review-value" id="reviewDietary">–</span></div>
+        <div class="review-item"><span class="review-label">Cooking video</span><span class="review-value" id="reviewYT">–</span></div>
+        <div class="review-item"><span class="review-label">Recipe</span><span class="review-value" id="reviewRecipe">–</span></div>
+      </div>
+    </div>
 
-    <div>
-      <div class="review-item"><span class="review-label">Dish name</span><span class="review-value" id="reviewName">–</span></div>
-      <div class="review-item"><span class="review-label">Photo</span><span class="review-value" id="reviewPhotoType">–</span></div>
-      <div class="review-item"><span class="review-label">Price per portion</span><span class="review-value" id="reviewPrice">–</span></div>
-      <div class="review-item"><span class="review-label">Portions available</span><span class="review-value" id="reviewPortions">–</span></div>
-      <div class="review-item"><span class="review-label">Pickup date &amp; time</span><span class="review-value" id="reviewPickup">–</span></div>
-      <div class="review-item"><span class="review-label">Dietary</span><span class="review-value" id="reviewDietary">–</span></div>
-      <div class="review-item">
-        <span class="review-label">Cooking video</span>
-        <span class="review-value" id="reviewYT">–</span>
-      </div>
-      <div class="review-item">
-        <span class="review-label">Recipe</span>
-        <span class="review-value" id="reviewRecipe">–</span>
-      </div>
+    <!-- Multi-dish batch review (shown when batch has 2+ dishes) -->
+    <div id="batchReview" style="display:none;">
+      <div class="batch-review-list" id="batchReviewList"></div>
     </div>
 
     <div class="info-box" style="margin-top:20px;">
@@ -499,7 +565,7 @@ Tips:
 
     <div class="btn-actions" style="margin-top:8px;">
       <button class="btn-primary" id="publish-btn" onclick="publishDish()">Publish listing 🚀</button>
-      <button class="btn-secondary" onclick="prevStep(3)">← Edit details</button>
+      <button class="btn-secondary" onclick="goBackFromReview()">← Edit details</button>
     </div>
     <div id="publish-error" style="display:none;background:#FFF0F0;border:2px solid #F87171;border-radius:12px;padding:12px 16px;margin-top:12px;font-size:0.83rem;color:#991B1B;"></div>
     <p class="terms">By publishing you confirm this food is freshly prepared and safe. You agree to our <a href="meetup-guide.html">Cook Guidelines</a> and <a href="meetup-guide.html">Community Standards</a>.</p>
@@ -631,15 +697,130 @@ function selectLibItem(food, el) {
   document.getElementById('previewName').textContent = food.name;
   document.getElementById('previewTag').textContent  = food.tag;
   document.getElementById('selectedPreview').classList.add('visible');
-  // Auto-fill dish name if empty
+  // Always auto-fill dish name when library item is selected
   const nameInput = document.getElementById('dishNameInput');
-  if (!nameInput.value.trim()) nameInput.value = food.name;
+  nameInput.value = food.name;
 }
 
 function clearSelection() {
   selectedLibItem = null; window.selectedLibItem = null;
   document.getElementById('selectedPreview').classList.remove('visible');
   document.querySelectorAll('.lib-item').forEach(i => i.classList.remove('selected'));
+}
+
+/* ── Dish batch ── */
+let _dishBatch = [];
+
+function captureDishFromForm() {
+  return {
+    name:        document.getElementById('dishNameInput')?.value.trim() || '',
+    price:       document.getElementById('inp-price')?.value.trim() || '',
+    portions:    document.getElementById('inp-portions')?.value || '',
+    pickupDate:  document.getElementById('inp-pickup-date')?.value || '',
+    pickupTime:  document.getElementById('inp-pickup-time')?.value || '',
+    description: document.getElementById('inp-description')?.value.trim() || '',
+    dietary:     [...document.querySelectorAll('#step-1 .chip.selected')].map(c => c.textContent.trim()),
+    libImg:      window.selectedLibItem ? window.selectedLibItem.img : (window._uploadedPhotoDataUrl || null),
+    libItem:     window.selectedLibItem || null,
+    uploadedUrl: window._uploadedPhotoDataUrl || null,
+  };
+}
+
+function resetDishForm() {
+  document.getElementById('dishNameInput').value = '';
+  document.getElementById('inp-price').value = '';
+  document.getElementById('inp-portions').value = '';
+  document.getElementById('inp-pickup-date').value = '';
+  document.getElementById('inp-pickup-time').value = '12:00';
+  document.getElementById('inp-description').value = '';
+  document.querySelectorAll('#step-1 .chip').forEach(c => c.classList.remove('selected'));
+  const thumbs = document.getElementById('foodThumbs');
+  if (thumbs) thumbs.innerHTML = '';
+  window._uploadedPhotoDataUrl = null;
+  clearSelection();
+  buildLibGrid(currentFilter);
+}
+
+function addToBatch() {
+  if (_dishBatch.length >= 5) return;
+  if (!validateStep(1)) return;
+  const dish = captureDishFromForm();
+  if (!dish.name) {
+    alert('Please enter a dish name before adding to the batch.');
+    return;
+  }
+  _dishBatch.push(dish);
+  renderBatchPanel();
+  resetDishForm();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function removeBatchItem(idx) {
+  _dishBatch.splice(idx, 1);
+  renderBatchPanel();
+}
+
+function renderBatchPanel() {
+  const wrap     = document.getElementById('batchWrap');
+  const list     = document.getElementById('batchList');
+  const countEl  = document.getElementById('batchCount');
+  const addBtn   = document.getElementById('addAnotherBtn');
+
+  countEl.textContent = _dishBatch.length;
+
+  if (_dishBatch.length === 0) {
+    wrap.classList.remove('visible');
+  } else {
+    wrap.classList.add('visible');
+    list.innerHTML = _dishBatch.map((d, i) => `
+      <div class="batch-item">
+        ${d.libImg
+          ? `<img class="batch-img" src="${d.libImg}" alt="${d.name}"/>`
+          : `<div class="batch-img-ph">🍽️</div>`}
+        <div class="batch-info">
+          <div class="batch-name">${d.name}</div>
+          <div class="batch-meta">${d.price || '–'} &nbsp;·&nbsp; ${d.portions || '–'}</div>
+        </div>
+        <button class="batch-rm" onclick="removeBatchItem(${i})" title="Remove">✕</button>
+      </div>
+    `).join('');
+  }
+
+  if (addBtn) {
+    addBtn.disabled = _dishBatch.length >= 5;
+    addBtn.textContent = _dishBatch.length >= 5
+      ? '✓ Maximum 5 dishes reached'
+      : `+ Save this dish & add another (${5 - _dishBatch.length} more slot${5 - _dishBatch.length !== 1 ? 's' : ''})`;
+  }
+}
+
+function renderBatchReview() {
+  const single = document.getElementById('singleReview');
+  const multi  = document.getElementById('batchReview');
+  const mlist  = document.getElementById('batchReviewList');
+  const subtitle = document.getElementById('reviewSubtitle');
+  const publishBtn = document.getElementById('publish-btn');
+
+  if (_dishBatch.length <= 1) {
+    single.style.display = '';
+    multi.style.display  = 'none';
+    if (publishBtn) publishBtn.textContent = 'Publish listing 🚀';
+    if (subtitle) subtitle.textContent = 'Check everything looks right before publishing to your neighborhood.';
+  } else {
+    single.style.display = 'none';
+    multi.style.display  = '';
+    if (subtitle) subtitle.textContent = `You're publishing ${_dishBatch.length} dishes to your neighborhood.`;
+    if (publishBtn) publishBtn.textContent = `Publish ${_dishBatch.length} dishes 🚀`;
+    mlist.innerHTML = _dishBatch.map((d, i) => `
+      <div class="batch-review-item">
+        <div class="batch-review-num">${i + 1}</div>
+        <div>
+          <div class="batch-review-name">${d.name}</div>
+          <div class="batch-review-sub">${d.price || '–'} &nbsp;·&nbsp; ${d.portions || '–'} &nbsp;·&nbsp; Pickup ${d.pickupTime || '–'}</div>
+        </div>
+      </div>
+    `).join('');
+  }
 }
 
 /* ── Tab switch ── */
@@ -725,7 +906,36 @@ function addThumb(input, containerId) {
 /* ── Step navigation ── */
 let currentStep = 1;
 
+let _recipeSkipped = false;
+
+// Skip recipe step — jump from step 1 directly to review (step 3)
+function skipToReview() {
+  if (!validateStep(1)) return;
+  // Capture current dish into batch
+  const dish = captureDishFromForm();
+  if (dish.name) _dishBatch.push(dish);
+  _recipeSkipped = true;
+  renderBatchPanel();
+  document.getElementById('step-1').classList.add('hidden');
+  currentStep = 2;
+  nextStep(2);
+}
+
+// Back from review: return to step 1 if recipe was skipped, otherwise step 2
+function goBackFromReview() {
+  if (_recipeSkipped) {
+    document.getElementById('step-3').classList.add('hidden');
+    document.getElementById('step-1').classList.remove('hidden');
+    document.getElementById('step-1').scrollIntoView({behavior:'smooth',block:'start'});
+    updateProgress(1);
+    currentStep = 1;
+  } else {
+    prevStep(3);
+  }
+}
+
 function nextStep(from) {
+  if (from === 1) _recipeSkipped = false; // cook chose recipe path
   // Populate review when advancing to step 3
   if (from === 2) {
     // Dish name
@@ -741,7 +951,7 @@ function nextStep(from) {
     } else if (selectedLibItem) {
       reviewImg.src = selectedLibItem.img;
       reviewImg.style.display = 'block';
-      document.getElementById('reviewPhotoType').textContent = 'Platform photo — ' + selectedLibItem.name;
+      document.getElementById('reviewPhotoType').textContent = 'Platform photo — ' + name;
     } else {
       reviewImg.style.display = 'none';
       document.getElementById('reviewPhotoType').textContent = 'No photo selected';
@@ -779,6 +989,7 @@ function nextStep(from) {
     document.getElementById('reviewRecipe').innerHTML = isPaid
       ? '<span class="badge" style="background:#FFF3CD;color:#92400E;border-radius:100px;padding:3px 10px;font-size:0.72rem;font-weight:700;">Paid on request</span>'
       : '<span class="badge badge-free">Free for everyone</span>';
+    renderBatchReview();
   }
   const next = from + 1;
   document.getElementById('step-' + from).classList.add('hidden');
@@ -863,72 +1074,79 @@ buildLibGrid('All');
       return;
     }
 
+    if (_dishBatch.length === 0) {
+      errEl.textContent = '❌ No dishes to publish. Please fill in at least one dish.';
+      errEl.style.display = 'block';
+      return;
+    }
+
     btn.disabled = true;
-    btn.textContent = 'Publishing…';
+    const total = _dishBatch.length;
+    btn.textContent = `Publishing ${total} dish${total > 1 ? 'es' : ''}…`;
+
+    // Recipe & video info (only for last dish when going through recipe step)
+    const youtubeUrl = document.getElementById('ytInput')?.value.trim() || '';
+    let youtubeId = null;
+    const ytMatch = youtubeUrl.match(/(?:v=|\/shorts\/|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+    if (ytMatch) youtubeId = ytMatch[1];
+    const recipeText   = document.getElementById('recipeInput')?.value.trim() || '';
+    const visibility   = document.getElementById('visPaid')?.classList.contains('selected') ? 'paid' : 'free';
+
+    const cookBase = {
+      cookUid:      user.uid,
+      cookName:     _cookProfile?.cookName || user.displayName || 'Neighborhood Cook',
+      cookPhone:    _cookProfile?.phone || '',
+      neighborhood: _cookProfile?.neighborhood || '',
+      lat:          _cookProfile?.lat  || null,
+      lng:          _cookProfile?.lng  || null,
+      email:        user.email || '',
+      isActive:     true,
+    };
 
     try {
-      // Collect form values
-      const dishName    = document.getElementById('dishNameInput')?.value.trim() || '';
-      const price       = document.getElementById('inp-price')?.value.trim() || '';
-      const portions    = document.getElementById('inp-portions')?.value || '';
-      const pickupDate  = document.getElementById('inp-pickup-date')?.value || '';
-      const pickupTime  = document.getElementById('inp-pickup-time')?.value || '';
-      const description = document.getElementById('inp-description')?.value.trim() || '';
-      const dietary     = [...document.querySelectorAll('#step-1 .chip.selected')].map(c => c.textContent.trim());
-      const youtubeUrl  = document.getElementById('ytInput')?.value.trim() || '';
-      const visibility  = document.getElementById('visPaid')?.classList.contains('selected') ? 'paid' : 'free';
-
-      // Extract YouTube video ID
-      let youtubeId = null;
-      const ytMatch = youtubeUrl.match(/(?:v=|\/shorts\/|youtu\.be\/)([A-Za-z0-9_-]{11})/);
-      if (ytMatch) youtubeId = ytMatch[1];
-
-      // Image — prefer uploaded photo (data URL), then library image URL
-      const libImg = window.selectedLibItem ? window.selectedLibItem.img
-                   : (window._uploadedPhotoDataUrl || null);
-
-      if (!dishName) {
-        errEl.textContent = '❌ Please enter a dish name.';
-        errEl.style.display = 'block';
-        btn.disabled = false; btn.textContent = 'Publish listing 🚀';
-        return;
+      for (let i = 0; i < _dishBatch.length; i++) {
+        const d = _dishBatch[i];
+        const isLast = i === _dishBatch.length - 1;
+        const data = {
+          ...cookBase,
+          dishName:    d.name,
+          price:       d.price,
+          portions:    d.portions,
+          pickupDate:  d.pickupDate,
+          pickupTime:  d.pickupTime,
+          description: d.description,
+          dietary:     d.dietary,
+          imageUrl:    d.libImg,
+          // Recipe data only attached if cook went through recipe step (last dish, non-skipped)
+          youtubeId:        (isLast && !_recipeSkipped) ? youtubeId : null,
+          recipeText:       (isLast && !_recipeSkipped) ? recipeText : '',
+          recipeVisibility: (isLast && !_recipeSkipped) ? visibility : 'free',
+          createdAt:   serverTimestamp(),
+        };
+        const docRef = await addDoc(collection(db, 'dishes'), data);
+        console.log(`[publishDish] ✅ dish ${i+1}/${total} saved as dishes/${docRef.id}`);
+        btn.textContent = `Publishing… (${i+1}/${total})`;
       }
 
-      const data = {
-        cookUid:      user.uid,
-        cookName:     _cookProfile?.cookName || user.displayName || 'Neighborhood Cook',
-        neighborhood: _cookProfile?.neighborhood || '',
-        email:        user.email || '',
-        dishName,
-        price,
-        portions,
-        pickupDate,
-        pickupTime,
-        description,
-        dietary,
-        youtubeId,
-        imageUrl:     libImg,
-        recipeVisibility: visibility,
-        isActive:     true,
-        createdAt:    serverTimestamp(),
-      };
-
-      console.log('[publishDish] saving dish to Firestore server…');
-      const docRef = await addDoc(collection(db, 'dishes'), data);
-      console.log('[publishDish] ✅ saved to server as dishes/' + docRef.id);
-
-      // Set profile link dynamically then advance to success step
       const profileLink = document.getElementById('view-profile-link');
-      if (profileLink && user.uid) {
-        profileLink.href = 'cook-profile.html?uid=' + user.uid;
-      }
+      if (profileLink && user.uid) profileLink.href = 'cook-profile.html?uid=' + user.uid;
+
+      // Update success message to reflect count
+      const successTitle = document.querySelector('.success-title');
+      const successSub   = document.querySelector('.success-sub');
+      if (successTitle) successTitle.textContent = total > 1 ? `${total} dishes are live! 🎉` : 'Dish is live!';
+      if (successSub)   successSub.textContent   = total > 1
+        ? `All ${total} listings are now visible to neighbors within 1 km.`
+        : 'Your listing is now visible to neighbors within 1 km. Here\'s what happens next:';
+
+      _dishBatch = [];
       nextStep(3);
     } catch(err) {
       console.error('[publishDish] error:', err);
       errEl.textContent = '❌ Could not publish: ' + (err.message || 'Unknown error');
       errEl.style.display = 'block';
       btn.disabled = false;
-      btn.textContent = 'Publish listing 🚀';
+      btn.textContent = `Publish ${total} dish${total > 1 ? 'es' : ''} 🚀`;
     }
   };
 </script>

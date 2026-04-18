@@ -2,14 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="brand_assets/logo.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="brand_assets/logo.png"/>
+  <link rel="apple-touch-icon" href="brand_assets/logo.png"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#0C342C"/>
+  <link rel="manifest" href="manifest.json"/>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
   <meta http-equiv="Expires" content="0"/>
+  <meta name="description" content="Become a home cook on CookNextDoor. List your home-cooked dishes for neighbours within 1 km. Free to join, zero commission, direct payment."/>
   <title>Cook Registration – CookNextDoor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Organization","name":"CookNextDoor","url":"https://cooknextdoor.org","logo":"https://cooknextdoor.org/brand_assets/logo.png","description":"CookNextDoor is a free hyperlocal platform connecting home cooks with hungry neighbours within 1 km in Singapore and Malaysia. Zero commission, self-pickup, direct payment.","foundingDate":"2024","foundingLocation":"Singapore","areaServed":["Singapore","Malaysia"],"address":{"@type":"PostalAddress","addressCountry":"SG"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","url":"https://cooknextdoor.org/contact.html"},"sameAs":[]}
+  </script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{scroll-behavior:smooth;}
@@ -23,7 +33,7 @@
 
     /* ── Top bar ── */
     .topbar{background:rgba(12,52,44,0.92);backdrop-filter:blur(16px);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:100;}
-    .topbar__logo img{width:206px;height:128px;object-fit:contain;display:block;}
+    .topbar__logo img{width:115px;height:72px;object-fit:contain;display:block;}
     .topbar__back{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.7);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
     .topbar__back:hover{color:var(--orange);}
 
@@ -198,7 +208,7 @@
 
 <!-- Top bar -->
 <div class="topbar">
-  <a class="topbar__logo" href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:206px;height:128px;object-fit:contain;display:block;"/></a>
+  <a class="topbar__logo" href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:115px;height:72px;object-fit:contain;display:block;"/></a>
   <a class="topbar__back" href="index.html">← Back to home</a>
 </div>
 
@@ -361,6 +371,13 @@
       <label>Pickup instructions <span class="opt">shown to reserved buyers only</span></label>
       <textarea id="inp-pickup" class="form-control" placeholder="e.g. Come to the void deck, Block 123. I'll be at the bench near the lift. Look for my red tote bag!"></textarea>
     </div>
+    <div class="form-group">
+      <label>GPS coordinates <span class="opt">helps buyers find you by distance</span></label>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button type="button" id="gps-btn" onclick="captureGPS()" style="display:inline-flex;align-items:center;gap:7px;background:rgba(227,239,38,0.10);border:1.5px solid rgba(227,239,38,0.30);color:#E3EF26;font-family:Poppins,sans-serif;font-weight:600;font-size:0.82rem;padding:10px 16px;border-radius:100px;cursor:pointer;transition:background 0.2s;">📍 Use my GPS location</button>
+        <span id="gps-status" style="font-size:0.78rem;color:rgba(255,255,255,0.45);"></span>
+      </div>
+    </div>
     <div class="btn-actions">
       <button class="btn-primary" onclick="nextStep(4)">Continue →</button>
       <button class="btn-secondary" onclick="prevStep(4)">← Back</button>
@@ -511,7 +528,7 @@
     <div class="form-group">
       <label>Your chef / profile photo</label>
       <label class="photo-upload">
-        <input type="file" accept="image/*" onchange="addThumb(this,'chefThumbs')"/>
+        <input type="file" accept="image/*" onchange="uploadChefPhoto(this)"/>
         <div class="photo-upload__icon">🤳</div>
         <div class="photo-upload__title">Upload your photo</div>
         <div class="photo-upload__sub">Smiling face works best · JPG or PNG · Max 5 MB</div>
@@ -647,6 +664,8 @@
     initializeFirestore, persistentLocalCache,
     doc, setDoc, getDoc, serverTimestamp, waitForPendingWrites
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC3ynPUHYnPQ9msdLJNB5l-gM--CogrXAQ",
@@ -670,6 +689,32 @@
     console.warn('Firestore persistence unavailable, using in-memory:', e.message);
   }
   const provider = new GoogleAuthProvider();
+  const storage  = getStorage(app);
+
+  // ── Chef photo upload to Firebase Storage ─────────────
+  window._chefPhotoUrl = null;
+  window.uploadChefPhoto = async function(input) {
+    addThumb(input, 'chefThumbs');
+    const file = input.files[0];
+    if (!file || !window._cndUid) return;
+    const status = document.createElement('div');
+    status.id = 'chef-upload-status';
+    status.style.cssText = 'font-size:0.75rem;color:rgba(255,255,255,0.55);margin-top:6px;';
+    status.textContent = '⏳ Uploading photo…';
+    const existing = document.getElementById('chef-upload-status');
+    if (existing) existing.remove();
+    document.getElementById('chefThumbs').after(status);
+    try {
+      const storageRef = ref(storage, 'cook_photos/' + window._cndUid + '_profile');
+      await uploadBytes(storageRef, file);
+      window._chefPhotoUrl = await getDownloadURL(storageRef);
+      status.textContent = '✓ Photo uploaded';
+      status.style.color = '#E3EF26';
+    } catch(e) {
+      console.warn('Chef photo upload:', e.message);
+      status.textContent = 'Upload failed — profile will save without photo';
+    }
+  };
 
   // Sign out
   window.cookSignOut = async function() {
@@ -953,6 +998,8 @@
         hasFoodPhotos:      (document.getElementById('foodThumbs')?.children.length || 0) > 0,
         isActive:           true,
         updatedAt:          serverTimestamp(),
+        ...(window._cndLat && window._cndLng ? { lat: window._cndLat, lng: window._cndLng } : {}),
+        ...(window._chefPhotoUrl ? { profilePhotoUrl: window._chefPhotoUrl } : {}),
       };
       // Only set createdAt on first save (merge won't overwrite existing value
       // but serverTimestamp on merge still overwrites — use conditional)
@@ -1288,6 +1335,25 @@
     ['HOUGANG','Hougang'],['SENGKANG','Sengkang'],['PUNGGOL','Punggol'],['ANG MO KIO','Ang Mo Kio'],['SERANGOON','Serangoon'],
     ['TOA PAYOH','Toa Payoh'],['BISHAN','Bishan'],['BUKIT TIMAH','Bukit Timah'],['QUEENSTOWN','Queenstown'],['NOVENA','Novena'],
   ];
+
+  // GPS location capture for cook profile
+  window._cndLat = null;
+  window._cndLng = null;
+  function captureGPS() {
+    const btn    = document.getElementById('gps-btn');
+    const status = document.getElementById('gps-status');
+    if (!navigator.geolocation) { if (status) status.textContent = 'GPS not supported in this browser.'; return; }
+    if (btn) btn.textContent = '⏳ Getting location…';
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      window._cndLat = pos.coords.latitude;
+      window._cndLng = pos.coords.longitude;
+      if (btn) { btn.textContent = '✓ Location captured'; btn.style.color = '#E3EF26'; }
+      if (status) status.textContent = window._cndLat.toFixed(4) + ', ' + window._cndLng.toFixed(4);
+    }, function() {
+      if (btn) btn.textContent = '📍 Use my GPS location';
+      if (status) status.textContent = 'Could not get location. Please try again.';
+    });
+  }
 
   let _postalTimer = null;
   function onPostalInput(v) {

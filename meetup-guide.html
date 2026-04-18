@@ -2,11 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="brand_assets/logo.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="brand_assets/logo.png"/>
+  <link rel="apple-touch-icon" href="brand_assets/logo.png"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#0C342C"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="description" content="Everything you need to know about arranging safe, convenient self-pickup for home-cooked meals on CookNextDoor."/>
   <title>How Pickup & Payment Works – CookNextDoor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Organization","name":"CookNextDoor","url":"https://cooknextdoor.org","logo":"https://cooknextdoor.org/brand_assets/logo.png","description":"CookNextDoor is a free hyperlocal platform connecting home cooks with hungry neighbours within 1 km in Singapore and Malaysia. Zero commission, self-pickup, direct payment.","foundingDate":"2024","foundingLocation":"Singapore","areaServed":["Singapore","Malaysia"],"address":{"@type":"PostalAddress","addressCountry":"SG"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","url":"https://cooknextdoor.org/contact.html"},"sameAs":[]}
+  </script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{scroll-behavior:smooth;}
@@ -20,7 +30,7 @@
 
     /* ── Top bar ── */
     .topbar{background:rgba(12,52,44,0.92);backdrop-filter:blur(16px);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:100;}
-    .topbar__logo img{width:206px;height:128px;object-fit:contain;display:block;}
+    .topbar__logo img{width:115px;height:72px;object-fit:contain;display:block;}
     .topbar__back{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;color:rgba(255,255,255,0.7);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
     .topbar__back:hover{color:var(--orange);}
 
@@ -217,7 +227,7 @@
 
 <!-- Top bar -->
 <div class="topbar">
-  <a class="topbar__logo" href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:206px;height:128px;object-fit:contain;display:block;"/></a>
+  <a class="topbar__logo" href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:115px;height:72px;object-fit:contain;display:block;"/></a>
   <a class="topbar__back" href="index.html">← Back to home</a>
 </div>
 

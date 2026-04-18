@@ -2,11 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="brand_assets/logo.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="brand_assets/logo.png"/>
+  <link rel="apple-touch-icon" href="brand_assets/logo.png"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0C342C"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="description" content="Find home-cooked meals within 1 km of you in Singapore and Malaysia. Browse dishes from neighbourhood cooks — self-pickup, direct payment, zero commission."/>
   <title>CookNextDoor – Food from just next door.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "CookNextDoor",
+    "url": "https://cooknextdoor.org",
+    "logo": "https://cooknextdoor.org/brand_assets/logo.png",
+    "description": "CookNextDoor is a free hyperlocal platform connecting home cooks with hungry neighbours within 1 km in Singapore and Malaysia. Zero commission, self-pickup, direct payment.",
+    "foundingDate": "2024",
+    "foundingLocation": "Singapore",
+    "areaServed": ["Singapore", "Malaysia"],
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "SG"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "url": "https://cooknextdoor.org/contact.html"
+    },
+    "sameAs": []
+  }
+  </script>
   <style>
     /* ── Reset & Base ─────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -84,7 +114,7 @@
       max-width: 1140px; margin: 0 auto; padding: 8px 24px;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .nav__logo img{width:206px;height:128px;object-fit:contain;display:block;}
+    .nav__logo img{width:115px;height:72px;object-fit:contain;display:block;}
     .nav__links { display: flex; gap: 32px; }
     .nav__links a {
       font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 0.9rem;
@@ -209,6 +239,31 @@
     .pill { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.85rem; padding: 8px 18px; border-radius: 100px; border: 2px solid rgba(255,255,255,0.18); cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.70); }
     .pill.active { background: var(--orange); color: var(--on-lime); border-color: var(--orange); }
     .pill:not(.active):hover { border-color: var(--orange); color: var(--orange); background: rgba(227,239,38,0.10); }
+
+    /* ── Search + location ───────────────────────────────── */
+    .listings__search{display:flex;gap:10px;margin-bottom:20px;align-items:center;flex-wrap:wrap;}
+    .search-input{flex:1;min-width:180px;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.13);color:#fff;border-radius:100px;padding:11px 20px 11px 42px;font-family:'Inter',sans-serif;font-size:0.88rem;outline:none;transition:border-color 0.2s,background 0.2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' fill='none' stroke='rgba(255,255,255,0.30)' stroke-width='2' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:16px center;}
+    .search-input::placeholder{color:rgba(255,255,255,0.28);}
+    .search-input:focus{border-color:var(--orange);background-color:rgba(255,255,255,0.10);}
+    .loc-btn{display:flex;align-items:center;gap:5px;background:rgba(227,239,38,0.08);border:1.5px solid rgba(227,239,38,0.25);color:var(--orange);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.80rem;padding:11px 16px;border-radius:100px;cursor:pointer;white-space:nowrap;transition:background 0.2s,color 0.2s,border-color 0.2s;}
+    .loc-btn:hover{background:rgba(227,239,38,0.16);}
+    .loc-btn.loc-active{background:var(--orange);color:var(--on-lime);border-color:var(--orange);}
+    .no-results{text-align:center;padding:40px 24px;color:rgba(255,255,255,0.45);font-size:0.92rem;display:none;}
+    .no-results .no-res-icon{font-size:2rem;margin-bottom:10px;display:block;}
+    .no-results button{margin-top:12px;background:none;border:1px solid rgba(255,255,255,0.20);color:rgba(255,255,255,0.55);padding:8px 16px;border-radius:100px;cursor:pointer;font-size:0.80rem;}
+    .no-results button:hover{border-color:var(--orange);color:var(--orange);}
+
+    /* ── Notify me band ──────────────────────────────────── */
+    .notify-band{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:18px;padding:24px 28px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-top:36px;}
+    .notify-band__text{flex:1;min-width:180px;}
+    .notify-band__text strong{display:block;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;color:#fff;margin-bottom:4px;}
+    .notify-band__text span{font-size:0.82rem;color:rgba(255,255,255,0.45);}
+    .notify-form{display:flex;gap:8px;flex-wrap:wrap;}
+    .notify-form input[type=email]{background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.13);color:#fff;border-radius:100px;padding:10px 18px;font-family:'Inter',sans-serif;font-size:0.84rem;outline:none;width:205px;transition:border-color 0.2s;}
+    .notify-form input[type=email]::placeholder{color:rgba(255,255,255,0.28);}
+    .notify-form input[type=email]:focus{border-color:var(--orange);}
+    .notify-form button{background:var(--orange);color:var(--on-lime);font-family:'Poppins',sans-serif;font-weight:700;font-size:0.82rem;padding:10px 20px;border-radius:100px;border:none;cursor:pointer;white-space:nowrap;transition:transform 0.2s;}
+    .notify-form button:hover{transform:translateY(-2px);}
 
     .food-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
     .food-card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.22); transition: transform 0.25s, box-shadow 0.25s; cursor: pointer; }
@@ -443,6 +498,30 @@
     .fade-up { opacity: 1; transform: translateY(0); transition: opacity 0.65s ease, transform 0.65s ease; }
     .js-ready .fade-up { opacity: 0; transform: translateY(30px); }
     .js-ready .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Food card extras ─────────────────────────────────── */
+    .food-card__dietary{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;}
+    .food-card__tag{font-size:0.62rem;font-family:'Poppins',sans-serif;font-weight:600;padding:2px 8px;border-radius:100px;background:rgba(7,102,83,0.12);color:#3d9977;border:1px solid rgba(7,102,83,0.22);}
+    .food-card__pickup{font-size:0.72rem;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:4px;}
+    .food-card__wa{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#25D366;text-decoration:none;font-size:1rem;transition:transform 0.2s;flex-shrink:0;}
+    .food-card__wa:hover{transform:scale(1.12);}
+
+    /* ── Onboarding modal ─────────────────────────────────── */
+    .onboarding-modal{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.72);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;}
+    .onboarding-modal.open{display:flex;}
+    .onboarding-card{background:#0C342C;border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:40px 32px;max-width:420px;width:100%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.5);}
+    .onboarding-card__icon{font-size:2.8rem;margin-bottom:16px;}
+    .onboarding-card h2{font-family:'Poppins',sans-serif;font-weight:900;font-size:1.4rem;color:#fff;margin-bottom:8px;}
+    .onboarding-card p{font-size:0.88rem;color:rgba(255,255,255,0.60);margin-bottom:24px;line-height:1.7;}
+    .onboarding-input{width:100%;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.15);color:#fff;border-radius:12px;padding:13px 16px;font-family:'Inter',sans-serif;font-size:0.9rem;outline:none;margin-bottom:12px;transition:border-color 0.2s;}
+    .onboarding-input::placeholder{color:rgba(255,255,255,0.30);}
+    .onboarding-input:focus{border-color:var(--orange);}
+    .onboarding-btn-primary{width:100%;background:var(--orange);color:var(--on-lime);font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;padding:14px;border-radius:12px;border:none;cursor:pointer;margin-bottom:10px;transition:transform 0.2s;}
+    .onboarding-btn-primary:hover{transform:translateY(-2px);}
+    .onboarding-btn-loc{width:100%;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.75);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;padding:11px;border-radius:12px;cursor:pointer;transition:background 0.2s,border-color 0.2s;}
+    .onboarding-btn-loc:hover{background:rgba(255,255,255,0.12);border-color:var(--orange);}
+    .onboarding-skip{font-size:0.78rem;color:rgba(255,255,255,0.35);cursor:pointer;border:none;background:none;margin-top:14px;display:inline-block;}
+    .onboarding-skip:hover{color:rgba(255,255,255,0.60);}
   </style>
 </head>
 <body>
@@ -450,7 +529,7 @@
 <!-- ── Nav ─────────────────────────────────────────────────── -->
 <nav id="mainNav">
   <div class="nav__inner">
-    <a class="nav__logo" href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:206px;height:128px;object-fit:contain;display:block;"/></a>
+    <a class="nav__logo" href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:115px;height:72px;object-fit:contain;display:block;"/></a>
     <div class="nav__links">
       <a href="#listings">Browse food</a>
       <a href="#how">How it works</a>
@@ -555,6 +634,11 @@
       </div>
       <a href="#listings" class="btn btn--outline btn--sm">See all listings →</a>
     </div>
+    <!-- Search + location -->
+    <div class="listings__search fade-up">
+      <input type="text" id="search-input" class="search-input" placeholder="Search dishes, cooks or neighbourhood…" oninput="window.onSearch(this.value)" autocomplete="off"/>
+      <button class="loc-btn" id="loc-btn" onclick="window.requestLocation()">📍 Near me</button>
+    </div>
     <div class="category-pills fade-up">
       <button class="pill active">All</button>
       <button class="pill">🍛 Rice &amp; Curry</button>
@@ -577,6 +661,23 @@
       <div style="font-size:0.92rem;line-height:1.7;max-width:380px;margin:0 auto 28px;">We're growing our community of home cooks. Be the first in your neighbourhood to share a dish!</div>
       <a href="cook-register.html" style="display:inline-block;background:var(--orange);color:#06231D;font-family:Poppins,sans-serif;font-weight:700;font-size:0.95rem;padding:13px 28px;border-radius:100px;text-decoration:none;">🍽️ Start cooking →</a>
       <div style="margin-top:16px;font-size:0.80rem;color:rgba(255,255,255,0.30);">Meanwhile, here are some example listings to show you how it works:</div>
+    </div>
+    <!-- No search results -->
+    <div id="no-results" class="no-results">
+      <span class="no-res-icon">🔍</span>
+      No results for "<span id="no-results-term"></span>"
+      <br/><button onclick="document.getElementById('search-input').value='';window.onSearch('');">Clear search</button>
+    </div>
+    <!-- Notify me -->
+    <div class="notify-band fade-up">
+      <div class="notify-band__text">
+        <strong>🔔 Get notified when new food is listed near you</strong>
+        <span>A quick email when a home cook posts something new nearby — no spam, ever</span>
+      </div>
+      <form class="notify-form" onsubmit="window.submitNotify(event)">
+        <input type="email" id="notify-email" placeholder="your@email.com" required/>
+        <button type="submit">Notify me</button>
+      </form>
     </div>
   </div>
 </section>
@@ -862,6 +963,7 @@
     <div class="final-cta__btns fade-up">
       <a href="user-auth.html" class="btn btn--white">🍜 Find food near me</a>
       <a href="cook-register.html" class="btn btn--dark">🍳 Start cooking</a>
+      <a href="contact.html" class="btn btn--dark" style="background:#25D366;border-color:#25D366;">💬 Join WhatsApp community</a>
     </div>
   </div>
 </section>
@@ -871,7 +973,7 @@
   <div class="container">
     <div class="footer__inner">
       <div class="footer__brand">
-        <img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:206px;height:128px;object-fit:contain;display:block;"/>
+        <img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:115px;height:72px;object-fit:contain;display:block;"/>
         <p>A free hyperlocal platform where neighborhood home cooks share extra food with people just around the corner.</p>
       </div>
       <div class="footer__col"><h4>Product</h4><ul><li><a href="#how">How it works</a></li><li><a href="user-auth.html">Find food</a></li><li><a href="cook-register.html">Start cooking</a></li><li><a href="food-mood.html">🎭 Food Mood</a></li><li><a href="news.html">📰 News</a></li><li><a href="meetup-guide.html">Meetup guide</a></li></ul></div>
@@ -879,8 +981,9 @@
       <div class="footer__col"><h4>Legal</h4><ul><li><a href="terms.html">Terms</a></li><li><a href="privacy.html">Privacy</a></li><li><a href="cookies.html">Cookies</a></li></ul></div>
     </div>
     <div class="footer__bottom">
-      <p>© 2025 CookNextDoor. Made with ❤️ for neighbors.</p>
+      <p>© 2026 CookNextDoor. Made with ❤️ for neighbors.</p>
       <div class="footer__social">
+        <a href="contact.html" class="social-btn" aria-label="WhatsApp community" title="Join our WhatsApp community" style="background:#25D366;">💬</a>
         <a href="contact.html" class="social-btn" aria-label="Instagram" title="Follow us — links coming soon">📸</a>
         <a href="contact.html" class="social-btn" aria-label="Facebook" title="Follow us — links coming soon">📘</a>
         <a href="contact.html" class="social-btn" aria-label="TikTok" title="Follow us — links coming soon">🎵</a>
@@ -909,19 +1012,119 @@
     btn.classList.add(panel === 'buyers' ? 'active--orange' : 'active--green');
   }
 
+  // ── Category pills — now filter live data ─────────────
   document.querySelectorAll('.pill').forEach(pill => {
     pill.addEventListener('click', () => {
       document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
       pill.classList.add('active');
+      window._activeCategory = pill.textContent.trim();
+      if (typeof window.filterAndRender === 'function') window.filterAndRender();
     });
   });
+
+  // ── Search ────────────────────────────────────────────
+  window.onSearch = function(val) {
+    window._searchTerm = val.trim();
+    const term = document.getElementById('no-results-term');
+    if (term) term.textContent = val.trim();
+    if (typeof window.filterAndRender === 'function') window.filterAndRender();
+  };
+
+  // ── Geolocation ───────────────────────────────────────
+  window.requestLocation = function() {
+    const btn = document.getElementById('loc-btn');
+    if (!navigator.geolocation) { if (btn) btn.textContent = '📍 Not available'; return; }
+    if (btn) btn.textContent = '⏳ Locating…';
+    navigator.geolocation.getCurrentPosition(
+      function(pos) {
+        localStorage.setItem('cnd_lat', pos.coords.latitude);
+        localStorage.setItem('cnd_lng', pos.coords.longitude);
+        if (btn) { btn.textContent = '✓ Near me'; btn.classList.add('loc-active'); }
+        if (typeof window.filterAndRender === 'function') window.filterAndRender();
+      },
+      function() { if (btn) btn.textContent = '📍 Near me'; }
+    );
+  };
+
+  // Restore location button state on page load
+  if (localStorage.getItem('cnd_lat')) {
+    document.addEventListener('DOMContentLoaded', function() {
+      const btn = document.getElementById('loc-btn');
+      if (btn) { btn.textContent = '✓ Near me'; btn.classList.add('loc-active'); }
+    });
+    const btn = document.getElementById('loc-btn');
+    if (btn) { btn.textContent = '✓ Near me'; btn.classList.add('loc-active'); }
+  }
+
+  // ── First-visit onboarding modal ─────────────────────
+  (function() {
+    if (localStorage.getItem('cnd_onboarded')) return;
+    setTimeout(function() {
+      const modal = document.getElementById('onboardingModal');
+      if (modal) modal.classList.add('open');
+    }, 1400);
+  })();
+
+  window.obSubmit = function() {
+    const val = document.getElementById('ob-neighborhood')?.value.trim();
+    if (!val) { document.getElementById('ob-neighborhood')?.focus(); return; }
+    localStorage.setItem('cnd_neighborhood', val);
+    localStorage.setItem('cnd_onboarded', '1');
+    document.getElementById('onboardingModal')?.classList.remove('open');
+  };
+
+  window.obUseLocation = function() {
+    if (!navigator.geolocation) { window.obSkip(); return; }
+    const locBtn = document.getElementById('ob-neighborhood');
+    if (locBtn) locBtn.placeholder = 'Getting your location…';
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      localStorage.setItem('cnd_lat', pos.coords.latitude);
+      localStorage.setItem('cnd_lng', pos.coords.longitude);
+      localStorage.setItem('cnd_onboarded', '1');
+      document.getElementById('onboardingModal')?.classList.remove('open');
+      const btn = document.getElementById('loc-btn');
+      if (btn) { btn.textContent = '✓ Near me'; btn.classList.add('loc-active'); }
+      if (typeof window.filterAndRender === 'function') window.filterAndRender();
+    }, function() {
+      if (locBtn) locBtn.placeholder = 'e.g. Tampines, Bedok, Petaling Jaya…';
+    });
+  };
+
+  window.obSkip = function() {
+    localStorage.setItem('cnd_onboarded', '1');
+    document.getElementById('onboardingModal')?.classList.remove('open');
+  };
+
+  // ── Notify me ─────────────────────────────────────────
+  window.submitNotify = async function(e) {
+    e.preventDefault();
+    const email = document.getElementById('notify-email').value.trim();
+    if (!email) return;
+    const btn = e.target.querySelector('button[type=submit]');
+    if (btn) { btn.textContent = 'Saving…'; btn.disabled = true; }
+    try {
+      if (typeof window._cndNotifySubscribe === 'function') {
+        await window._cndNotifySubscribe(email);
+      }
+      const band = e.target.closest('.notify-band');
+      if (band) {
+        band.querySelector('.notify-band__text strong').textContent = '✓ You\'re on the list!';
+        band.querySelector('.notify-band__text span').textContent = 'We\'ll email you when new food is posted nearby.';
+      }
+      e.target.innerHTML = '';
+    } catch(err) {
+      console.warn('notify subscribe error:', err);
+      if (btn) { btn.textContent = 'Notify me'; btn.disabled = false; }
+    }
+  };
 </script>
-<!-- Load live dish listings from Firestore -->
+<!-- Load live dish listings from Firestore (real-time) -->
 <script type="module">
-  import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import {
-    initializeFirestore, persistentLocalCache,
-    collection, query, orderBy, limit, getDocs
+    initializeFirestore, persistentLocalCache, getFirestore,
+    collection, query, orderBy, limit, onSnapshot,
+    addDoc, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -938,80 +1141,202 @@
   try {
     db = initializeFirestore(app, { localCache: persistentLocalCache() });
   } catch(e) {
-    const { getFirestore } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
     db = getFirestore(app);
   }
 
-  // Fallback demo cards shown if Firestore is empty
+  // ── Category keyword map ──────────────────────────────
+  const CATEGORY_MAP = {
+    '🍛 Rice & Curry': ['rice','curry','biryani','rendang','nasi','briyani','fried rice'],
+    '🍜 Noodles':      ['noodle','mee','pasta','laksa','ramen','pho','bee hoon','char kway'],
+    '🥗 Healthy':      ['salad','healthy','vegan','vegetarian','soup','greens','grain','quinoa'],
+    '🍱 Bento':        ['bento','japanese','sushi','onigiri','don','teishoku'],
+    '🍰 Desserts':     ['dessert','cake','sweet','kueh','pudding','pie','tart','kue'],
+  };
+
+  // ── Haversine distance (km) ───────────────────────────
+  function haversine(lat1, lng1, lat2, lng2) {
+    const R = 6371, dLat = (lat2-lat1)*Math.PI/180, dLng = (lng2-lng1)*Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  function distLabel(d) {
+    const lat = parseFloat(localStorage.getItem('cnd_lat'));
+    const lng = parseFloat(localStorage.getItem('cnd_lng'));
+    if (lat && lng && d.lat && d.lng) {
+      const km = haversine(lat, lng, d.lat, d.lng);
+      return km < 1 ? Math.round(km * 1000) + ' m' : km.toFixed(1) + ' km';
+    }
+    return d.neighborhood || 'Nearby';
+  }
+
+  // ── Demo fallback cards ───────────────────────────────
   const DEMO = [
-    { dishName:'Chicken Biryani', cookName:'Auntie Siti', neighborhood:'Tampines', price:'$5', portions:'3 portions', imageUrl:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&h=340&fit=crop&q=80', isDemo:true },
-    { dishName:'Prawn Mee Soup',  cookName:'Uncle Tan',   neighborhood:'Bedok',    price:'$4', portions:'5 portions', imageUrl:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&h=340&fit=crop&q=80', isDemo:true },
-    { dishName:'Beef Rendang & Rice', cookName:'Mdm Lim', neighborhood:'Pasir Ris',price:'$6', portions:'2 portions', imageUrl:'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=340&fit=crop&q=80', isDemo:true },
-    { dishName:'Japanese Bento Box',  cookName:'Kenji',   neighborhood:'Hougang',  price:'$7', portions:'4 portions', imageUrl:'https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=600&h=340&fit=crop&q=80', isDemo:true },
+    { dishName:'Chicken Biryani',     cookName:'Auntie Siti', neighborhood:'Tampines', price:'$5', portions:'3 portions', imageUrl:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&h=340&fit=crop&q=80', isDemo:true },
+    { dishName:'Prawn Mee Soup',      cookName:'Uncle Tan',   neighborhood:'Bedok',    price:'$4', portions:'5 portions', imageUrl:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&h=340&fit=crop&q=80', isDemo:true },
+    { dishName:'Beef Rendang & Rice', cookName:'Mdm Lim',     neighborhood:'Pasir Ris',price:'$6', portions:'2 portions', imageUrl:'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=340&fit=crop&q=80', isDemo:true },
+    { dishName:'Japanese Bento Box',  cookName:'Kenji',       neighborhood:'Hougang',  price:'$7', portions:'4 portions', imageUrl:'https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=600&h=340&fit=crop&q=80', isDemo:true },
   ];
 
+  // ── WhatsApp link builder ─────────────────────────────
+  function waLink(phone, dishName) {
+    const num = (phone || '').replace(/\D/g, '');
+    if (!num) return '';
+    const msg = encodeURIComponent('Hi! I saw your ' + dishName + ' on CookNextDoor — is it still available?');
+    return 'https://wa.me/' + num + '?text=' + msg;
+  }
+
+  // ── Build a single food card ──────────────────────────
   function buildCard(d) {
     const card = document.createElement('div');
     card.className = 'food-card';
     if (d.cookUid && !d.isDemo) {
       card.style.cursor = 'pointer';
       card.addEventListener('click', function(e) {
-        if (e.target.classList.contains('food-card__btn')) return;
+        if (e.target.closest('.food-card__wa') || e.target.classList.contains('food-card__btn')) return;
         window.location.href = 'cook-profile.html?uid=' + d.cookUid;
       });
     }
-    const imgSrc = d.imageUrl || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=340&fit=crop&q=80';
-    const badge = d.portions ? '<div class="food-card__badge">' + d.portions.replace(' portions','') + ' left</div>' : '';
-    const demoTag = d.isDemo ? '<div style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.55);color:#fff;font-size:0.6rem;font-family:Poppins,sans-serif;font-weight:700;padding:3px 7px;border-radius:100px;letter-spacing:0.05em;">DEMO</div>' : '';
+    const imgSrc  = d.imageUrl || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=340&fit=crop&q=80';
+    const badge   = d.portions ? '<div class="food-card__badge">' + d.portions.replace(' portions','') + ' left</div>' : '';
+    const demoTag = d.isDemo   ? '<div style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.55);color:#fff;font-size:0.6rem;font-family:Poppins,sans-serif;font-weight:700;padding:3px 7px;border-radius:100px;letter-spacing:0.05em;">DEMO</div>' : '';
+    const dist    = distLabel(d);
+    const rating  = d.avgRating ? ' <span style="color:#F59E0B;font-size:0.70rem;">★ ' + Number(d.avgRating).toFixed(1) + '</span>' : '';
+    const dest    = d.cookUid ? 'cook-profile.html?uid=' + d.cookUid : 'user-auth.html';
+    // Dietary tags
+    const dietaryTags = Array.isArray(d.dietary) && d.dietary.length
+      ? d.dietary.slice(0,3).map(t => '<span class="food-card__tag">' + t + '</span>').join('')
+      : '';
+    const dietaryRow = dietaryTags ? '<div class="food-card__dietary">' + dietaryTags + '</div>' : '';
+    // Pickup time
+    const pickupRow = d.pickupTime ? '<div class="food-card__pickup">⏰ ' + d.pickupTime + '</div>' : '';
+    // WhatsApp CTA
+    const waUrl = waLink(d.cookPhone, d.dishName);
+    const waBtn = waUrl ? '<a href="' + waUrl + '" target="_blank" rel="noopener" class="food-card__wa" title="WhatsApp cook">💬</a>' : '';
     card.innerHTML =
       '<div class="food-card__img">' +
         '<img src="' + imgSrc + '" alt="' + d.dishName + '" loading="lazy"/>' +
         badge + demoTag +
-        '<div class="food-card__dist">📍 ' + (d.neighborhood || 'Nearby') + '</div>' +
+        '<div class="food-card__dist">📍 ' + dist + '</div>' +
       '</div>' +
       '<div class="food-card__body">' +
         '<div class="food-card__name">' + d.dishName + '</div>' +
-        '<div class="food-card__cook">👨‍🍳 ' + (d.cookName || 'Home Cook') + '</div>' +
+        '<div class="food-card__cook">👨‍🍳 ' + (d.cookName || 'Home Cook') + rating + '</div>' +
+        dietaryRow + pickupRow +
         '<div class="food-card__footer">' +
           '<div><div class="food-card__price">' + (d.price || '–') + '</div><div class="food-card__portions">per portion</div></div>' +
-          '<button class="food-card__btn" onclick="window.location.href=\'' + (d.cookUid ? 'cook-profile.html?uid=' + d.cookUid : 'user-auth.html') + '\'">+</button>' +
+          '<div style="display:flex;gap:6px;align-items:center;">' + waBtn +
+            '<button class="food-card__btn" onclick="window.location.href=\'' + dest + '\'">+</button>' +
+          '</div>' +
         '</div>' +
       '</div>';
     return card;
   }
 
-  async function loadDishes() {
+  // ── Shared filter state ───────────────────────────────
+  window._allDishes      = [];
+  window._activeCategory = 'All';
+  window._searchTerm     = '';
+
+  // ── Filter + sort + render ────────────────────────────
+  window.filterAndRender = function() {
+    const grid      = document.getElementById('food-grid');
+    const noResults = document.getElementById('no-results');
+    if (!grid) return;
+
+    let filtered = window._allDishes;
+
+    // Text search: match name, cook, neighbourhood, description
+    if (window._searchTerm) {
+      const q = window._searchTerm.toLowerCase();
+      filtered = filtered.filter(d =>
+        (d.dishName     || '').toLowerCase().includes(q) ||
+        (d.cookName     || '').toLowerCase().includes(q) ||
+        (d.neighborhood || '').toLowerCase().includes(q) ||
+        (d.description  || '').toLowerCase().includes(q)
+      );
+    }
+
+    // Category pill filter
+    if (window._activeCategory && window._activeCategory !== 'All') {
+      const kws = CATEGORY_MAP[window._activeCategory] || [];
+      filtered = filtered.filter(d => {
+        const text = ((d.dishName||'') + ' ' + (d.description||'') + ' ' + (d.cuisineType||'')).toLowerCase();
+        return kws.some(k => text.includes(k));
+      });
+    }
+
+    // Sort by distance if user's location is stored
+    const uLat = parseFloat(localStorage.getItem('cnd_lat'));
+    const uLng = parseFloat(localStorage.getItem('cnd_lng'));
+    if (uLat && uLng) {
+      filtered = filtered.slice().sort((a, b) => {
+        const da = (a.lat && a.lng) ? haversine(uLat, uLng, a.lat, a.lng) : 9999;
+        const db = (b.lat && b.lng) ? haversine(uLat, uLng, b.lat, b.lng) : 9999;
+        return da - db;
+      });
+    }
+
+    grid.innerHTML = '';
+    const isEmpty = filtered.length === 0 && (window._searchTerm || window._activeCategory !== 'All');
+    if (noResults) noResults.style.display = isEmpty ? 'block' : 'none';
+    filtered.forEach(d => grid.appendChild(buildCard(d)));
+  };
+
+  // ── Notify subscription ───────────────────────────────
+  window._cndNotifySubscribe = async function(email) {
+    await addDoc(collection(db, 'notify_subscriptions'), {
+      email,
+      createdAt: serverTimestamp(),
+      source: 'index_listings'
+    });
+  };
+
+  // ── Load dishes with real-time listener ──────────────
+  function loadDishes() {
     const grid  = document.getElementById('food-grid');
     const empty = document.getElementById('food-empty');
-    try {
-      const q    = query(collection(db, 'dishes'), orderBy('createdAt', 'desc'), limit(8));
-      console.log('[loadDishes] querying Firestore dishes collection…');
-      const snap = await getDocs(q);
-      console.log('[loadDishes] got', snap.size, 'dishes from Firestore');
-
-      grid.innerHTML = ''; // clear skeletons
-
-      if (snap.empty) {
-        // No real dishes yet — show empty state message + demo cards as examples
-        console.warn('[loadDishes] dishes collection empty — showing empty state + DEMO');
-        if (empty) empty.style.display = 'block';
-        DEMO.forEach(d => grid.appendChild(buildCard(d)));
-      } else {
-        // Real dishes exist — show only real ones, no fake padding
-        snap.forEach(docSnap => grid.appendChild(buildCard(docSnap.data())));
-      }
-    } catch(err) {
-      console.warn('[loadDishes] error:', err.code, err.message);
-      // Firestore unreachable — show demo cards as fallback
+    const q     = query(collection(db, 'dishes'), orderBy('createdAt', 'desc'), limit(12));
+    onSnapshot(q, (snap) => {
       grid.innerHTML = '';
-      DEMO.forEach(d => grid.appendChild(buildCard(d)));
-    }
+      if (snap.empty) {
+        if (empty) empty.style.display = 'block';
+        window._allDishes = DEMO;
+      } else {
+        if (empty) empty.style.display = 'none';
+        window._allDishes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      }
+      window.filterAndRender();
+    }, (err) => {
+      console.warn('[loadDishes] error:', err.code, err.message);
+      grid.innerHTML = '';
+      window._allDishes = DEMO;
+      window.filterAndRender();
+    });
   }
 
   loadDishes();
 </script>
 
+<!-- ── First-visit onboarding modal ──────────────────────── -->
+<div class="onboarding-modal" id="onboardingModal">
+  <div class="onboarding-card">
+    <div class="onboarding-card__icon">🏘️</div>
+    <h2>Where are you?</h2>
+    <p>We'll show you home-cooked meals within 1 km of your neighbourhood — no sign-up needed.</p>
+    <input type="text" class="onboarding-input" id="ob-neighborhood" placeholder="e.g. Tampines, Bedok, Petaling Jaya…" autocomplete="off" onkeydown="if(event.key==='Enter')window.obSubmit()"/>
+    <button class="onboarding-btn-primary" onclick="window.obSubmit()">Show me food near me →</button>
+    <button class="onboarding-btn-loc" onclick="window.obUseLocation()">📍 Use my GPS location instead</button>
+    <button class="onboarding-skip" onclick="window.obSkip()">Skip for now</button>
+  </div>
+</div>
+
 <div id="cnd-chatbot"></div>
 <script src="widget/chatbot.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+</script>
 </body>
 </html>
