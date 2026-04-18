@@ -196,8 +196,8 @@
     .batch-meta{font-size:0.72rem;color:rgba(255,255,255,0.50);margin-top:2px;}
     .batch-rm{background:rgba(255,80,80,0.12);border:none;border-radius:8px;width:30px;height:30px;cursor:pointer;color:#F87171;font-size:0.95rem;flex-shrink:0;transition:background 0.2s;display:flex;align-items:center;justify-content:center;}
     .batch-rm:hover{background:rgba(255,80,80,0.30);}
-    .batch-add-btn{width:100%;margin-top:12px;padding:12px;background:transparent;border:1.5px dashed rgba(227,239,38,0.35);border-radius:12px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.84rem;color:#E3EF26;cursor:pointer;transition:all 0.2s;}
-    .batch-add-btn:hover:not(:disabled){background:rgba(227,239,38,0.07);border-color:#E3EF26;}
+    .batch-add-btn{width:100%;margin-top:12px;padding:12px;background:transparent;border:2px dashed rgba(6,35,29,0.30);border-radius:12px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.84rem;color:#06231D;cursor:pointer;transition:all 0.2s;}
+    .batch-add-btn:hover:not(:disabled){background:rgba(6,35,29,0.06);border-color:#06231D;}
     .batch-add-btn:disabled{opacity:0.4;cursor:not-allowed;}
     /* ── Batch review summary ── */
     .batch-review-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
@@ -392,20 +392,20 @@
     <!-- Add to batch -->
     <div style="margin-top:28px;padding-top:24px;border-top:1px solid #E8E8E8;">
       <button id="addAnotherBtn" onclick="addToBatch()" class="batch-add-btn">+ Save this dish &amp; add another (up to 5 dishes)</button>
-      <div style="text-align:center;font-size:0.74rem;color:var(--muted);margin:16px 0 14px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;">— or choose what to do next —</div>
+      <div style="text-align:center;font-size:0.74rem;color:#888;margin:16px 0 14px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;">— or choose what to do next —</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
 
         <!-- Path A: publish now -->
-        <button onclick="skipToReview()" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;background:rgba(227,239,38,0.07);border:2px solid rgba(227,239,38,0.35);border-radius:16px;cursor:pointer;transition:border-color 0.2s,background 0.2s;text-align:center;" onmouseover="this.style.borderColor='#E3EF26';this.style.background='rgba(227,239,38,0.13)'" onmouseout="this.style.borderColor='rgba(227,239,38,0.35)';this.style.background='rgba(227,239,38,0.07)'">
+        <button onclick="skipToReview()" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;background:#06231D;border:2px solid #06231D;border-radius:16px;cursor:pointer;transition:opacity 0.2s;text-align:center;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
           <span style="font-size:1.5rem;">🚀</span>
           <span style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.80rem;color:#E3EF26;line-height:1.3;">Publish all now</span>
-          <span style="font-size:0.70rem;color:rgba(255,255,255,0.45);line-height:1.4;">No recipe needed.<br>Buyers can message you.</span>
+          <span style="font-size:0.70rem;color:rgba(255,255,255,0.65);line-height:1.4;">No recipe needed.<br>Buyers can message you.</span>
         </button>
 
         <!-- Path B: add recipe -->
         <button onclick="nextStep(1)" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;background:#E3EF26;border:2px solid #E3EF26;border-radius:16px;cursor:pointer;transition:opacity 0.2s;text-align:center;" onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
           <span style="font-size:1.5rem;">📖</span>
-          <span style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.80rem;color:#06231D;line-height:1.3;">Add recipe & video</span>
+          <span style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.80rem;color:#06231D;line-height:1.3;">Add recipe &amp; video</span>
           <span style="font-size:0.70rem;color:rgba(6,35,29,0.65);line-height:1.4;">Share your recipe to<br>attract more buyers.</span>
         </button>
 
@@ -619,6 +619,52 @@ Tips:
 </div>
 
 <script>
+/* ── Step validation ── */
+function validateStep(step) {
+  if (step === 1) {
+    const name = document.getElementById('dishNameInput')?.value.trim();
+    if (!name) {
+      showStepError('Please enter a dish name before continuing.');
+      document.getElementById('dishNameInput')?.focus();
+      return false;
+    }
+    const price = document.getElementById('inp-price')?.value.trim();
+    if (!price) {
+      showStepError('Please enter a price per portion (e.g. $5 or Negotiate).');
+      document.getElementById('inp-price')?.focus();
+      return false;
+    }
+    const portions = document.getElementById('inp-portions')?.value;
+    if (!portions) {
+      showStepError('Please select how many portions are available.');
+      document.getElementById('inp-portions')?.focus();
+      return false;
+    }
+    hideStepError();
+    return true;
+  }
+  return true;
+}
+
+function showStepError(msg) {
+  let el = document.getElementById('step1-error');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'step1-error';
+    el.style.cssText = 'background:#FFF0F0;border:1.5px solid #F87171;border-radius:12px;padding:11px 16px;font-size:0.83rem;color:#991B1B;margin-top:12px;display:none;';
+    const target = document.querySelector('#step-1 .btn-actions, #step-1 [style*="margin-top:28px"]');
+    if (target) target.insertAdjacentElement('beforebegin', el);
+  }
+  el.textContent = '❌ ' + msg;
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function hideStepError() {
+  const el = document.getElementById('step1-error');
+  if (el) el.style.display = 'none';
+}
+
 /* ── Food library ── */
 const FOOD_LIBRARY = [
   // Malay
