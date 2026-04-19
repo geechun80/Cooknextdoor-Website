@@ -331,12 +331,12 @@
 
   <!-- Sticky CTA (shown to visitors; hidden for the cook owner) -->
   <div class="cta-section" id="cta-section">
-    <div class="cta-card">
-      <div class="cta-info">
+    <div class="cta-card" id="cta-card">
+      <div class="cta-info" id="cta-info">
         <div class="cta-price" id="cta-price">–</div>
         <div class="cta-label" id="cta-cook-name">per portion · self pickup</div>
       </div>
-      <button class="btn-reserve" onclick="openReserveModal()">💬 Reserve via WhatsApp →</button>
+      <button class="btn-reserve" id="cta-reserve-btn" onclick="openReserveModal()">💬 Reserve via WhatsApp →</button>
     </div>
   </div>
 
@@ -950,10 +950,15 @@
       }
 
       // Hide stale registration-era sections that don't apply to this specific dish
-      ['prof-dishes-card', 'prof-schedule-card', 'prof-meta-grid', 'prof-dietary-card'].forEach(id => {
+      ['prof-dishes-card', 'prof-schedule-card', 'prof-meta-grid', 'prof-dietary-card', 'cta-info'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'none';
       });
+      // Centre the WhatsApp button now that price info is gone
+      const ctaCard = document.getElementById('cta-card');
+      if (ctaCard) ctaCard.style.justifyContent = 'center';
+      const ctaBtn = document.getElementById('cta-reserve-btn');
+      if (ctaBtn) ctaBtn.style.width = '100%';
 
       // Show modal
       const modal = document.getElementById('dish-modal');
