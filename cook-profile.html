@@ -362,6 +362,8 @@
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getAuth, onAuthStateChanged }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC3ynPUHYnPQ9msdLJNB5l-gM--CogrXAQ",
@@ -372,9 +374,10 @@
     appId: "1:924339275437:web:a97a0a2ba0089dd58e824"
   };
 
-  const app  = initializeApp(firebaseConfig);
-  const db   = getFirestore(app);
-  const auth = getAuth(app);
+  const app     = initializeApp(firebaseConfig);
+  const db      = getFirestore(app);
+  const auth    = getAuth(app);
+  const storage = getStorage(app);
 
   async function loadProfile() {
     const params = new URLSearchParams(window.location.search);
@@ -419,10 +422,70 @@
     document.title = (data.cookName || 'Cook') + ' – CookNextDoor';
 
     // Show owner dashboard if the signed-in user is viewing their own profile
+    function enableOwnerMode(user) {
+      document.getElementById('owner-panel').style.display = 'block';
+      document.getElementById('cta-section').style.display = 'none';
+      // Make avatar clickable to change photo
+      const avatarEl = document.getElementById('prof-avatar');
+      if (avatarEl && !avatarEl.dataset.editable) {
+        avatarEl.dataset.editable = '1';
+        avatarEl.style.cursor = 'pointer';
+        avatarEl.title = 'Click to change your profile photo';
+        // Camera badge overlay
+        const badge = document.createElement('div');
+        badge.style.cssText = 'position:absolute;bottom:2px;right:2px;background:#E3EF26;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;border:2px solid #fff;pointer-events:none;';
+        badge.textContent = '📷';
+        avatarEl.style.position = 'relative';
+        avatarEl.appendChild(badge);
+        // Hidden file input
+        const inp = document.createElement('input');
+        inp.type = 'file'; inp.accept = 'image/*'; inp.style.display = 'none';
+        inp.id = 'avatar-file-input';
+        avatarEl.appendChild(inp);
+        avatarEl.addEventListener('click', () => inp.click());
+        inp.addEventListener('change', () => changeCookAvatar(inp, user.uid));
+      }
+    }
+
+    async function changeCookAvatar(input, cookUid) {
+      const file = input.files[0];
+      if (!file) return;
+      const avatarEl = document.getElementById('prof-avatar');
+      const badge = avatarEl?.querySelector('div');
+      if (badge) badge.textContent = '⏳';
+      try {
+        const storageRef = ref(storage, 'cook_photos/' + cookUid + '_profile');
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        await updateDoc(doc(db, 'cooks', cookUid), { profilePhotoUrl: url });
+        // Update avatar in DOM
+        if (avatarEl) {
+          const img = avatarEl.querySelector('img') || document.createElement('img');
+          img.src = url; img.alt = 'Profile'; img.style.cssText = 'width:100%;height:100%;border-radius:50%;object-fit:cover;';
+          if (!avatarEl.querySelector('img')) {
+            avatarEl.innerHTML = '';
+            avatarEl.appendChild(img);
+          }
+          // Re-add badge
+          const newBadge = document.createElement('div');
+          newBadge.style.cssText = 'position:absolute;bottom:2px;right:2px;background:#E3EF26;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;border:2px solid #fff;pointer-events:none;';
+          newBadge.textContent = '📷';
+          avatarEl.appendChild(newBadge);
+          const newInp = document.createElement('input');
+          newInp.type = 'file'; newInp.accept = 'image/*'; newInp.style.display = 'none'; newInp.id = 'avatar-file-input';
+          avatarEl.appendChild(newInp);
+          newInp.addEventListener('change', () => changeCookAvatar(newInp, cookUid));
+        }
+      } catch (e) {
+        console.error('Avatar upload error:', e);
+        if (badge) badge.textContent = '📷';
+        alert('Photo upload failed. Please try again.');
+      }
+    }
+
     onAuthStateChanged(auth, user => {
       if (user && user.uid === uid) {
-        document.getElementById('owner-panel').style.display = 'block';
-        document.getElementById('cta-section').style.display = 'none';
+        enableOwnerMode(user);
       } else if (user && user.uid !== uid) {
         // Non-owner logged in — expose reviewer info for the review form
         window._reviewCookUid  = uid;
@@ -434,8 +497,7 @@
     });
     const currentUser = auth.currentUser;
     if (currentUser && currentUser.uid === uid) {
-      document.getElementById('owner-panel').style.display = 'block';
-      document.getElementById('cta-section').style.display = 'none';
+      enableOwnerMode(currentUser);
     }
 
     // Avatar — show profile photo if uploaded, else keep emoji

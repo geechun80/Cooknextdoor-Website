@@ -389,15 +389,16 @@
         </div>
         <h2>Add your <span>photo</span> 🤳</h2>
         <p class="subtitle">Neighbors trust neighbors they can see. A profile photo helps cooks feel comfortable accepting your reservation.</p>
-        <img id="photoPreview" class="photo-preview" alt="Preview"/>
+        <img id="photoPreview" class="photo-preview" alt="Preview" style="display:none;width:100px;height:100px;border-radius:50%;object-fit:cover;margin:0 auto 16px;display:none;"/>
+        <div id="photo-upload-status" style="font-size:0.78rem;color:#276749;text-align:center;margin-bottom:10px;min-height:18px;"></div>
         <label class="photo-upload">
-          <input type="file" accept="image/*" onchange="previewPhoto(this)"/>
+          <input type="file" accept="image/*" onchange="uploadUserPhoto(this)"/>
           <div class="photo-upload__icon">📷</div>
           <div class="photo-upload__title">Upload your photo</div>
           <div class="photo-upload__sub">JPG or PNG · Max 5MB · Square works best</div>
         </label>
         <br/>
-        <button class="btn-primary" onclick="goToStep(5)">Complete Registration →</button>
+        <button class="btn-primary" onclick="completeRegistration()">Complete Registration →</button>
         <button class="btn-secondary" onclick="goToStep(5)">Skip for now</button>
         <button class="btn-secondary" onclick="goToStep(3)" style="margin-top:6px;">← Go back</button>
       </div>
@@ -407,8 +408,11 @@
         <div class="success-icon">🎉</div>
         <div class="success-title">You're all set!</div>
         <div class="success-sub">Welcome to CookNextDoor. Your account is active — start finding home-cooked food near you.</div>
-        <div style="background:#F5FAF0;border-radius:12px;padding:12px 16px;margin-bottom:20px;font-size:0.82rem;color:var(--muted);display:flex;align-items:center;gap:8px;">
-          <span>👤</span>
+        <div style="background:#F5FAF0;border-radius:12px;padding:12px 16px;margin-bottom:20px;font-size:0.82rem;color:var(--muted);display:flex;align-items:center;gap:12px;">
+          <div style="width:48px;height:48px;border-radius:50%;background:#E0F0E8;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;">
+            <span id="success-avatar-icon" style="font-size:1.4rem;">👤</span>
+            <img id="success-avatar-img" src="" alt="" style="display:none;width:48px;height:48px;border-radius:50%;object-fit:cover;"/>
+          </div>
           <div>
             <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.88rem;color:var(--dark);" id="success-name">–</div>
             <div id="success-email" style="font-size:0.78rem;color:var(--muted);">–</div>
@@ -438,6 +442,8 @@
   import {
     getFirestore, doc, setDoc, getDoc, updateDoc, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC3ynPUHYnPQ9msdLJNB5l-gM--CogrXAQ",
@@ -448,9 +454,11 @@
     appId: "1:924339275437:web:a97a0a2bda0089dd58e824"
   };
 
-  const app  = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db   = getFirestore(app);
+  const app     = initializeApp(firebaseConfig);
+  const auth    = getAuth(app);
+  const db      = getFirestore(app);
+  const storage = getStorage(app);
+  window._userPhotoUrl = null;
   const provider = new GoogleAuthProvider();
 
   function showToast(msg, durationMs = 4000) {
@@ -460,13 +468,22 @@
     setTimeout(() => t.classList.remove('show'), durationMs);
   }
 
-  async function showSuccess(name, email) {
+  async function showSuccess(name, email, photoURL) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     document.getElementById('panel-5').classList.add('active');
     const nameEl  = document.getElementById('success-name');
     const emailEl = document.getElementById('success-email');
     if (nameEl)  nameEl.textContent  = name  || 'neighbor';
     if (emailEl) emailEl.textContent = email || '';
+    // Show profile photo in success panel
+    const url = photoURL || window._userPhotoUrl;
+    const iconEl = document.getElementById('success-avatar-icon');
+    const imgEl  = document.getElementById('success-avatar-img');
+    if (url && iconEl && imgEl) {
+      iconEl.style.display = 'none';
+      imgEl.src   = url;
+      imgEl.style.display = 'block';
+    }
 
     // Check if this user already has a cook profile → show correct link
     try {
@@ -507,7 +524,8 @@
       const result = await signInWithPopup(auth, provider);
       const user   = result.user;
       await saveUserToFirestore(user, { provider: 'google' });
-      showSuccess(user.displayName, user.email);
+      if (user.photoURL) window._userPhotoUrl = user.photoURL;
+      showSuccess(user.displayName, user.email, user.photoURL);
     } catch (err) {
       showToast('⚠️ Google sign-in failed. Try again.');
       console.error(err);
@@ -688,6 +706,45 @@
       img.style.display = 'block';
     };
     reader.readAsDataURL(input.files[0]);
+  }
+
+  async function uploadUserPhoto(input) {
+    previewPhoto(input);
+    const file = input.files[0];
+    if (!file) return;
+    const statusEl = document.getElementById('photo-upload-status');
+    if (statusEl) { statusEl.textContent = '⏳ Uploading photo…'; statusEl.style.color = '#555'; }
+    try {
+      const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+      const { getStorage, ref, uploadBytes, getDownloadURL } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js');
+      const auth    = getAuth();
+      const storage = getStorage();
+      const user    = auth.currentUser;
+      if (!user) { if (statusEl) statusEl.textContent = '⚠️ Not signed in.'; return; }
+      const storageRef = ref(storage, 'user_photos/' + user.uid + '_profile');
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      window._userPhotoUrl = url;
+      if (statusEl) { statusEl.textContent = '✅ Photo uploaded!'; statusEl.style.color = '#276749'; }
+    } catch (e) {
+      console.warn('User photo upload error:', e);
+      if (statusEl) { statusEl.textContent = '⚠️ Upload failed — your account will still be created.'; statusEl.style.color = '#991B1B'; }
+    }
+  }
+
+  async function completeRegistration() {
+    // Save uploaded photo URL to Firestore then go to success
+    if (window._userPhotoUrl) {
+      try {
+        const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+        const { getFirestore, doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+        const user = getAuth().currentUser;
+        if (user) {
+          await updateDoc(doc(getFirestore(), 'users', user.uid), { photoURL: window._userPhotoUrl });
+        }
+      } catch (e) { console.warn('Photo save error:', e); }
+    }
+    goToStep(5);
   }
 
   /* ── GPS capture for user location ── */

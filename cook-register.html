@@ -886,6 +886,23 @@
     window._cndUid = user.uid;
     window._cndEmailVerified = user.emailVerified;
 
+    // Auto-use Google profile photo if available
+    if (user.photoURL && !window._chefPhotoUrl) {
+      window._chefPhotoUrl = user.photoURL;
+      const thumbs = document.getElementById('chefThumbs');
+      if (thumbs) {
+        thumbs.innerHTML = '<img src="' + user.photoURL + '" class="photo-thumb" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid rgba(227,239,38,0.4);"/>';
+      }
+      let st = document.getElementById('chef-upload-status');
+      if (!st) {
+        st = document.createElement('div');
+        st.id = 'chef-upload-status';
+        st.style.cssText = 'font-size:0.75rem;color:rgba(255,255,255,0.55);margin-top:6px;';
+        if (thumbs) thumbs.after(st);
+      }
+      st.textContent = '✅ Using your Google profile photo — or upload a new one below.';
+    }
+
     if (isNewSignIn) {
       // Google auth = email already verified → skip step 2, go to step 3
       goToStep(3);
