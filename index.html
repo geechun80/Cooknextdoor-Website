@@ -217,7 +217,11 @@
     @keyframes imgPan    { 0%,100%{object-position:50% 50%} 33%{object-position:55% 44%} 66%{object-position:46% 56%} }
 
     @media (max-width: 900px) { .hero__inner { grid-template-columns: 1fr; } .hero h1 { font-size: 2.6rem; } }
-    @media (max-width: 600px) { .hero__visual { display: none; } .hero { min-height: auto; } }
+    @media (max-width: 600px) {
+      .hero__visual { display: none; } .hero { min-height: auto; }
+      .hero__ctas { flex-direction: column; }
+      .hero__ctas .btn { width: 100%; justify-content: center; }
+    }
 
     /* ── Marquee ──────────────────────────────────────────── */
     .marquee-section { background: var(--orange); padding: 18px 0; overflow: hidden; }
@@ -355,7 +359,14 @@
     .wsi--green  { background: rgba(7,102,83,0.28); }
     .why__stat-val   { font-family: 'Poppins', sans-serif; font-weight: 900; font-size: 2.2rem; color: #fff; line-height: 1; }
     .why__stat-label { font-size: 0.85rem; color: rgba(255,255,255,0.60); }
-    @media (max-width: 900px) { .why__inner { grid-template-columns: 1fr; gap: 40px; } .why__stats { flex-direction: row; flex-wrap: wrap; } .why__stat-card { flex: 1; min-width: 140px; } }
+    @media (max-width: 900px) { .why__inner { grid-template-columns: 1fr; gap: 40px; } .why__stats { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; } }
+    @media (max-width: 600px) {
+      .why__stats { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .why__stat-card { padding: 18px 14px; gap: 12px; flex-direction: column; align-items: flex-start; }
+      .why__stat-icon { width: 42px; height: 42px; border-radius: 12px; font-size: 1.2rem; }
+      .why__stat-val { font-size: 1.7rem; }
+      .why__stat-label { font-size: 0.75rem; line-height: 1.3; }
+    }
 
     /* ── Testimonial ──────────────────────────────────────── */
     .testimonial { background: var(--bg-alt); }
@@ -967,6 +978,113 @@
     </div>
   </div>
 </section>
+
+<!-- ── Cook map ──────────────────────────────────────────────── -->
+<section style="background:#06231D;padding:64px 0 0;">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#E3EF26;margin-bottom:8px;">FIND FOOD NEAR YOU</div>
+      <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.6rem,3vw,2.2rem);color:#fff;margin-bottom:10px;">Cooks on the map 📍</h2>
+      <p style="color:rgba(255,255,255,0.5);font-size:0.92rem;max-width:500px;margin:0 auto;">Click any pin to see the cook's listings and get directions. All pickup within 1 km of your neighbourhood.</p>
+    </div>
+
+    <!-- Leaflet map -->
+    <div id="cook-map" style="width:100%;height:460px;border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,0.10);"></div>
+    <p style="text-align:center;font-size:0.72rem;color:rgba(255,255,255,0.2);margin-top:10px;padding-bottom:48px;">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener" style="color:rgba(255,255,255,0.3);">OpenStreetMap</a> contributors</p>
+  </div>
+</section>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function() {
+  // Wait for Leaflet + Firebase dishes to load
+  function initCookMap() {
+    if (typeof L === 'undefined') { setTimeout(initCookMap, 200); return; }
+
+    const map = L.map('cook-map', { zoomControl: true, scrollWheelZoom: false })
+      .setView([1.352, 103.820], 12); // Singapore centre
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: ''
+    }).addTo(map);
+
+    // Custom lime pin icon
+    const cookIcon = L.divIcon({
+      className: '',
+      html: '<div style="width:34px;height:34px;background:#E3EF26;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #06231D;box-shadow:0 3px 10px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;"><span style="transform:rotate(45deg);font-size:14px;">👨‍🍳</span></div>',
+      iconSize: [34, 34],
+      iconAnchor: [17, 34],
+      popupAnchor: [0, -36]
+    });
+
+    // Load cooks from Firestore via the already-loaded Firebase instance
+    function placeCookPins() {
+      if (!window._allDishes || window._allDishes.length === 0) {
+        setTimeout(placeCookPins, 600); return;
+      }
+      // Group dishes by cookUid
+      const cookMap = {};
+      window._allDishes.forEach(d => {
+        if (!d.cookUid || d.isDemo) return;
+        if (!cookMap[d.cookUid]) cookMap[d.cookUid] = { dishes: [], lat: d.lat, lng: d.lng, cookName: d.cookName, neighborhood: d.neighborhood };
+        cookMap[d.cookUid].dishes.push(d);
+        if (!cookMap[d.cookUid].lat && d.lat) { cookMap[d.cookUid].lat = d.lat; cookMap[d.cookUid].lng = d.lng; }
+      });
+
+      Object.entries(cookMap).forEach(([uid, c]) => {
+        if (!c.lat || !c.lng) return;
+        // Build dish list for popup
+        const dishList = c.dishes.slice(0, 3).map(d =>
+          `<div style="padding:4px 0;border-bottom:1px solid rgba(0,0,0,0.07);font-size:0.8rem;">
+            <strong>${d.dishName}</strong> — ${d.price || '–'}
+            ${d.pickupDate ? '<br><span style="color:#666;font-size:0.72rem;">⏰ ' + d.pickupDate + (d.pickupTime ? ' · ' + d.pickupTime : '') + '</span>' : ''}
+          </div>`
+        ).join('');
+        const moreCount = c.dishes.length > 3 ? `<div style="font-size:0.75rem;color:#888;padding-top:4px;">+${c.dishes.length - 3} more dish${c.dishes.length - 3 > 1 ? 'es' : ''}</div>` : '';
+        const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`;
+
+        const popup = L.popup({ maxWidth: 260, className: 'cook-popup' }).setContent(`
+          <div style="font-family:'Poppins',sans-serif;padding:4px 2px;">
+            <div style="font-weight:800;font-size:0.95rem;color:#06231D;margin-bottom:2px;">${c.cookName || 'Home Cook'}</div>
+            <div style="font-size:0.75rem;color:#666;margin-bottom:10px;">📍 ${c.neighborhood || 'Singapore'}</div>
+            <div style="margin-bottom:10px;">${dishList}${moreCount}</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <a href="cook-profile.html?uid=${uid}" style="flex:1;background:#E3EF26;color:#06231D;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.75rem;padding:7px 10px;border-radius:8px;text-decoration:none;text-align:center;">View listings</a>
+              <a href="${directionsUrl}" target="_blank" rel="noopener" style="flex:1;background:#06231D;color:#fff;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.75rem;padding:7px 10px;border-radius:8px;text-decoration:none;text-align:center;">🗺️ Directions</a>
+            </div>
+          </div>`);
+
+        L.marker([c.lat, c.lng], { icon: cookIcon }).bindPopup(popup).addTo(map);
+      });
+
+      // Fit map to markers if any
+      const markers = Object.values(cookMap).filter(c => c.lat && c.lng);
+      if (markers.length > 0) {
+        const bounds = L.latLngBounds(markers.map(c => [c.lat, c.lng]));
+        map.fitBounds(bounds.pad(0.3));
+      }
+    }
+
+    placeCookPins();
+  }
+
+  // Try user GPS first to centre the map
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      window._mapUserLat = pos.coords.latitude;
+      window._mapUserLng = pos.coords.longitude;
+    }, null, { timeout: 4000 });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCookMap);
+  } else {
+    initCookMap();
+  }
+})();
+</script>
 
 <!-- ── Footer ────────────────────────────────────────────────── -->
 <footer>
