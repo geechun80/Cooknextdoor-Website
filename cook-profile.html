@@ -292,6 +292,30 @@
 
 </div>
 
+<!-- Edit dish modal (owner only) -->
+<div id="edit-dish-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:1200;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#0C342C;border:1px solid rgba(227,239,38,0.25);border-radius:24px;max-width:420px;width:100%;padding:28px 24px;position:relative;">
+    <button onclick="closeEditDish()" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.08);border:none;font-size:1.1rem;color:rgba(255,255,255,0.6);cursor:pointer;width:32px;height:32px;border-radius:50%;">✕</button>
+    <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.05rem;color:#E3EF26;margin-bottom:4px;">✏️ Edit Dish</div>
+    <div id="edit-dish-name" style="font-size:0.82rem;color:rgba(255,255,255,0.45);margin-bottom:20px;"></div>
+    <input type="hidden" id="edit-dish-id"/>
+
+    <label style="display:block;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.55);margin-bottom:5px;">Pickup date</label>
+    <input type="date" id="edit-pickup-date" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.9rem;padding:10px 14px;box-sizing:border-box;margin-bottom:14px;"/>
+
+    <label style="display:block;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.55);margin-bottom:5px;">Pickup time</label>
+    <input type="time" id="edit-pickup-time" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.9rem;padding:10px 14px;box-sizing:border-box;margin-bottom:14px;"/>
+
+    <label style="display:block;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.55);margin-bottom:5px;">Portions available</label>
+    <input type="text" id="edit-portions" placeholder="e.g. 2 portions" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.9rem;padding:10px 14px;box-sizing:border-box;margin-bottom:14px;"/>
+
+    <label style="display:block;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.55);margin-bottom:5px;">Price per portion</label>
+    <input type="text" id="edit-price" placeholder="e.g. $4" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.9rem;padding:10px 14px;box-sizing:border-box;margin-bottom:22px;"/>
+
+    <button id="edit-save-btn" onclick="saveEditDish()" style="width:100%;background:#E3EF26;color:#06231D;font-family:'Poppins',sans-serif;font-weight:800;font-size:0.95rem;padding:14px;border:none;border-radius:14px;cursor:pointer;">Save changes</button>
+  </div>
+</div>
+
 <!-- Dish detail modal (shown when ?dish= param is present) -->
 <div id="dish-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);z-index:1100;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;">
   <div style="background:#0C342C;border:1px solid rgba(255,255,255,0.12);border-radius:24px;max-width:460px;width:100%;margin:auto;position:relative;overflow:hidden;">
@@ -379,6 +403,8 @@
       const snap = await getDoc(doc(db, 'cooks', uid));
       if (!snap.exists()) { showError(); return; }
       renderProfile(snap.data(), uid);
+      // Set owner flag before dishes render so correct buttons appear immediately
+      if (auth.currentUser && auth.currentUser.uid === uid) window._isOwner = true;
       loadCookDishes(uid);
       loadReviews(uid);
       // If a specific dish was linked, show its detail modal
@@ -404,6 +430,7 @@
 
     // Show owner dashboard if the signed-in user is viewing their own profile
     function enableOwnerMode(user) {
+      window._isOwner = true;
       document.getElementById('owner-panel').style.display = 'block';
       document.getElementById('cta-section').style.display = 'none';
       // Show warning banner based on warningLevel
@@ -606,41 +633,53 @@
       const cookSnap2 = await getDoc(doc(db, 'cooks', cookUid));
       const cookPhone = cookSnap2.exists() ? (cookSnap2.data().phone || '') : '';
 
+      // Store dishes globally so owner action functions can access them
+      window._dishMap = window._dishMap || {};
+
+      function fmtTime(t) {
+        if (!t) return '';
+        const [hh, mm] = t.split(':').map(Number);
+        return (hh % 12 || 12) + (mm ? ':' + String(mm).padStart(2,'0') : '') + ' ' + (hh >= 12 ? 'PM' : 'AM');
+      }
+      function fmtDate(ds) {
+        if (!ds) return '';
+        try {
+          const [y, m, d] = ds.split('-').map(Number);
+          return new Date(y, m-1, d).toLocaleDateString('en-SG', { weekday:'short', day:'numeric', month:'short' });
+        } catch(e) { return ds; }
+      }
+
       activeDocs.forEach(docSnap => {
-        const dish = docSnap.data();
+        const dishId = docSnap.id;
+        const dish   = docSnap.data();
+        window._dishMap[dishId] = { ...dish, id: dishId };
 
-        // Format time as 12h AM/PM
-        function fmtTime(t) {
-          if (!t) return '';
-          const [hh, mm] = t.split(':').map(Number);
-          const suffix = hh >= 12 ? 'PM' : 'AM';
-          const h12 = hh % 12 || 12;
-          return h12 + (mm ? ':' + String(mm).padStart(2,'0') : '') + ' ' + suffix;
-        }
-
-        // Format date more readably e.g. "Mon, 28 Apr"
-        function fmtDate(ds) {
-          if (!ds) return '';
-          try {
-            const [y, m, d] = ds.split('-').map(Number);
-            return new Date(y, m-1, d).toLocaleDateString('en-SG', { weekday:'short', day:'numeric', month:'short' });
-          } catch(e) { return ds; }
-        }
-
-        const dateStr  = fmtDate(dish.pickupDate);
-        const timeStr  = fmtTime(dish.pickupTime);
+        const dateStr    = fmtDate(dish.pickupDate);
+        const timeStr    = fmtTime(dish.pickupTime);
         const pickupLine = [dateStr, timeStr].filter(Boolean).join(' · ');
-        const portions = dish.portions || '';
-        const dietary  = Array.isArray(dish.dietary) && dish.dietary.length
+        const portions   = dish.portions || '';
+        const dietary    = Array.isArray(dish.dietary) && dish.dietary.length
           ? dish.dietary.map(t => `<span style="background:rgba(227,239,38,0.10);border:1px solid rgba(227,239,38,0.20);color:#E3EF26;font-size:0.68rem;font-family:Poppins,sans-serif;font-weight:600;padding:2px 8px;border-radius:100px;">${escHtml(t)}</span>`).join(' ')
           : '';
 
-        // WhatsApp link
-        let waHtml = '';
-        if (cookPhone) {
+        // Owner sees Remove + Edit; visitors see WhatsApp
+        let actionHtml = '';
+        if (window._isOwner) {
+          actionHtml = `
+            <div style="display:flex;gap:8px;margin-top:10px;">
+              <button onclick="openEditDish('${dishId}')"
+                style="flex:1;background:rgba(227,239,38,0.12);border:1px solid rgba(227,239,38,0.30);color:#E3EF26;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.78rem;padding:8px 12px;border-radius:100px;cursor:pointer;">
+                ✏️ Edit
+              </button>
+              <button onclick="removeDish('${dishId}', this)"
+                style="flex:1;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.30);color:#FCA5A5;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.78rem;padding:8px 12px;border-radius:100px;cursor:pointer;">
+                🗑️ Remove
+              </button>
+            </div>`;
+        } else if (cookPhone) {
           const num = cookPhone.replace(/\D/g,'');
           const msg = encodeURIComponent('Hi! I saw your ' + (dish.dishName || 'dish') + ' on CookNextDoor — is it still available?');
-          waHtml = `<a href="https://wa.me/${num}?text=${msg}" target="_blank" rel="noopener"
+          actionHtml = `<a href="https://wa.me/${num}?text=${msg}" target="_blank" rel="noopener"
             style="display:inline-flex;align-items:center;gap:6px;background:#25D366;color:#fff;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.78rem;padding:8px 14px;border-radius:100px;text-decoration:none;margin-top:10px;">
             💬 Reserve via WhatsApp</a>`;
         }
@@ -649,18 +688,20 @@
           ? `<img style="width:90px;height:90px;border-radius:14px;object-fit:cover;flex-shrink:0;" src="${escHtml(dish.imageUrl)}" alt="${escHtml(dish.dishName)}" onerror="this.style.display='none'"/>`
           : `<div style="width:90px;height:90px;border-radius:14px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;">🍽️</div>`;
 
-        list.innerHTML += `
-          <div style="display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
-            ${imgHtml}
-            <div style="flex:1;min-width:0;">
-              <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#fff;margin-bottom:3px;">${escHtml(dish.dishName || '–')}</div>
-              ${dietary ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;">${dietary}</div>` : ''}
-              ${pickupLine ? `<div style="font-size:0.78rem;color:rgba(255,255,255,0.50);margin-bottom:4px;">⏰ ${escHtml(pickupLine)}</div>` : ''}
-              ${portions ? `<div style="font-size:0.75rem;color:rgba(255,255,255,0.35);margin-bottom:4px;">${escHtml(portions)}</div>` : ''}
-              <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.05rem;color:#E3EF26;">${escHtml(dish.price || '–')} <span style="font-size:0.72rem;color:rgba(255,255,255,0.35);font-weight:400;">/ portion</span></div>
-              ${waHtml}
-            </div>
+        const row = document.createElement('div');
+        row.id = 'dish-row-' + dishId;
+        row.style.cssText = 'display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.07);';
+        row.innerHTML = `
+          ${imgHtml}
+          <div style="flex:1;min-width:0;">
+            <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#fff;margin-bottom:3px;">${escHtml(dish.dishName || '–')}</div>
+            ${dietary ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;">${dietary}</div>` : ''}
+            ${pickupLine ? `<div style="font-size:0.78rem;color:rgba(255,255,255,0.50);margin-bottom:4px;">⏰ ${escHtml(pickupLine)}</div>` : ''}
+            ${portions ? `<div style="font-size:0.75rem;color:rgba(255,255,255,0.35);margin-bottom:4px;">${escHtml(portions)}</div>` : ''}
+            <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.05rem;color:#E3EF26;">${escHtml(dish.price || '–')} <span style="font-size:0.72rem;color:rgba(255,255,255,0.35);font-weight:400;">/ portion</span></div>
+            ${actionHtml}
           </div>`;
+        list.appendChild(row);
       });
 
       card.style.display = 'block';
@@ -972,6 +1013,59 @@
     clearTimeout(t._tid);
     t._tid = setTimeout(function(){ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; }, ms);
   }
+
+  // ── Owner dish management ────────────────────────────────────────
+  window.removeDish = async function(dishId, btn) {
+    if (!confirm('Remove this dish listing? It will no longer appear to neighbours.')) return;
+    btn.textContent = '⏳ Removing…'; btn.disabled = true;
+    try {
+      await updateDoc(doc(db, 'dishes', dishId), { isActive: false });
+      const row = document.getElementById('dish-row-' + dishId);
+      if (row) { row.style.transition='opacity 0.4s'; row.style.opacity='0'; setTimeout(()=>row.remove(), 400); }
+      toast('✅ Dish removed from listings.');
+    } catch(e) {
+      btn.textContent = '🗑️ Remove'; btn.disabled = false;
+      toast('❌ Remove failed — try again.');
+    }
+  };
+
+  window.openEditDish = function(dishId) {
+    const dish = (window._dishMap || {})[dishId];
+    if (!dish) return;
+    document.getElementById('edit-dish-id').value    = dishId;
+    document.getElementById('edit-dish-name').textContent = dish.dishName || '';
+    document.getElementById('edit-pickup-date').value = dish.pickupDate || '';
+    document.getElementById('edit-pickup-time').value = dish.pickupTime || '';
+    document.getElementById('edit-portions').value    = dish.portions || '';
+    document.getElementById('edit-price').value       = dish.price || '';
+    document.getElementById('edit-dish-modal').style.display = 'flex';
+  };
+
+  window.closeEditDish = function() {
+    document.getElementById('edit-dish-modal').style.display = 'none';
+  };
+
+  window.saveEditDish = async function() {
+    const dishId   = document.getElementById('edit-dish-id').value;
+    const newDate  = document.getElementById('edit-pickup-date').value;
+    const newTime  = document.getElementById('edit-pickup-time').value;
+    const newPort  = document.getElementById('edit-portions').value.trim();
+    const newPrice = document.getElementById('edit-price').value.trim();
+    const saveBtn  = document.getElementById('edit-save-btn');
+    if (!dishId) return;
+    saveBtn.textContent = 'Saving…'; saveBtn.disabled = true;
+    try {
+      await updateDoc(doc(db, 'dishes', dishId), {
+        pickupDate: newDate, pickupTime: newTime, portions: newPort, price: newPrice
+      });
+      closeEditDish();
+      toast('✅ Dish updated — reload to see changes.');
+    } catch(e) {
+      saveBtn.textContent = 'Save changes'; saveBtn.disabled = false;
+      toast('❌ Save failed — ' + e.message);
+    }
+  };
+  // ─────────────────────────────────────────────────────────────────
 
   function copyLink() {
     const url = window._profileUrl || window.location.href;
