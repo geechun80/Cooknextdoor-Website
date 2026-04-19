@@ -287,6 +287,7 @@
         <span class="review-star" data-v="5">★</span>
       </div>
       <textarea id="review-text" class="review-textarea" placeholder="Share your experience with this cook…"></textarea>
+      <div id="review-submit-error" style="display:none;color:#F87171;font-size:0.82rem;margin-bottom:8px;"></div>
       <button class="review-submit-btn" onclick="window.submitReview()">Submit review</button>
     </div>
   </div>
@@ -1009,39 +1010,59 @@
   window.submitReview = async function() {
     const rating = parseInt(document.getElementById('review-stars-input')?.dataset.selected || '0');
     const text   = (document.getElementById('review-text')?.value || '').trim();
-    if (!rating) { alert('Please select a star rating.'); return; }
+    if (!rating) { alert('Please select a star rating first.'); return; }
 
-    const btn = document.querySelector('.review-submit-btn');
+    const btn    = document.querySelector('.review-submit-btn');
+    const errDiv = document.getElementById('review-submit-error');
     if (btn) { btn.textContent = 'Submitting…'; btn.disabled = true; }
+    if (errDiv) errDiv.style.display = 'none';
 
     try {
-      const db      = window._cndDb;
-      const cookUid = window._reviewCookUid || '';
-      const { addDoc, collection, query: q, where, getDocs, updateDoc, doc: docRef, serverTimestamp } =
+      // Use direct Firestore import to bypass any db reference issue
+      const { getFirestore, addDoc, collection, query: q, where, getDocs, updateDoc, doc: docRef, serverTimestamp } =
         await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      const { getAuth } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+
+      const db   = window._cndDb || getFirestore();
+      const user = (window._cndAuth || getAuth()).currentUser;
+
+      if (!user) {
+        if (errDiv) { errDiv.textContent = '⚠️ Please sign in to leave a review.'; errDiv.style.display = 'block'; }
+        if (btn) { btn.textContent = 'Submit review'; btn.disabled = false; }
+        return;
+      }
+
+      const cookUid = window._reviewCookUid || new URLSearchParams(window.location.search).get('uid') || '';
+
       await addDoc(collection(db, 'reviews'), {
         cookUid,
-        reviewerUid:  window._reviewerUid    || '',
-        reviewerName: window._reviewerName   || 'Neighbour',
+        reviewerUid:  user.uid,
+        reviewerName: user.displayName || window._reviewerName || 'Neighbour',
         rating,
         text,
         createdAt: serverTimestamp()
       });
-      // Write back avgRating to cook document
+
+      // Write back avgRating to cook document (non-blocking)
       if (cookUid) {
-        try {
-          const snap = await getDocs(q(collection(db, 'reviews'), where('cookUid', '==', cookUid)));
+        getDocs(q(collection(db, 'reviews'), where('cookUid', '==', cookUid))).then(snap => {
           const ratings = snap.docs.map(d => d.data().rating).filter(r => typeof r === 'number');
           if (ratings.length > 0) {
             const avg = ratings.reduce((s, r) => s + r, 0) / ratings.length;
-            await updateDoc(docRef(db, 'cooks', cookUid), { avgRating: Math.round(avg * 10) / 10, reviewCount: ratings.length });
+            updateDoc(docRef(db, 'cooks', cookUid), { avgRating: Math.round(avg * 10) / 10, reviewCount: ratings.length })
+              .catch(e => console.warn('avgRating write-back:', e.message));
           }
-        } catch(e) { console.warn('avgRating write-back:', e.message); }
+        }).catch(() => {});
       }
+
       const form = document.getElementById('prof-review-form');
-      if (form) form.innerHTML = '<div style="color:var(--orange);font-family:Poppins,sans-serif;font-weight:600;font-size:0.88rem;padding:12px 0;">✓ Review submitted — thank you!</div>';
+      if (form) form.innerHTML = '<div style="color:var(--orange);font-family:Poppins,sans-serif;font-weight:600;font-size:0.88rem;padding:12px 0;">✅ Review submitted — thank you!</div>';
     } catch(err) {
       console.warn('submitReview error:', err);
+      const msg = err.code === 'permission-denied'
+        ? '⚠️ Permission denied — please sign in and try again.'
+        : '⚠️ Could not submit review: ' + (err.message || 'Unknown error');
+      if (errDiv) { errDiv.textContent = msg; errDiv.style.display = 'block'; }
       if (btn) { btn.textContent = 'Submit review'; btn.disabled = false; }
     }
   };
