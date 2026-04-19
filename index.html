@@ -1190,11 +1190,14 @@
   function buildCard(d) {
     const card = document.createElement('div');
     card.className = 'food-card';
+    const dest = d.cookUid
+      ? 'cook-profile.html?uid=' + d.cookUid + (d.id && !d.isDemo ? '&dish=' + d.id : '')
+      : 'user-auth.html';
     if (d.cookUid && !d.isDemo) {
       card.style.cursor = 'pointer';
       card.addEventListener('click', function(e) {
         if (e.target.closest('.food-card__wa') || e.target.classList.contains('food-card__btn')) return;
-        window.location.href = 'cook-profile.html?uid=' + d.cookUid;
+        window.location.href = dest;
       });
     }
     const imgSrc  = d.imageUrl || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=340&fit=crop&q=80';
@@ -1202,14 +1205,14 @@
     const demoTag = d.isDemo   ? '<div style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.55);color:#fff;font-size:0.6rem;font-family:Poppins,sans-serif;font-weight:700;padding:3px 7px;border-radius:100px;letter-spacing:0.05em;">DEMO</div>' : '';
     const dist    = distLabel(d);
     const rating  = d.avgRating ? ' <span style="color:#F59E0B;font-size:0.70rem;">★ ' + Number(d.avgRating).toFixed(1) + '</span>' : '';
-    const dest    = d.cookUid ? 'cook-profile.html?uid=' + d.cookUid : 'user-auth.html';
     // Dietary tags
     const dietaryTags = Array.isArray(d.dietary) && d.dietary.length
       ? d.dietary.slice(0,3).map(t => '<span class="food-card__tag">' + t + '</span>').join('')
       : '';
     const dietaryRow = dietaryTags ? '<div class="food-card__dietary">' + dietaryTags + '</div>' : '';
-    // Pickup time
-    const pickupRow = d.pickupTime ? '<div class="food-card__pickup">⏰ ' + d.pickupTime + '</div>' : '';
+    // Pickup date + time
+    const pickupParts = [d.pickupDate, d.pickupTime].filter(Boolean);
+    const pickupRow = pickupParts.length ? '<div class="food-card__pickup">⏰ ' + pickupParts.join(' · ') + '</div>' : '';
     // WhatsApp CTA
     const waUrl = waLink(d.cookPhone, d.dishName);
     const waBtn = waUrl ? '<a href="' + waUrl + '" target="_blank" rel="noopener" class="food-card__wa" title="WhatsApp cook">💬</a>' : '';
