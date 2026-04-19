@@ -825,7 +825,8 @@
 
   async function loadReviews(cookUid) {
     try {
-      const q    = query(collection(db, 'reviews'), where('cookUid','==',cookUid), orderBy('createdAt','desc'));
+      // Single-field query avoids composite index requirement; sort in JS
+      const q    = query(collection(db, 'reviews'), where('cookUid','==',cookUid));
       const snap = await getDocs(q);
       const list = document.getElementById('prof-reviews-list');
       const avgWrap = document.getElementById('prof-reviews-avg');
@@ -833,9 +834,14 @@
 
       if (snap.empty) return; // keep default "no reviews yet" message
 
+      // Sort newest first in JS
+      const sorted = snap.docs.slice().sort((a, b) =>
+        (b.data().createdAt?.seconds || 0) - (a.data().createdAt?.seconds || 0)
+      );
+
       let total = 0, count = 0;
       list.innerHTML = '';
-      snap.forEach(d => {
+      sorted.forEach(d => {
         const r = d.data();
         if (r.rating) { total += r.rating; count++; }
         const stars = '★'.repeat(r.rating || 0) + '☆'.repeat(5 - (r.rating || 0));
