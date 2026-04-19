@@ -1100,6 +1100,9 @@
 
   function validateStep(step) {
     if (step === 4) {
+      const postal = document.getElementById('inp-postal')?.value.trim();
+      if (!postal) { showAlert('Please enter your postal code.'); return false; }
+      if (!_postalValid) { showAlert('Please enter a valid postal code — we need to verify your location before continuing.'); return false; }
       if (!document.getElementById('inp-neighborhood')?.value) { showAlert('Please select your neighborhood.'); return false; }
     }
     if (step === 5) {
@@ -1356,28 +1359,47 @@
   }
 
   let _postalTimer = null;
+  let _postalValid = false; // set true only when OneMap confirms the postcode
+
   function onPostalInput(v) {
     const status = document.getElementById('postal-status');
     clearTimeout(_postalTimer);
-    if (v.length < 6) { if (status) status.textContent = ''; return; }
-    if (status) status.textContent = '🔍 Looking up address…';
-    _postalTimer = setTimeout(() => lookupPostal(v), 400);
+    _postalValid = false;
+    if (!v) { if (status) status.textContent = ''; return; }
+    // SG: 6 digits | MY: 5 digits
+    const isSG = /^\d{6}$/.test(v);
+    const isMY = /^\d{5}$/.test(v);
+    if (!isSG && !isMY) {
+      if (status) { status.textContent = v.length > 2 ? '⚠️ Singapore postcodes are 6 digits, Malaysia are 5 digits.' : ''; status.style.color = '#991B1B'; }
+      return;
+    }
+    if (isMY) {
+      // No free MY postcode API — just accept the format
+      _postalValid = true;
+      if (status) { status.textContent = '✅ Malaysian postcode format looks correct.'; status.style.color = '#276749'; }
+      return;
+    }
+    if (status) { status.textContent = '🔍 Checking postcode…'; status.style.color = '#555'; }
+    _postalTimer = setTimeout(() => lookupPostal(v), 500);
   }
 
   async function lookupPostal(postal) {
     const status = document.getElementById('postal-status');
     try {
-      const res  = await fetch('https://www.onemap.gov.sg/api/common/elastic/search?searchVal=' + postal + '&returnGeom=N&getAddrDetails=Y&pageNum=1');
+      const res  = await fetch('https://www.onemap.gov.sg/api/common/elastic/search?searchVal=' + postal + '&returnGeom=Y&getAddrDetails=Y&pageNum=1');
       const json = await res.json();
       if (!json.results || json.results.length === 0) {
-        if (status) status.textContent = '⚠️ Postal code not found. Please fill in manually.';
+        _postalValid = false;
+        if (status) { status.textContent = '❌ Postcode not found in Singapore. Please check and re-enter.'; status.style.color = '#991B1B'; }
         return;
       }
       const r = json.results[0];
+      // Auto-fill block + street
       const blockEl  = document.getElementById('inp-block');
       const streetEl = document.getElementById('inp-street');
-      if (blockEl)  blockEl.value  = r.BLK_NO ? 'Blk ' + r.BLK_NO : (blockEl.value || '');
-      if (streetEl) streetEl.value = r.ROAD_NAME || '';
+      if (blockEl && !blockEl.value)   blockEl.value  = r.BLK_NO ? 'Blk ' + r.BLK_NO : '';
+      if (streetEl && !streetEl.value) streetEl.value = r.ROAD_NAME || '';
+      // Auto-fill neighbourhood from address match
       const addr = (r.ROAD_NAME + ' ' + (r.ADDRESS || '')).toUpperCase();
       const sel  = document.getElementById('inp-neighborhood');
       if (sel && !sel.value) {
@@ -1390,9 +1412,17 @@
           }
         }
       }
-      if (status) status.textContent = '✅ Address filled — please add your unit number above.';
+      // Store lat/lng from OneMap result
+      if (r.LATITUDE && r.LONGITUDE) {
+        window._cndLat = parseFloat(r.LATITUDE);
+        window._cndLng = parseFloat(r.LONGITUDE);
+      }
+      _postalValid = true;
+      const addr_short = r.ADDRESS || (r.ROAD_NAME + (r.BLK_NO ? ' Blk ' + r.BLK_NO : ''));
+      if (status) { status.textContent = '✅ ' + addr_short; status.style.color = '#276749'; }
     } catch (e) {
-      if (status) status.textContent = '⚠️ Could not look up address. Please fill in manually.';
+      _postalValid = false;
+      if (status) { status.textContent = '⚠️ Could not verify postcode. Check your connection and try again.'; status.style.color = '#991B1B'; }
       console.warn('Postal lookup error:', e);
     }
   }
