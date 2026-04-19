@@ -946,10 +946,10 @@
         </div>
       </div>
       <div class="app-banner__visual fade-up" style="transition-delay:0.2s">
-        <div class="app-feature-card"><div class="app-feature-card__icon">📍</div><div class="app-feature-card__title">Live map view</div><div class="app-feature-card__desc">See food listings on a real-time map near you</div></div>
-        <div class="app-feature-card"><div class="app-feature-card__icon">🔔</div><div class="app-feature-card__title">Instant alerts</div><div class="app-feature-card__desc">Get notified when someone near you posts food</div></div>
-        <div class="app-feature-card"><div class="app-feature-card__icon">💬</div><div class="app-feature-card__title">Direct chat</div><div class="app-feature-card__desc">Message your cook to confirm pickup details</div></div>
-        <div class="app-feature-card"><div class="app-feature-card__icon">⭐</div><div class="app-feature-card__title">Ratings</div><div class="app-feature-card__desc">Rate your experience and build community trust</div></div>
+        <div class="app-feature-card" style="cursor:pointer;" onclick="appFeatureClick('Live map view — see food listings pinned on a real-time map near you.')"><div class="app-feature-card__icon">📍</div><div class="app-feature-card__title">Live map view</div><div class="app-feature-card__desc">See food listings on a real-time map near you</div><div style="font-size:0.68rem;color:rgba(255,255,255,0.30);margin-top:6px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:0.05em;">COMING IN APP</div></div>
+        <div class="app-feature-card" style="cursor:pointer;" onclick="appFeatureClick('Instant alerts — get notified the moment a cook near you posts food.')"><div class="app-feature-card__icon">🔔</div><div class="app-feature-card__title">Instant alerts</div><div class="app-feature-card__desc">Get notified when someone near you posts food</div><div style="font-size:0.68rem;color:rgba(255,255,255,0.30);margin-top:6px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:0.05em;">COMING IN APP</div></div>
+        <div class="app-feature-card" style="cursor:pointer;" onclick="appFeatureClick('Direct chat — message your cook to confirm pickup details, all in one place.')"><div class="app-feature-card__icon">💬</div><div class="app-feature-card__title">Direct chat</div><div class="app-feature-card__desc">Message your cook to confirm pickup details</div><div style="font-size:0.68rem;color:rgba(255,255,255,0.30);margin-top:6px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:0.05em;">COMING IN APP</div></div>
+        <div class="app-feature-card" style="cursor:pointer;" onclick="appFeatureClick('Ratings — rate your experience and help build community trust.')"><div class="app-feature-card__icon">⭐</div><div class="app-feature-card__title">Ratings</div><div class="app-feature-card__desc">Rate your experience and build community trust</div><div style="font-size:0.68rem;color:rgba(255,255,255,0.30);margin-top:6px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:0.05em;">COMING IN APP</div></div>
       </div>
     </div>
   </div>
@@ -1093,6 +1093,25 @@
   window.obSkip = function() {
     localStorage.setItem('cnd_onboarded', '1');
     document.getElementById('onboardingModal')?.classList.remove('open');
+  };
+
+  // ── App feature card click — show toast + scroll to notify signup ──
+  window.appFeatureClick = function(featureDesc) {
+    // Show toast
+    let toast = document.getElementById('feature-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'feature-toast';
+      toast.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#0C342C;color:#fff;font-family:Poppins,sans-serif;font-weight:600;font-size:0.82rem;padding:12px 20px;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,0.3);border:1px solid rgba(227,239,38,0.25);z-index:9999;max-width:320px;text-align:center;transition:opacity 0.3s;';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = featureDesc + ' Sign up below to be first to know when it launches!';
+    toast.style.opacity = '1';
+    clearTimeout(window._featureToastTimer);
+    window._featureToastTimer = setTimeout(() => { toast.style.opacity = '0'; }, 4000);
+    // Scroll to notify signup
+    const band = document.querySelector('.notify-band');
+    if (band) { band.scrollIntoView({ behavior: 'smooth', block: 'center' }); band.style.border = '1.5px solid rgba(227,239,38,0.5)'; setTimeout(() => { band.style.border = ''; }, 2000); }
   };
 
   // ── Notify me ─────────────────────────────────────────
