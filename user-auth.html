@@ -331,6 +331,13 @@
           <div class="helper">For WhatsApp pickup coordination — never shown publicly</div>
         </div>
 
+        <!-- Postal code -->
+        <div class="form-group">
+          <label>Postal code</label>
+          <input type="text" id="reg-postal" class="form-control" placeholder="e.g. 520123 (SG) or 47500 (MY)" maxlength="6" oninput="onUserPostalInput(this.value)" style="letter-spacing:0.05em;"/>
+          <div id="user-postal-status" style="font-size:0.78rem;margin-top:5px;min-height:18px;"></div>
+        </div>
+
         <!-- Neighbourhood -->
         <div class="form-group">
           <label>Neighbourhood / Area</label>
@@ -586,13 +593,14 @@
     }
   };
 
-  /* ── Save phone + neighbourhood + GPS ── */
-  window.saveContactLocation = async function(phone, neighbourhood, lat, lng) {
+  /* ── Save phone + postal + neighbourhood + GPS ── */
+  window.saveContactLocation = async function(phone, postal, neighbourhood, lat, lng) {
     const user = auth.currentUser;
     if (!user) return;
     try {
       const payload = {
         phone,
+        postal,
         neighbourhood,
         updatedAt: serverTimestamp(),
         ...(lat && lng ? { lat, lng } : {})
@@ -718,14 +726,95 @@
     );
   }
 
+  /* ── User postcode validation (OneMap for SG, format-only for MY) ── */
+  let _userPostalTimer = null;
+  let _userPostalValid = false;
+
+  function onUserPostalInput(v) {
+    const status = document.getElementById('user-postal-status');
+    clearTimeout(_userPostalTimer);
+    _userPostalValid = false;
+    if (!v) { if (status) status.textContent = ''; return; }
+    const isSG = /^\d{6}$/.test(v);
+    const isMY = /^\d{5}$/.test(v);
+    if (!isSG && !isMY) {
+      if (status && v.length > 2) { status.textContent = '⚠️ Singapore postcodes are 6 digits, Malaysia are 5 digits.'; status.style.color = '#991B1B'; }
+      return;
+    }
+    if (isMY) {
+      _userPostalValid = true;
+      if (status) { status.textContent = '✅ Malaysian postcode format looks correct.'; status.style.color = '#276749'; }
+      return;
+    }
+    if (status) { status.textContent = '🔍 Checking postcode…'; status.style.color = '#555'; }
+    _userPostalTimer = setTimeout(() => lookupUserPostal(v), 500);
+  }
+
+  async function lookupUserPostal(postal) {
+    const status = document.getElementById('user-postal-status');
+    try {
+      const res  = await fetch('https://www.onemap.gov.sg/api/common/elastic/search?searchVal=' + postal + '&returnGeom=Y&getAddrDetails=Y&pageNum=1');
+      const json = await res.json();
+      if (!json.results || json.results.length === 0) {
+        _userPostalValid = false;
+        if (status) { status.textContent = '❌ Postcode not found in Singapore. Please check and re-enter.'; status.style.color = '#991B1B'; }
+        return;
+      }
+      const r = json.results[0];
+      // Auto-fill neighbourhood from address if field is empty
+      const nbInput = document.getElementById('reg-neighbourhood');
+      if (nbInput && !nbInput.value.trim()) {
+        const addr = (r.ROAD_NAME + ' ' + (r.ADDRESS || '')).toUpperCase();
+        const SG_AREAS = [
+          ['TAMPINES','Tampines'],['BEDOK','Bedok'],['PASIR RIS','Pasir Ris'],
+          ['CHANGI','Changi'],['JURONG','Jurong West'],['CLEMENTI','Clementi'],
+          ['BUKIT BATOK','Bukit Batok'],['CHOA CHU KANG','Choa Chu Kang'],
+          ['WOODLANDS','Woodlands'],['YISHUN','Yishun'],['SEMBAWANG','Sembawang'],
+          ['HOUGANG','Hougang'],['SENGKANG','Sengkang'],['PUNGGOL','Punggol'],
+          ['ANG MO KIO','Ang Mo Kio'],['SERANGOON','Serangoon'],
+          ['TOA PAYOH','Toa Payoh'],['BISHAN','Bishan'],['QUEENSTOWN','Queenstown'],
+          ['NOVENA','Novena'],['BUKIT TIMAH','Bukit Timah'],['GEYLANG','Geylang'],
+          ['MARINE PARADE','Marine Parade'],['KALLANG','Kallang'],['ROCHOR','Rochor'],
+        ];
+        for (const [key, label] of SG_AREAS) {
+          if (addr.includes(key)) { nbInput.value = label; break; }
+        }
+      }
+      // Store lat/lng
+      if (r.LATITUDE && r.LONGITUDE) {
+        window._userLat = parseFloat(r.LATITUDE);
+        window._userLng = parseFloat(r.LONGITUDE);
+        const gpsStatus = document.getElementById('gps-user-status');
+        if (gpsStatus) { gpsStatus.textContent = `📍 ${window._userLat.toFixed(4)}, ${window._userLng.toFixed(4)} — location from postcode`; gpsStatus.style.display = 'block'; gpsStatus.style.color = '#276749'; }
+      }
+      _userPostalValid = true;
+      const addr_short = r.ADDRESS || r.ROAD_NAME;
+      if (status) { status.textContent = '✅ ' + addr_short; status.style.color = '#276749'; }
+    } catch (e) {
+      _userPostalValid = false;
+      if (status) { status.textContent = '⚠️ Could not verify postcode. Check your connection and try again.'; status.style.color = '#991B1B'; }
+    }
+  }
+
   /* ── Phone + Location step: save & continue ── */
   function sendSmsCode() {
-    const prefix       = document.getElementById('phone-prefix').value;
-    const number       = document.getElementById('reg-phone').value.trim();
+    const prefix        = document.getElementById('phone-prefix').value;
+    const number        = document.getElementById('reg-phone').value.trim();
+    const postal        = document.getElementById('reg-postal').value.trim();
     const neighbourhood = document.getElementById('reg-neighbourhood').value.trim();
 
     if (!number) {
       showToast('⚠️ Please enter your mobile number.');
+      return;
+    }
+    if (!postal) {
+      showToast('⚠️ Please enter your postal code.');
+      document.getElementById('reg-postal').focus();
+      return;
+    }
+    if (!_userPostalValid) {
+      showToast('⚠️ Please enter a valid postal code — we need to verify your location.');
+      document.getElementById('reg-postal').focus();
       return;
     }
     if (!neighbourhood) {
@@ -739,9 +828,9 @@
     document.getElementById('phoneOtpSection').style.display = 'block';
     document.getElementById('sendSmsBtn').style.display = 'none';
 
-    // Save phone + neighbourhood + GPS to Firestore
+    // Save phone + postal + neighbourhood + GPS to Firestore
     if (typeof window.saveContactLocation === 'function') {
-      window.saveContactLocation(full, neighbourhood, window._userLat, window._userLng);
+      window.saveContactLocation(full, postal, neighbourhood, window._userLat, window._userLng);
     }
   }
 </script>
