@@ -742,14 +742,14 @@
 
   async function loadCookDishes(cookUid) {
     try {
-      const q    = query(
-        collection(db, 'dishes'),
-        where('cookUid', '==', cookUid),
-        where('isActive', '==', true),
-        orderBy('createdAt', 'desc')
-      );
+      // Simple single-field query avoids composite index requirement
+      const q    = query(collection(db, 'dishes'), where('cookUid', '==', cookUid));
       const snap = await getDocs(q);
-      if (snap.empty) return; // no listings — section stays hidden
+      // Filter active dishes in JS and sort newest first
+      const activeDocs = snap.docs
+        .filter(d => d.data().isActive !== false)
+        .sort((a, b) => (b.data().createdAt?.seconds || 0) - (a.data().createdAt?.seconds || 0));
+      if (activeDocs.length === 0) return; // no listings — section stays hidden
 
       const card = document.getElementById('prof-listings-card');
       const list = document.getElementById('prof-listings-list');
@@ -759,7 +759,7 @@
       const cookSnap2 = await getDoc(doc(db, 'cooks', cookUid));
       const cookPhone = cookSnap2.exists() ? (cookSnap2.data().phone || '') : '';
 
-      snap.forEach(docSnap => {
+      activeDocs.forEach(docSnap => {
         const dish = docSnap.data();
 
         // Format time as 12h AM/PM
@@ -950,7 +950,7 @@
       }
 
       // Hide stale registration-era sections that don't apply to this specific dish
-      ['prof-dishes-card', 'prof-schedule-card'].forEach(id => {
+      ['prof-dishes-card', 'prof-schedule-card', 'prof-meta-grid'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'none';
       });
