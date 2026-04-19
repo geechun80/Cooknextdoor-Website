@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+  <title>Admin – CookNextDoor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',sans-serif;background:#06231D;color:#fff;min-height:100vh;}
+    .topbar{background:rgba(12,52,44,0.95);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);}
+    .topbar h1{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.1rem;color:#E3EF26;}
+    .topbar span{font-size:0.8rem;color:rgba(255,255,255,0.45);}
+    .page{max-width:900px;margin:0 auto;padding:32px 20px 80px;}
+    .sign-in-box{text-align:center;padding:80px 20px;}
+    .sign-in-box h2{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.4rem;margin-bottom:12px;}
+    .sign-in-box p{color:rgba(255,255,255,0.5);margin-bottom:28px;}
+    .btn-google{background:#fff;color:#333;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.9rem;padding:13px 28px;border-radius:100px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:10px;}
+    .section-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.75rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;margin:32px 0 14px;}
+    .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px;}
+    .stat-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:14px;padding:16px 20px;}
+    .stat-card__val{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.8rem;color:#E3EF26;}
+    .stat-card__label{font-size:0.75rem;color:rgba(255,255,255,0.4);margin-top:2px;}
+    .cook-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:16px;padding:18px 20px;margin-bottom:14px;}
+    .cook-card.critical{border-color:rgba(239,68,68,0.45);background:rgba(185,28,28,0.12);}
+    .cook-card.warned{border-color:rgba(251,191,36,0.35);background:rgba(217,119,6,0.10);}
+    .cook-card__header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;}
+    .cook-card__name{font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#fff;}
+    .cook-card__meta{font-size:0.78rem;color:rgba(255,255,255,0.45);margin-top:2px;}
+    .badge{display:inline-block;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.68rem;padding:3px 10px;border-radius:100px;letter-spacing:0.04em;}
+    .badge.red{background:rgba(239,68,68,0.2);color:#FCA5A5;border:1px solid rgba(239,68,68,0.3);}
+    .badge.yellow{background:rgba(251,191,36,0.15);color:#FCD34D;border:1px solid rgba(251,191,36,0.3);}
+    .badge.green{background:rgba(34,197,94,0.12);color:#86EFAC;border:1px solid rgba(34,197,94,0.2);}
+    .reviews-list{margin:10px 0 14px;display:flex;flex-direction:column;gap:8px;}
+    .review-row{background:rgba(0,0,0,0.2);border-radius:10px;padding:10px 14px;font-size:0.82rem;}
+    .review-row__stars{color:#F59E0B;font-size:0.85rem;margin-bottom:3px;}
+    .review-row__text{color:rgba(255,255,255,0.65);line-height:1.5;}
+    .review-row__meta{font-size:0.72rem;color:rgba(255,255,255,0.3);margin-top:4px;}
+    .review-row.flagged{border-left:3px solid #EF4444;}
+    .appeal-box{background:rgba(227,239,38,0.06);border:1px solid rgba(227,239,38,0.2);border-radius:10px;padding:12px 14px;margin:10px 0 14px;font-size:0.82rem;color:rgba(255,255,255,0.7);line-height:1.6;}
+    .appeal-box__label{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.7rem;color:#E3EF26;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;}
+    .action-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .btn-suspend{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.35);color:#FCA5A5;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.8rem;padding:8px 16px;border-radius:10px;cursor:pointer;}
+    .btn-suspend:hover{background:rgba(239,68,68,0.3);}
+    .btn-reinstate{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);color:#86EFAC;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.8rem;padding:8px 16px;border-radius:10px;cursor:pointer;}
+    .btn-reinstate:hover{background:rgba(34,197,94,0.25);}
+    .btn-clear{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.8rem;padding:8px 16px;border-radius:10px;cursor:pointer;}
+    .btn-clear:hover{background:rgba(255,255,255,0.12);}
+    .btn-profile{background:rgba(227,239,38,0.08);border:1px solid rgba(227,239,38,0.2);color:#E3EF26;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.8rem;padding:8px 16px;border-radius:10px;cursor:pointer;text-decoration:none;display:inline-block;}
+    .empty{text-align:center;padding:40px 20px;color:rgba(255,255,255,0.3);font-size:0.88rem;}
+    #action-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0C342C;color:#fff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;padding:12px 22px;border-radius:14px;border:1px solid rgba(227,239,38,0.25);box-shadow:0 8px 24px rgba(0,0,0,0.3);opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:9999;}
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>🛡️ CookNextDoor Admin</h1>
+  <span id="admin-email">Not signed in</span>
+</div>
+
+<div class="page">
+
+  <!-- Sign-in screen -->
+  <div class="sign-in-box" id="sign-in-screen">
+    <h2>Admin access only</h2>
+    <p>Sign in with the admin Google account to continue.</p>
+    <button class="btn-google" onclick="adminSignIn()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" height="20" alt="Google"/>
+      Sign in with Google
+    </button>
+    <div id="sign-in-error" style="color:#FCA5A5;font-size:0.82rem;margin-top:16px;"></div>
+  </div>
+
+  <!-- Admin dashboard -->
+  <div id="admin-dashboard" style="display:none;">
+
+    <div class="stat-row" id="stat-row">
+      <div class="stat-card"><div class="stat-card__val" id="stat-total">–</div><div class="stat-card__label">Total cooks</div></div>
+      <div class="stat-card"><div class="stat-card__val" id="stat-warned">–</div><div class="stat-card__label">Warned cooks</div></div>
+      <div class="stat-card"><div class="stat-card__val" id="stat-appeals">–</div><div class="stat-card__label">Pending appeals</div></div>
+    </div>
+
+    <div class="section-title">🚨 Cooks with bad reviews</div>
+    <div id="flagged-list"><div class="empty">Loading…</div></div>
+
+    <div class="section-title">📨 Pending appeals</div>
+    <div id="appeals-list"><div class="empty">Loading…</div></div>
+
+    <div class="section-title">All cooks</div>
+    <div id="all-cooks-list"><div class="empty">Loading…</div></div>
+
+  </div>
+</div>
+
+<div id="action-toast"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore, collection, getDocs, query, where, orderBy,
+    doc, updateDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC3ynPUHYnPQ9msdLJNB5l-gM--CogrXAQ",
+    authDomain: "cooknextdoor-eedbe.firebaseapp.com",
+    projectId: "cooknextdoor-eedbe",
+    storageBucket: "cooknextdoor-eedbe.firebasestorage.app",
+    messagingSenderId: "924339275437",
+    appId: "1:924339275437:web:a97a0a2ba0089dd58e824"
+  };
+
+  const app      = initializeApp(firebaseConfig);
+  const auth     = getAuth(app);
+  const db       = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  // ── Admin whitelist (add more UIDs as needed) ──────────
+  const ADMIN_EMAILS = ['geechun80@gmail.com'];
+
+  function showToast(msg, ms = 3000) {
+    const t = document.getElementById('action-toast');
+    t.textContent = msg; t.style.opacity = '1';
+    setTimeout(() => { t.style.opacity = '0'; }, ms);
+  }
+
+  function escHtml(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  window.adminSignIn = async function() {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      if (!ADMIN_EMAILS.includes(result.user.email)) {
+        await signOut(auth);
+        document.getElementById('sign-in-error').textContent = '⚠️ This account does not have admin access.';
+      }
+    } catch(e) {
+      document.getElementById('sign-in-error').textContent = '⚠️ Sign-in failed. Try again.';
+    }
+  };
+
+  onAuthStateChanged(auth, async user => {
+    if (!user || !ADMIN_EMAILS.includes(user.email)) {
+      document.getElementById('sign-in-screen').style.display = 'block';
+      document.getElementById('admin-dashboard').style.display = 'none';
+      document.getElementById('admin-email').textContent = 'Not signed in';
+      return;
+    }
+    document.getElementById('sign-in-screen').style.display = 'none';
+    document.getElementById('admin-dashboard').style.display = 'block';
+    document.getElementById('admin-email').textContent = user.email + ' · Admin';
+    loadDashboard();
+  });
+
+  async function loadDashboard() {
+    const [cooksSnap, appealsSnap] = await Promise.all([
+      getDocs(collection(db, 'cooks')),
+      getDocs(query(collection(db, 'appeals'), where('status', '==', 'pending')))
+    ]);
+
+    const cooks = cooksSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const flagged = cooks.filter(c => (c.badReviewCount || 0) >= 1).sort((a,b) => (b.badReviewCount||0) - (a.badReviewCount||0));
+    const appeals = appealsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    document.getElementById('stat-total').textContent   = cooks.length;
+    document.getElementById('stat-warned').textContent  = flagged.length;
+    document.getElementById('stat-appeals').textContent = appeals.length;
+
+    // Flagged cooks
+    const flaggedEl = document.getElementById('flagged-list');
+    if (flagged.length === 0) {
+      flaggedEl.innerHTML = '<div class="empty">✅ No cooks with bad reviews.</div>';
+    } else {
+      flaggedEl.innerHTML = '';
+      for (const cook of flagged) {
+        flaggedEl.appendChild(await buildCookCard(cook, true));
+      }
+    }
+
+    // Appeals
+    const appealsEl = document.getElementById('appeals-list');
+    if (appeals.length === 0) {
+      appealsEl.innerHTML = '<div class="empty">No pending appeals.</div>';
+    } else {
+      appealsEl.innerHTML = '';
+      appeals.forEach(a => {
+        const date = a.createdAt?.toDate ? a.createdAt.toDate().toLocaleDateString('en-SG') : '';
+        const div = document.createElement('div');
+        div.className = 'cook-card';
+        div.innerHTML = `
+          <div class="cook-card__header">
+            <div>
+              <div class="cook-card__name">${escHtml(a.cookName || a.cookEmail || 'Unknown cook')}</div>
+              <div class="cook-card__meta">${escHtml(a.cookEmail)} · Submitted ${date}</div>
+            </div>
+            <span class="badge yellow">PENDING</span>
+          </div>
+          <div class="appeal-box">
+            <div class="appeal-box__label">Cook's explanation</div>
+            ${escHtml(a.text)}
+          </div>
+          <div class="action-row">
+            <button class="btn-clear" onclick="resolveAppeal('${a.id}', '${a.cookUid}', this)">✅ Mark resolved</button>
+            <a href="cook-profile.html?uid=${a.cookUid}" target="_blank" class="btn-profile">View profile →</a>
+          </div>`;
+        appealsEl.appendChild(div);
+      });
+    }
+
+    // All cooks
+    const allEl = document.getElementById('all-cooks-list');
+    allEl.innerHTML = '';
+    for (const cook of cooks.sort((a,b) => (b.badReviewCount||0) - (a.badReviewCount||0))) {
+      allEl.appendChild(await buildCookCard(cook, false));
+    }
+  }
+
+  async function buildCookCard(cook, showReviews) {
+    const bad   = cook.badReviewCount || 0;
+    const wl    = cook.warningLevel   || 'good';
+    const active = cook.isActive !== false;
+    const cardClass = bad >= 3 ? 'critical' : bad >= 1 ? 'warned' : '';
+    const statusBadge = !active
+      ? '<span class="badge red">SUSPENDED</span>'
+      : bad >= 3 ? '<span class="badge red">AT RISK</span>'
+      : bad >= 1 ? '<span class="badge yellow">WARNED</span>'
+      : '<span class="badge green">GOOD</span>';
+
+    const div = document.createElement('div');
+    div.className = 'cook-card ' + cardClass;
+    div.innerHTML = `
+      <div class="cook-card__header">
+        <div>
+          <div class="cook-card__name">${escHtml(cook.cookName || '–')}</div>
+          <div class="cook-card__meta">${escHtml(cook.email || '–')} · ${escHtml(cook.neighborhood || '')} · ⭐ ${cook.avgRating || '–'} · ${cook.reviewCount || 0} review${cook.reviewCount !== 1 ? 's' : ''} · 🚩 ${bad} bad</div>
+        </div>
+        ${statusBadge}
+      </div>
+      <div class="action-row">
+        ${active
+          ? `<button class="btn-suspend" onclick="suspendCook('${cook.id}', this)">🚫 Suspend account</button>`
+          : `<button class="btn-reinstate" onclick="reinstateCook('${cook.id}', this)">✅ Reinstate account</button>`}
+        <button class="btn-clear" onclick="clearWarnings('${cook.id}', this)">🧹 Clear warnings</button>
+        <a href="cook-profile.html?uid=${cook.id}" target="_blank" class="btn-profile">View profile →</a>
+      </div>
+      <div class="reviews-section" id="reviews-${cook.id}" style="margin-top:12px;display:none;"></div>
+      <button class="btn-clear" style="margin-top:8px;font-size:0.74rem;padding:5px 12px;" onclick="toggleReviews('${cook.id}')">Show reviews</button>`;
+    return div;
+  }
+
+  window.toggleReviews = async function(cookUid) {
+    const el = document.getElementById('reviews-' + cookUid);
+    if (!el) return;
+    if (el.style.display === 'block') { el.style.display = 'none'; return; }
+    el.style.display = 'block';
+    if (el.dataset.loaded) return;
+    el.innerHTML = 'Loading reviews…';
+    const snap = await getDocs(query(collection(db, 'reviews'), where('cookUid','==',cookUid)));
+    if (snap.empty) { el.innerHTML = '<div style="font-size:0.8rem;color:rgba(255,255,255,0.3);">No reviews yet.</div>'; return; }
+    const sorted = snap.docs.sort((a,b) => (b.data().createdAt?.seconds||0)-(a.data().createdAt?.seconds||0));
+    el.innerHTML = '<div class="reviews-list">' + sorted.map(d => {
+      const r = d.data();
+      const stars = '★'.repeat(r.rating||0)+'☆'.repeat(5-(r.rating||0));
+      const date  = r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString('en-SG') : '';
+      return `<div class="review-row${r.flagged?' flagged':''}">
+        <div class="review-row__stars">${stars} ${r.flagged?'<span style="font-size:0.7rem;color:#EF4444;">⚑ Flagged</span>':''}</div>
+        <div class="review-row__text">${escHtml(r.text||'(no comment)')}</div>
+        <div class="review-row__meta">${escHtml(r.reviewerName||'Neighbour')} · ${date}</div>
+      </div>`;
+    }).join('') + '</div>';
+    el.dataset.loaded = '1';
+  };
+
+  window.suspendCook = async function(cookUid, btn) {
+    if (!confirm('Suspend this cook account? Their listings will be hidden.')) return;
+    btn.textContent = 'Suspending…'; btn.disabled = true;
+    await updateDoc(doc(db, 'cooks', cookUid), { isActive: false, suspendedAt: serverTimestamp() });
+    showToast('✅ Account suspended.');
+    setTimeout(loadDashboard, 800);
+  };
+
+  window.reinstateCook = async function(cookUid, btn) {
+    if (!confirm('Reinstate this cook account?')) return;
+    btn.textContent = 'Reinstating…'; btn.disabled = true;
+    await updateDoc(doc(db, 'cooks', cookUid), { isActive: true, suspendedAt: null });
+    showToast('✅ Account reinstated.');
+    setTimeout(loadDashboard, 800);
+  };
+
+  window.clearWarnings = async function(cookUid, btn) {
+    if (!confirm('Clear all warnings for this cook?')) return;
+    btn.textContent = 'Clearing…'; btn.disabled = true;
+    await updateDoc(doc(db, 'cooks', cookUid), { badReviewCount: 0, warningLevel: 'good' });
+    showToast('✅ Warnings cleared.');
+    setTimeout(loadDashboard, 800);
+  };
+
+  window.resolveAppeal = async function(appealId, cookUid, btn) {
+    btn.textContent = 'Saving…'; btn.disabled = true;
+    await updateDoc(doc(db, 'appeals', appealId), { status: 'resolved', resolvedAt: serverTimestamp() });
+    showToast('✅ Appeal marked as resolved.');
+    setTimeout(loadDashboard, 800);
+  };
+</script>
+</body>
+</html>
