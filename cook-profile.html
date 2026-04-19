@@ -892,6 +892,12 @@
         waEl.style.display = 'none';
       }
 
+      // Hide stale registration-era sections that don't apply to this specific dish
+      ['prof-dishes-card', 'prof-schedule-card'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+
       // Show modal
       const modal = document.getElementById('dish-modal');
       if (modal) { modal.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
@@ -903,6 +909,7 @@
   window.closeDishModal = function() {
     const modal = document.getElementById('dish-modal');
     if (modal) { modal.style.display = 'none'; document.body.style.overflow = ''; }
+    // Keep the stale sections hidden even after modal is closed
   };
 
   // Expose db + auth for the review submit function
