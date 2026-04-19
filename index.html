@@ -1210,8 +1210,22 @@
       ? d.dietary.slice(0,3).map(t => '<span class="food-card__tag">' + t + '</span>').join('')
       : '';
     const dietaryRow = dietaryTags ? '<div class="food-card__dietary">' + dietaryTags + '</div>' : '';
-    // Pickup date + time
-    const pickupParts = [d.pickupDate, d.pickupTime].filter(Boolean);
+    // Pickup date + time (time formatted as AM/PM)
+    function fmtTime12(t) {
+      if (!t) return '';
+      const [hh, mm] = t.split(':').map(Number);
+      const suffix = hh >= 12 ? 'PM' : 'AM';
+      const h12 = hh % 12 || 12;
+      return h12 + (mm ? ':' + String(mm).padStart(2,'0') : '') + ' ' + suffix;
+    }
+    function fmtPickupDate(ds) {
+      if (!ds) return '';
+      try {
+        const [y, m, d2] = ds.split('-').map(Number);
+        return new Date(y, m-1, d2).toLocaleDateString('en-SG', { weekday:'short', day:'numeric', month:'short' });
+      } catch(e) { return ds; }
+    }
+    const pickupParts = [fmtPickupDate(d.pickupDate), fmtTime12(d.pickupTime)].filter(Boolean);
     const pickupRow = pickupParts.length ? '<div class="food-card__pickup">⏰ ' + pickupParts.join(' · ') + '</div>' : '';
     // WhatsApp CTA
     const waUrl = waLink(d.cookPhone, d.dishName);

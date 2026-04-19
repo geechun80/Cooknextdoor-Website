@@ -862,7 +862,7 @@ function renderBatchReview() {
         <div class="batch-review-num">${i + 1}</div>
         <div>
           <div class="batch-review-name">${d.name}</div>
-          <div class="batch-review-sub">${d.price || '–'} &nbsp;·&nbsp; ${d.portions || '–'} &nbsp;·&nbsp; Pickup ${d.pickupTime || '–'}</div>
+          <div class="batch-review-sub">${d.price || '–'} &nbsp;·&nbsp; ${d.portions || '–'} &nbsp;·&nbsp; Pickup ${d.pickupDate ? (()=>{try{const[y,m,dy]=d.pickupDate.split('-').map(Number);return new Date(y,m-1,dy).toLocaleDateString('en-SG',{weekday:'short',day:'numeric',month:'short'});}catch(e){return d.pickupDate;}})() + ' ' : ''}${d.pickupTime ? (t=>{const[hh,mm]=t.split(':').map(Number);return(hh%12||12)+(mm?':'+String(mm).padStart(2,'0'):'')+' '+(hh>=12?'PM':'AM');})(d.pickupTime) : '–'}</div>
         </div>
       </div>
     `).join('');
