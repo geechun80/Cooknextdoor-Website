@@ -298,7 +298,7 @@
         <button class="btn-secondary" onclick="goToStep(1)">← Go back</button>
       </div>
 
-      <!-- PANEL 3 — Phone Verification -->
+      <!-- PANEL 3 — Phone + Location -->
       <div class="panel" id="panel-3">
         <div class="steps">
           <div class="step-dot done"></div>
@@ -307,8 +307,10 @@
           <div class="step-dot"></div>
           <span class="step-label">Step 3 of 4</span>
         </div>
-        <h2>Add your <span>phone</span> 📱</h2>
-        <p class="subtitle">Your number lets cooks reach you via WhatsApp to confirm pickup details. It's never shown publicly.</p>
+        <h2>Contact &amp; <span>location</span> 📍</h2>
+        <p class="subtitle">So cooks nearby can find and reach you. Your exact address is never shown publicly — only your neighbourhood.</p>
+
+        <!-- Phone -->
         <div class="form-group">
           <label>Mobile number</label>
           <div class="phone-row">
@@ -326,13 +328,44 @@
             </select>
             <input type="tel" id="reg-phone" class="form-control" placeholder="9123 4567"/>
           </div>
-          <div class="helper">Used for WhatsApp coordination — never shown publicly</div>
+          <div class="helper">For WhatsApp pickup coordination — never shown publicly</div>
         </div>
+
+        <!-- Neighbourhood -->
+        <div class="form-group">
+          <label>Neighbourhood / Area</label>
+          <input type="text" id="reg-neighbourhood" class="form-control" placeholder="e.g. Tampines, Jurong West, Bedok, Yishun…" autocomplete="off" list="sg-areas"/>
+          <datalist id="sg-areas">
+            <option>Ang Mo Kio</option><option>Bedok</option><option>Bishan</option>
+            <option>Bukit Batok</option><option>Bukit Merah</option><option>Bukit Panjang</option>
+            <option>Bukit Timah</option><option>Choa Chu Kang</option><option>Clementi</option>
+            <option>Geylang</option><option>Hougang</option><option>Jurong East</option>
+            <option>Jurong West</option><option>Kallang</option><option>Marine Parade</option>
+            <option>Pasir Ris</option><option>Punggol</option><option>Queenstown</option>
+            <option>Sembawang</option><option>Sengkang</option><option>Serangoon</option>
+            <option>Tampines</option><option>Toa Payoh</option><option>Woodlands</option>
+            <option>Yishun</option><option>Novena</option><option>Rochor</option>
+            <option>Outram</option><option>Tengah</option>
+            <!-- Malaysia -->
+            <option>Petaling Jaya</option><option>Subang Jaya</option><option>Shah Alam</option>
+            <option>Cheras</option><option>Ampang</option><option>Bangsar</option>
+          </datalist>
+          <div class="helper">Helps match you with home cooks within 1 km</div>
+        </div>
+
+        <!-- GPS -->
+        <div style="margin-bottom:18px;">
+          <button type="button" id="gps-user-btn" onclick="captureUserGPS()" style="width:100%;padding:11px 16px;background:#F5FAF0;border:2px solid #D4EDDA;border-radius:12px;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.84rem;color:#276749;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s;">
+            📍 Use my current GPS location
+          </button>
+          <div id="gps-user-status" style="font-size:0.75rem;color:var(--muted);margin-top:6px;text-align:center;display:none;"></div>
+        </div>
+
         <button class="btn-primary" onclick="sendSmsCode()" id="sendSmsBtn" style="margin-bottom:0;">Save &amp; Continue →</button>
 
-        <!-- OTP section — placeholder for future SMS verify -->
+        <!-- Confirmation row shown after save -->
         <div id="phoneOtpSection" style="display:none;margin-top:24px;">
-          <div class="verify-info">Saved: <strong id="phone-verify-display">your number</strong></div>
+          <div class="verify-info">✅ Saved: <strong id="phone-verify-display">your number</strong></div>
           <button class="btn-primary" onclick="goToStep(4)">Continue →</button>
         </div>
         <button class="btn-secondary" onclick="goToStep(2)" style="margin-top:10px;">← Go back</button>
@@ -553,13 +586,19 @@
     }
   };
 
-  /* ── Save phone and proceed ── */
-  window.savePhone = async function(phone) {
+  /* ── Save phone + neighbourhood + GPS ── */
+  window.saveContactLocation = async function(phone, neighbourhood, lat, lng) {
     const user = auth.currentUser;
     if (!user) return;
     try {
-      await setDoc(doc(db, 'users', user.uid), { phone, updatedAt: serverTimestamp() }, { merge: true });
-    } catch (err) { console.error('Phone save error:', err); }
+      const payload = {
+        phone,
+        neighbourhood,
+        updatedAt: serverTimestamp(),
+        ...(lat && lng ? { lat, lng } : {})
+      };
+      await setDoc(doc(db, 'users', user.uid), payload, { merge: true });
+    } catch (err) { console.error('Contact/location save error:', err); }
   };
 
   /* ── Forgot password ── */
@@ -643,23 +682,67 @@
     reader.readAsDataURL(input.files[0]);
   }
 
-  /* ── Phone step: save & continue ── */
-  function sendSmsCode() {
-    const prefix = document.getElementById('phone-prefix').value;
-    const number = document.getElementById('reg-phone').value.trim();
-    if (!number) {
-      const t = document.getElementById('gToast');
-      t.textContent = '⚠️ Please enter your mobile number.';
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 3500);
+  /* ── GPS capture for user location ── */
+  window._userLat = null;
+  window._userLng = null;
+
+  function captureUserGPS() {
+    const btn = document.getElementById('gps-user-btn');
+    const status = document.getElementById('gps-user-status');
+    btn.textContent = '⏳ Detecting location…';
+    btn.disabled = true;
+    status.style.display = 'block';
+    status.textContent = '';
+    if (!navigator.geolocation) {
+      btn.textContent = '📍 Use my current GPS location';
+      btn.disabled = false;
+      status.textContent = 'GPS not supported on this device.';
       return;
     }
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        window._userLat = pos.coords.latitude;
+        window._userLng = pos.coords.longitude;
+        btn.textContent = '✅ Location captured';
+        btn.style.background = '#D4EDDA';
+        btn.style.borderColor = '#28A745';
+        status.textContent = `📍 ${window._userLat.toFixed(4)}, ${window._userLng.toFixed(4)} — location saved`;
+        status.style.color = '#276749';
+      },
+      err => {
+        btn.textContent = '📍 Use my current GPS location';
+        btn.disabled = false;
+        status.textContent = 'Could not get location. Please type your neighbourhood above.';
+      },
+      { timeout: 10000 }
+    );
+  }
+
+  /* ── Phone + Location step: save & continue ── */
+  function sendSmsCode() {
+    const prefix       = document.getElementById('phone-prefix').value;
+    const number       = document.getElementById('reg-phone').value.trim();
+    const neighbourhood = document.getElementById('reg-neighbourhood').value.trim();
+
+    if (!number) {
+      showToast('⚠️ Please enter your mobile number.');
+      return;
+    }
+    if (!neighbourhood) {
+      showToast('⚠️ Please enter your neighbourhood or area.');
+      document.getElementById('reg-neighbourhood').focus();
+      return;
+    }
+
     const full = prefix.replace(/[^+\d]/g, '') + number;
     document.getElementById('phone-verify-display').textContent = full;
     document.getElementById('phoneOtpSection').style.display = 'block';
     document.getElementById('sendSmsBtn').style.display = 'none';
-    // save phone to Firestore if function available
-    if (typeof window.savePhone === 'function') window.savePhone(full);
+
+    // Save phone + neighbourhood + GPS to Firestore
+    if (typeof window.saveContactLocation === 'function') {
+      window.saveContactLocation(full, neighbourhood, window._userLat, window._userLng);
+    }
   }
 </script>
   <div id="gToast">⚠️ Sign-in failed. Please try again.</div>
