@@ -525,7 +525,16 @@
       const user   = result.user;
       await saveUserToFirestore(user, { provider: 'google' });
       if (user.photoURL) window._userPhotoUrl = user.photoURL;
-      showSuccess(user.displayName, user.email, user.photoURL);
+      // Check if user still needs to fill in phone + address
+      const userSnap = await getDoc(doc(db, 'users', user.uid));
+      const userData  = userSnap.exists() ? userSnap.data() : {};
+      if (!userData.phone || !userData.neighbourhood) {
+        // First time or incomplete profile — send to contact/location step
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('panel-3').classList.add('active');
+      } else {
+        showSuccess(user.displayName, user.email, user.photoURL);
+      }
     } catch (err) {
       showToast('⚠️ Google sign-in failed. Try again.');
       console.error(err);
