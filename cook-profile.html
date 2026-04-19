@@ -81,23 +81,6 @@
     /* ── Schedule / Calendar display ── */
     .meal-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
     .meal-chip{padding:6px 14px;border-radius:100px;border:1px solid rgba(227,239,38,0.3);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.78rem;color:var(--orange);background:rgba(227,239,38,0.08);}
-    /* Profile calendar */
-    .prof-cal{margin-top:4px;}
-    .prof-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-    .prof-cal-nav-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);border-radius:8px;width:32px;height:32px;font-size:1rem;cursor:pointer;color:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
-    .prof-cal-nav-btn:hover{border-color:var(--orange);color:var(--orange);}
-    .prof-cal-month{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.9rem;color:rgba(255,255,255,0.80);}
-    .prof-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
-    .prof-cal-hdr{text-align:center;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.60rem;color:rgba(255,255,255,0.35);padding:5px 2px;text-transform:uppercase;}
-    .prof-cal-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:7px;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.80rem;color:rgba(255,255,255,0.30);border:1px solid transparent;}
-    .prof-cal-cell.prof-avail{background:rgba(227,239,38,0.18);border-color:rgba(227,239,38,0.35);color:var(--orange);font-weight:800;}
-    .prof-cal-cell.prof-today{border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.60);}
-    .prof-cal-cell.prof-today.prof-avail{border-color:var(--orange);}
-    .prof-cal-cell.prof-past{color:rgba(255,255,255,0.12);}
-    .prof-cal-empty{aspect-ratio:1;}
-    .prof-cal-legend{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:0.72rem;color:rgba(255,255,255,0.40);}
-    .prof-cal-legend-dot{width:10px;height:10px;border-radius:3px;background:rgba(227,239,38,0.25);border:1px solid rgba(227,239,38,0.5);flex-shrink:0;}
-    .no-schedule{font-size:0.85rem;color:rgba(255,255,255,0.40);font-style:italic;}
 
     /* ── Dishes list ── */
     .dishes-text{font-size:0.92rem;color:rgba(255,255,255,0.80);line-height:1.7;white-space:pre-line;}
@@ -122,10 +105,7 @@
     /* ── CTA ── */
     .cta-section{position:fixed;bottom:0;left:0;right:0;z-index:150;padding:10px 20px 14px;background:linear-gradient(to top,rgba(6,35,29,0.98) 60%,transparent);pointer-events:none;}
     .cta-card{background:rgba(12,52,44,0.97);backdrop-filter:blur(16px);border:1px solid rgba(227,239,38,0.25);border-radius:20px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 -4px 40px rgba(0,0,0,0.35);pointer-events:all;max-width:700px;margin:0 auto;}
-    .cta-info{flex:1;}
-    .cta-price{font-family:'Poppins',sans-serif;font-weight:900;font-size:1.15rem;color:var(--orange);}
-    .cta-label{font-size:0.75rem;color:rgba(255,255,255,0.45);}
-    .btn-reserve{background:var(--orange);color:var(--on-lime);border:none;border-radius:14px;padding:14px 24px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 4px 16px rgba(227,239,38,0.30);white-space:nowrap;}
+.btn-reserve{background:var(--orange);color:var(--on-lime);border:none;border-radius:14px;padding:14px 24px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 4px 16px rgba(227,239,38,0.30);white-space:nowrap;}
     .btn-reserve:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(227,239,38,0.40);}
 
     /* ── Share row ── */
@@ -215,52 +195,10 @@
     </div>
   </div>
 
-  <!-- Price + portions quick facts -->
-  <div class="meta-grid" style="margin-bottom:16px;" id="prof-meta-grid">
-    <div class="meta-item">
-      <div class="meta-value" id="prof-price">–</div>
-      <div class="meta-label">Per portion</div>
-    </div>
-    <div class="meta-item">
-      <div class="meta-value" id="prof-portions">–</div>
-      <div class="meta-label">Typical portions</div>
-    </div>
-  </div>
-
   <!-- About -->
   <div class="info-card" id="prof-about-card" style="display:none;">
     <h3>About this cook</h3>
     <p class="cook-description" id="prof-description"></p>
-  </div>
-
-  <!-- Signature dishes -->
-  <div class="info-card" id="prof-dishes-card" style="display:none;">
-    <h3>🍽️ Signature dishes</h3>
-    <div class="dishes-text" id="prof-dishes"></div>
-  </div>
-
-  <!-- Cooking schedule -->
-  <div class="info-card" id="prof-schedule-card" style="display:none;">
-    <h3>🗓️ Cooking schedule</h3>
-    <!-- Meal time chips -->
-    <div class="meal-chips" id="prof-meal-chips"></div>
-    <!-- Calendar showing available dates -->
-    <div class="prof-cal" id="prof-cal">
-      <div class="prof-cal-nav">
-        <button class="prof-cal-nav-btn" type="button" onclick="profCalPrev()">&#8249;</button>
-        <span class="prof-cal-month" id="prof-cal-month">–</span>
-        <button class="prof-cal-nav-btn" type="button" onclick="profCalNext()">&#8250;</button>
-      </div>
-      <div class="prof-cal-grid" id="prof-cal-grid"></div>
-      <div class="prof-cal-legend"><div class="prof-cal-legend-dot"></div> Available for pickup</div>
-    </div>
-    <div class="no-schedule" id="prof-no-schedule" style="display:none;">No specific dates set — contact the cook to check availability.</div>
-  </div>
-
-  <!-- Dietary info -->
-  <div class="info-card" id="prof-dietary-card" style="display:none;">
-    <h3>✅ Dietary &amp; allergen info</h3>
-    <div class="chip-row" id="prof-dietary"></div>
   </div>
 
   <!-- Live dish listings -->
@@ -333,6 +271,9 @@
       <a href="cook-register.html" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.80);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;padding:12px 20px;border-radius:14px;text-decoration:none;border:1px solid rgba(255,255,255,0.15);">
         ✏️ Edit profile
       </a>
+      <button id="upload-photo-btn" onclick="document.getElementById('avatar-file-input').click()" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.80);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;padding:12px 20px;border-radius:14px;border:1px solid rgba(255,255,255,0.15);cursor:pointer;width:100%;">
+        📷 Change profile photo
+      </button>
     </div>
   </div>
 
@@ -345,11 +286,7 @@
   <!-- Sticky CTA (shown to visitors; hidden for the cook owner) -->
   <div class="cta-section" id="cta-section">
     <div class="cta-card" id="cta-card">
-      <div class="cta-info" id="cta-info">
-        <div class="cta-price" id="cta-price">–</div>
-        <div class="cta-label" id="cta-cook-name">per portion · self pickup</div>
-      </div>
-      <button class="btn-reserve" id="cta-reserve-btn" onclick="openReserveModal()">💬 Reserve via WhatsApp →</button>
+      <button class="btn-reserve" id="cta-reserve-btn" onclick="openReserveModal()" style="width:100%;">💬 Reserve via WhatsApp →</button>
     </div>
   </div>
 
@@ -607,70 +544,10 @@
       });
     }
 
-    // Price & portions
-    setText('prof-price',   data.priceRange || '–');
-    setText('cta-price',    data.priceRange || '–');
-    setText('prof-portions', data.portions  || '–');
-    setText('cta-cook-name', 'per portion · ' + (data.cookName || 'self pickup'));
-
     // About / description
     if (data.description) {
       setText('prof-description', data.description);
       show('prof-about-card');
-    }
-
-    // Signature dishes
-    if (data.dishes) {
-      setText('prof-dishes', data.dishes);
-      show('prof-dishes-card');
-    }
-
-    // Schedule: meal times + available dates
-    const mealTimes      = data.mealTimes || [];
-    const availableDates = data.availableDates || [];
-
-    // Fallback: old `schedule` field if new fields not yet saved
-    if (!mealTimes.length && !availableDates.length && data.schedule && data.schedule.length) {
-      const mealChipsWrap = document.getElementById('prof-meal-chips');
-      data.schedule.forEach(s => {
-        const ch = document.createElement('span');
-        ch.className = 'meal-chip';
-        ch.textContent = s;
-        mealChipsWrap.appendChild(ch);
-      });
-      show('prof-schedule-card');
-      document.getElementById('prof-cal').style.display = 'none';
-    } else if (mealTimes.length || availableDates.length) {
-      const mealChipsWrap = document.getElementById('prof-meal-chips');
-      mealTimes.forEach(m => {
-        const ch = document.createElement('span');
-        ch.className = 'meal-chip';
-        ch.textContent = m;
-        mealChipsWrap.appendChild(ch);
-      });
-      if (!mealTimes.length) mealChipsWrap.style.display = 'none';
-
-      if (availableDates.length) {
-        // Store dates globally for calendar nav
-        window._profDates = new Set(availableDates);
-        profCalRender();
-      } else {
-        document.getElementById('prof-cal').style.display = 'none';
-        document.getElementById('prof-no-schedule').style.display = 'block';
-      }
-      show('prof-schedule-card');
-    }
-
-    // Dietary chips
-    if (data.dietary && data.dietary.length) {
-      const wrap = document.getElementById('prof-dietary');
-      data.dietary.forEach(d => {
-        const ch = document.createElement('span');
-        ch.className = 'diet-chip';
-        ch.textContent = d;
-        wrap.appendChild(ch);
-      });
-      show('prof-dietary-card');
     }
 
     // WhatsApp links
@@ -709,72 +586,6 @@
   function escHtml(s) {
     return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
-
-  // Profile calendar state
-  window._profCalView = (function(){ var d = new Date(); d.setDate(1); return d; })();
-  window._profDates   = new Set();
-
-  const _PROF_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const _PROF_DAYS   = ['Su','Mo','Tu','We','Th','Fr','Sa'];
-
-  window.profCalRender = function() {
-    const year  = _profCalView.getFullYear();
-    const month = _profCalView.getMonth();
-
-    const lbl = document.getElementById('prof-cal-month');
-    if (lbl) lbl.textContent = _PROF_MONTHS[month] + ' ' + year;
-
-    const grid = document.getElementById('prof-cal-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
-
-    // Day headers
-    _PROF_DAYS.forEach(d => {
-      const hdr = document.createElement('div');
-      hdr.className = 'prof-cal-hdr';
-      hdr.textContent = d;
-      grid.appendChild(hdr);
-    });
-
-    const today = new Date(); today.setHours(0,0,0,0);
-    const firstDow    = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    // Empty leading cells
-    for (let i = 0; i < firstDow; i++) {
-      const e = document.createElement('div');
-      e.className = 'prof-cal-empty';
-      grid.appendChild(e);
-    }
-
-    // Date cells
-    for (let day = 1; day <= daysInMonth; day++) {
-      const cellDate = new Date(year, month, day);
-      const mm  = String(month + 1).padStart(2, '0');
-      const dd  = String(day).padStart(2, '0');
-      const ds  = year + '-' + mm + '-' + dd;
-
-      const cell = document.createElement('div');
-      cell.className = 'prof-cal-cell';
-      cell.textContent = day;
-
-      if (cellDate < today)              cell.classList.add('prof-past');
-      if (cellDate.getTime() === today.getTime()) cell.classList.add('prof-today');
-      if (_profDates.has(ds))            cell.classList.add('prof-avail');
-
-      grid.appendChild(cell);
-    }
-  };
-
-  window.profCalPrev = function() {
-    _profCalView.setMonth(_profCalView.getMonth() - 1);
-    profCalRender();
-  };
-
-  window.profCalNext = function() {
-    _profCalView.setMonth(_profCalView.getMonth() + 1);
-    profCalRender();
-  };
 
   async function loadCookDishes(cookUid) {
     try {
@@ -991,11 +802,6 @@
         waEl.style.display = 'none';
       }
 
-      // Hide stale registration-era sections that don't apply to this specific dish
-      ['prof-dishes-card', 'prof-schedule-card', 'prof-meta-grid', 'prof-dietary-card', 'cta-info'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = 'none';
-      });
       // Centre the WhatsApp button now that price info is gone
       const ctaCard = document.getElementById('cta-card');
       if (ctaCard) ctaCard.style.justifyContent = 'center';
