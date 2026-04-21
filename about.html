@@ -184,14 +184,14 @@
     <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.1rem;color:#E3EF26;margin-bottom:6px;">Support CookNextDoor</div>
     <div style="font-size:0.80rem;color:rgba(255,255,255,0.48);margin-bottom:22px;line-height:1.6;">Scan with PayNow or PayLah!<br/>Any amount is deeply appreciated 🙏</div>
     <div style="background:#fff;border-radius:16px;padding:14px;display:inline-block;margin-bottom:14px;">
-      <div id="donation-qr-wrap"></div>
+      <img id="donation-qr-img" src="" alt="PayNow QR Code" style="width:190px;height:190px;display:block;border-radius:4px;"/>
     </div>
     <div style="font-size:0.72rem;color:rgba(255,255,255,0.30);margin-bottom:18px;letter-spacing:0.04em;">PAYNOW · PAYLAH! · DBS PAYLINK</div>
     <a id="donation-paylink" href="#" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.80);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.85rem;padding:12px 20px;border-radius:12px;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.07)'">📱 Tap to pay on mobile →</a>
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4zsAx1L7SE3TP0e7VXGCQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- qr rendered via JS below -->
 <script>
 (function(){
   var _a=['https://www.dbs.com.sg/personal/mobile/','paylink/index.html?tranRef=wWyhs57Di8'];
@@ -201,11 +201,8 @@
     m.style.display='flex';
     document.getElementById('donation-paylink').href=_a.join('');
     if(!_done){
-      new QRCode(document.getElementById('donation-qr-wrap'),{
-        text:_a.join(''),width:190,height:190,
-        colorDark:'#06231D',colorLight:'#ffffff',
-        correctLevel:QRCode.CorrectLevel.H
-      });
+      var _img=document.getElementById('donation-qr-img');
+      _img.src='https://api.qrserver.com/v1/create-qr-code/?size=190x190&color=06231D&bgcolor=ffffff&qzone=1&data='+encodeURIComponent(_a.join(''));
       _done=true;
     }
   };
