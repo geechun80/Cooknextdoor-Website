@@ -184,7 +184,7 @@
     <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.1rem;color:#E3EF26;margin-bottom:6px;">Support CookNextDoor</div>
     <div style="font-size:0.80rem;color:rgba(255,255,255,0.48);margin-bottom:22px;line-height:1.6;">Scan with PayNow or PayLah!<br/>Any amount is deeply appreciated 🙏</div>
     <div style="background:#fff;border-radius:16px;padding:14px;display:inline-block;margin-bottom:14px;">
-      <img id="donation-qr-img" src="" alt="PayNow QR Code" style="width:190px;height:190px;display:block;border-radius:4px;"/>
+      <img id="donation-qr-img" src="brand_assets/donation-qr.png" alt="PayNow QR Code" style="width:190px;height:190px;display:block;border-radius:4px;"/>
     </div>
     <div style="margin-bottom:6px;">
       <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.92rem;color:#fff;margin-bottom:2px;">geechun</div>
@@ -205,8 +205,7 @@
     m.style.display='flex';
     document.getElementById('donation-paylink').href=_a.join('');
     if(!_done){
-      var _img=document.getElementById('donation-qr-img');
-      _img.src='https://api.qrserver.com/v1/create-qr-code/?size=190x190&color=06231D&bgcolor=ffffff&qzone=1&data='+encodeURIComponent(_a.join(''));
+      // QR image is static — no dynamic generation needed
       _done=true;
     }
   };
