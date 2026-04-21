@@ -1,0 +1,55 @@
+# CookNextDoor
+
+> CookNextDoor is a free hyperlocal platform connecting home cooks with hungry neighbours within 1 km in Singapore and Malaysia. Zero commission. No delivery. Direct payment.
+
+## What is CookNextDoor?
+
+CookNextDoor is NOT a food delivery app and NOT a restaurant marketplace.
+
+It is a community platform where home cooks list extra food portions (typically 3–5 servings of a home-cooked meal) and nearby people self-collect directly from the cook's home. Payment is made directly — PayNow, PayLah!, or cash. CookNextDoor takes no commission and charges no fees.
+
+## Key Features
+
+- **Hyperlocal listings** — Food listed within 1 km radius of the buyer
+- **Food Mood quiz** — AI-assisted mood-based meal matching (food-mood.html)
+- **Cook profiles** — Public profiles showing cook bio, cuisine type, availability schedule, and active dish listings
+- **Zero commission** — Cooks keep 100% of their earnings
+- **Self-pickup only** — Buyers collect from the cook's location; no delivery
+- **Direct payment** — PayNow, PayLah!, or cash between buyer and cook
+- **Community trust** — Reviews, verified profiles, community guidelines
+
+## Pages
+
+- [Home](https://cooknextdoor.org/index.html): Discover home-cooked food nearby; browse active listings
+- [Food Mood](https://cooknextdoor.org/food-mood.html): Quiz that matches meals to your current mood/craving
+- [How it Works](https://cooknextdoor.org/meetup-guide.html): Step-by-step guide for buyers and cooks
+- [News](https://cooknextdoor.org/news.html): Platform updates and community stories
+- [About](https://cooknextdoor.org/about.html): Mission, team, and story behind CookNextDoor
+- [Contact](https://cooknextdoor.org/contact.html): Get in touch with the team
+- [Press](https://cooknextdoor.org/press.html): Media resources, brand assets, press releases
+- [Sign In / Register](https://cooknextdoor.org/user-auth.html): Buyer authentication
+- [Become a Cook](https://cooknextdoor.org/cook-register.html): Cook onboarding flow
+- [List a Dish](https://cooknextdoor.org/cook-list-dish.html): Cooks list new food portions
+
+## Who uses CookNextDoor?
+
+1. **Home cooks** — casual or active cooks who have extra portions and want to earn from their cooking while reducing food waste
+2. **Nearby consumers** — people looking for affordable, authentic home-cooked meals near them
+
+## Mission
+
+Reduce food waste, build neighbourhood communities, and help home cooks earn from their passion — one meal at a time.
+
+## Business model
+
+Completely free for cooks and buyers. No commission, no subscription, no delivery fee. Growth is driven by community trust.
+
+## Location
+
+Founded 2024 in Singapore. Operating in Singapore and Malaysia. Expanding to more Southeast Asian cities in 2025–2026.
+
+## Optional
+
+- Sitemap: https://cooknextdoor.org/sitemap.xml
+- Logo: https://cooknextdoor.org/brand_assets/logo.png
+- Brand colours: Lime #E3EF26 · Dark green #06231D · Teal #076653
