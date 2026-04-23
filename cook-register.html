@@ -51,9 +51,10 @@
     .prog-dot{width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:1rem;font-family:'Poppins',sans-serif;font-weight:700;color:rgba(255,255,255,0.4);z-index:1;transition:all 0.3s;}
     .prog-step.done   .prog-dot{background:var(--green);border-color:var(--green);color:#fff;}
     .prog-step.active .prog-dot{background:var(--orange);border-color:var(--orange);color:var(--on-lime);box-shadow:0 0 0 4px rgba(227,239,38,0.25);}
-    .prog-label{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.62rem;color:rgba(255,255,255,0.40);letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;}
+    .prog-label{font-family:'Poppins',sans-serif;font-weight:600;font-size:0.72rem;color:rgba(255,255,255,0.40);letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;}
     .prog-step.active .prog-label{color:var(--orange);}
     .prog-step.done   .prog-label{color:rgba(255,255,255,0.60);}
+    @media(max-width:380px){.prog-label{display:none;}.prog-dot{width:28px;height:28px;font-size:0.72rem;}.prog-step:not(:last-child)::after{min-width:10px;}}
 
     /* ── Card ── */
     .card{background:#fff;border-radius:24px;padding:40px;margin-bottom:0;box-shadow:var(--shadow);}
@@ -66,7 +67,7 @@
     .form-group{margin-bottom:20px;}
     .form-group label{display:block;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.82rem;color:var(--dark);margin-bottom:7px;}
     .form-group label .opt{font-weight:400;color:var(--muted);font-size:0.75rem;}
-    .form-control{width:100%;padding:13px 16px;border:2px solid #E8E8E8;border-radius:12px;font-family:'Inter',sans-serif;font-size:0.92rem;color:var(--dark);outline:none;transition:border 0.2s,box-shadow 0.2s;background:#fff;}
+    .form-control{width:100%;padding:13px 16px;border:2px solid #E8E8E8;border-radius:12px;font-family:'Inter',sans-serif;font-size:1rem;color:var(--dark);outline:none;transition:border 0.2s,box-shadow 0.2s;background:#fff;}
     .form-control:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(227,239,38,0.10);}
     .form-control::placeholder{color:#B0B0B0;}
     textarea.form-control{resize:vertical;min-height:90px;}
@@ -84,7 +85,7 @@
     .pw-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--muted);font-size:0.9rem;border:none;background:none;padding:0;}
 
     .phone-row{display:flex;gap:8px;}
-    .phone-prefix{width:100px;flex-shrink:0;padding:13px 10px;border:2px solid #E8E8E8;border-radius:12px;font-size:0.85rem;color:var(--dark);background:#F9F9F9;outline:none;}
+    .phone-prefix{width:100px;flex-shrink:0;padding:13px 10px;border:2px solid #E8E8E8;border-radius:12px;font-size:1rem;color:var(--dark);background:#F9F9F9;outline:none;}
     .phone-row .form-control{flex:1;}
 
     /* Multi-select chips for food categories */
@@ -224,8 +225,9 @@
       <div class="prog-step" data-step="3"><div class="prog-dot">3</div><div class="prog-label">Phone</div></div>
       <div class="prog-step" data-step="4"><div class="prog-dot">4</div><div class="prog-label">Location</div></div>
       <div class="prog-step" data-step="5"><div class="prog-dot">5</div><div class="prog-label">Menu</div></div>
-      <div class="prog-step" data-step="6"><div class="prog-dot">6</div><div class="prog-label">Photos</div></div>
-      <div class="prog-step" data-step="7"><div class="prog-dot">✓</div><div class="prog-label">Done</div></div>
+      <div class="prog-step" data-step="6"><div class="prog-dot">6</div><div class="prog-label">Pricing</div></div>
+      <div class="prog-step" data-step="7"><div class="prog-dot">7</div><div class="prog-label">Photos</div></div>
+      <div class="prog-step" data-step="8"><div class="prog-dot">✓</div><div class="prog-label">Done</div></div>
     </div>
   </div>
 
@@ -233,21 +235,6 @@
   <div class="card" id="step-1">
     <h2>Step 1: <span>Account Setup</span></h2>
     <p class="subtitle">Create your cook account. You can also use your Google account for a faster setup.</p>
-
-    <!-- Cook guide video intro -->
-    <div class="video-guide" style="margin-bottom:24px;">
-      <h3>🎬 New here? Watch the cook registration guide</h3>
-      <p>A quick 5-minute walkthrough — from signing up to getting your first reservation.</p>
-      <div class="video-player" onclick="playVideo(this)" id="intro-video-player">
-        <div class="video-bg">🍳</div>
-        <div class="play-btn">▶</div>
-      </div>
-      <div class="video-steps">
-        <div class="vstep"><div class="vstep__num">0:30</div><div class="vstep__label">Creating your account</div></div>
-        <div class="vstep"><div class="vstep__num">2:00</div><div class="vstep__label">Setting up your menu</div></div>
-        <div class="vstep"><div class="vstep__num">4:00</div><div class="vstep__label">Going live</div></div>
-      </div>
-    </div>
 
     <button type="button" class="btn-gmail" onclick="googleSignIn()">
       <svg class="gmail-icon" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
@@ -287,9 +274,24 @@
     </div>
 
     <div class="btn-actions">
-      <button class="btn-primary" onclick="createCookAccount()">Continue →</button>
+      <button class="btn-primary" onclick="createCookAccount()">Create account &amp; continue →</button>
     </div>
     <p class="terms">By continuing you agree to our <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a></p>
+
+    <!-- Cook guide video — optional, below the fold -->
+    <div class="video-guide" style="margin-top:28px;">
+      <h3>🎬 Optional: Watch the cook registration guide</h3>
+      <p>A quick 5-minute walkthrough — from signing up to getting your first reservation.</p>
+      <div class="video-player" onclick="playVideo(this)" id="intro-video-player">
+        <div class="video-bg">🍳</div>
+        <div class="play-btn">▶</div>
+      </div>
+      <div class="video-steps">
+        <div class="vstep"><div class="vstep__num">0:30</div><div class="vstep__label">Creating your account</div></div>
+        <div class="vstep"><div class="vstep__num">2:00</div><div class="vstep__label">Setting up your menu</div></div>
+        <div class="vstep"><div class="vstep__num">4:00</div><div class="vstep__label">Going live</div></div>
+      </div>
+    </div>
   </div>
 
   <!-- STEP 2 — Email Verification -->
@@ -386,7 +388,7 @@
 
   <!-- STEP 5 — Menu Setup -->
   <div class="card hidden" id="step-5">
-    <h2>Step 5: <span>Your menu</span> 🍽️</h2>
+    <h2>Step 5: <span>What you cook</span> 🍽️</h2>
     <p class="subtitle">Tell buyers what kind of food you cook. You can add specific dishes later from your dashboard.</p>
 
     <div class="form-group">
@@ -444,6 +446,17 @@
       </div>
     </div>
 
+    <div class="btn-actions">
+      <button class="btn-primary" onclick="nextStep(5)">Continue →</button>
+      <button class="btn-secondary" onclick="prevStep(5)">← Back</button>
+    </div>
+  </div>
+
+  <!-- STEP 6 — Availability & Pricing -->
+  <div class="card hidden" id="step-6">
+    <h2>Step 6: <span>Availability &amp; pricing</span> 📅</h2>
+    <p class="subtitle">Set your price, when you cook, and which days you'll have food available.</p>
+
     <div class="form-group">
       <label>Typical price per portion</label>
       <div class="price-options">
@@ -480,6 +493,7 @@
         <div class="chip" onclick="toggleChip(this)">🕐 Flexible / On request</div>
       </div>
     </div>
+
     <div class="form-group">
       <label>Dates you'll be cooking <span class="opt">tap to mark available days</span></label>
       <div class="cal-wrap">
@@ -500,14 +514,14 @@
     </div>
 
     <div class="btn-actions">
-      <button class="btn-primary" onclick="nextStep(5)">Continue →</button>
-      <button class="btn-secondary" onclick="prevStep(5)">← Back</button>
+      <button class="btn-primary" onclick="nextStep(6)">Continue →</button>
+      <button class="btn-secondary" onclick="prevStep(6)">← Back</button>
     </div>
   </div>
 
   <!-- STEP 6 — Photos -->
-  <div class="card hidden" id="step-6">
-    <h2>Step 6: <span>Your photos</span> 📸</h2>
+  <div class="card hidden" id="step-7">
+    <h2>Step 7: <span>Your photos</span> 📸</h2>
     <p class="subtitle">Listings with photos get 3× more reservations. Add a photo of yourself and your food.</p>
 
     <!-- Video guidance -->
@@ -558,14 +572,14 @@
     </div>
 
     <div class="btn-actions">
-      <button class="btn-primary" onclick="nextStep(6)">Review & Submit →</button>
-      <button class="btn-secondary" onclick="nextStep(6)">Skip photos for now</button>
-      <button class="btn-secondary" onclick="prevStep(6)">← Back</button>
+      <button class="btn-primary" onclick="nextStep(7)">Review my profile →</button>
+      <button class="btn-secondary" onclick="nextStep(7)">Continue without photos</button>
+      <button class="btn-secondary" onclick="prevStep(7)">← Back</button>
     </div>
   </div>
 
-  <!-- STEP 7 — Review -->
-  <div class="card hidden" id="step-7">
+  <!-- STEP 8 — Review -->
+  <div class="card hidden" id="step-8">
     <h2>Almost there! <span>Review your profile</span> ✅</h2>
     <p class="subtitle">Check everything looks right before submitting.</p>
     <div>
@@ -578,9 +592,10 @@
       <div class="review-item"><span class="review-label">Schedule</span><span class="review-value" id="rv-schedule">—</span></div>
       <div class="review-item"><span class="review-label">Photos</span><span class="review-value" id="rv-photos">—</span></div>
     </div>
-    <div class="btn-actions" style="margin-top:24px;">
-      <button class="btn-primary" onclick="submitProfile()">Submit & Go Live! 🚀</button>
-      <button class="btn-secondary" onclick="prevStep(7)">← Edit details</button>
+    <p style="font-size:0.84rem;color:var(--muted);margin-bottom:16px;margin-top:24px;">Your profile will go live immediately after submitting. You can pause it anytime from your profile page.</p>
+    <div class="btn-actions">
+      <button class="btn-primary" onclick="submitProfile()">Submit &amp; Go Live! 🚀</button>
+      <button class="btn-secondary" onclick="prevStep(8)">← Edit details</button>
     </div>
     <p class="terms">By submitting you confirm your food is prepared safely and you comply with our <a href="meetup-guide.html">Cook Guidelines</a> and <a href="meetup-guide.html">Community Standards</a>.</p>
   </div>
@@ -608,8 +623,8 @@
     </div>
   </div>
 
-  <!-- STEP 8 — Success -->
-  <div class="card hidden" id="step-8">
+  <!-- STEP 9 — Success -->
+  <div class="card hidden" id="step-9">
     <div class="success-card">
       <div class="success-icon">🎉</div>
       <div class="success-title">You're now a CookNextDoor cook!</div>
@@ -942,7 +957,7 @@
 
   window.submitProfile = async function() {
     const el  = (id) => document.getElementById(id);
-    const btn = document.querySelector('#step-7 .btn-primary');
+    const btn = document.querySelector('#step-8 .btn-primary');
 
     // Inline error panel inside step-7 so errors are always visible
     function showSaveError(msg) {
@@ -951,9 +966,9 @@
         panel = document.createElement('div');
         panel.id = 'save-error-panel';
         panel.style.cssText = 'background:#FFF0F0;border:2px solid #F87171;border-radius:12px;padding:14px 16px;margin-top:12px;font-size:0.84rem;color:#991B1B;font-family:Inter,sans-serif;line-height:1.5;';
-        const actions = document.querySelector('#step-7 .btn-actions');
+        const actions = document.querySelector('#step-8 .btn-actions');
         if (actions) actions.after(panel);
-        else document.getElementById('step-7').appendChild(panel);
+        else document.getElementById('step-8').appendChild(panel);
       }
       panel.innerHTML = '<strong>❌ Save failed</strong><br>' + msg;
       panel.style.display = 'block';
@@ -1031,7 +1046,7 @@
       // Wire "View live profile" link and go to success screen NOW
       const profileLink = document.getElementById('cook-profile-link');
       if (profileLink) profileLink.href = 'cook-profile.html?uid=' + uid;
-      goToStep(8);
+      goToStep(9);
 
       // Wait in the background for the server to confirm (max 15 s)
       try {
@@ -1088,8 +1103,8 @@
         phoneEl.textContent = num ? prefix + ' ' + num : 'your phone';
       }
     }
-    if (n === 5) renderCalendar();
-    if (n === 7) populateReview();
+    if (n === 6) renderCalendar();
+    if (n === 8) populateReview();
   }
 
   function nextStep(from) {
@@ -1125,6 +1140,8 @@
     if (step === 5) {
       const cats = document.querySelectorAll('#categoryChips .chip.selected');
       if (cats.length === 0) { showAlert('Please select at least one food category.'); return false; }
+    }
+    if (step === 6) {
       const priceEl = document.querySelector('.price-opt.selected');
       if (!priceEl) { showAlert('Please select a price range.'); return false; }
       const isCustom = priceEl.querySelector('.price-opt__range')?.textContent.trim() === 'Custom';
@@ -1326,7 +1343,8 @@
   function savePhoneStep() {
     const prefix = document.getElementById('inp-phone-prefix')?.value.replace(/[^+\d]/g,'') || '+65';
     const num    = val('inp-phone-number');
-    if (!num) { showAlert('Please enter your mobile number.'); return; }
+    if (!num) { showAlert('Please enter your mobile number — buyers need this to contact you via WhatsApp.'); return; }
+    if (num.replace(/\D/g,'').length < 8) { showAlert('Please enter a valid phone number (at least 8 digits).'); return; }
     // Update Firestore with phone if uid is available
     const phone = prefix + ' ' + num;
     if (window._cndUid && typeof setDoc !== 'undefined') {
