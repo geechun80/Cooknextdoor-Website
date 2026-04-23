@@ -339,7 +339,7 @@
 
     /* ── Search + location ───────────────────────────────── */
     .listings__search{display:flex;gap:10px;margin-bottom:20px;align-items:center;flex-wrap:wrap;}
-    .search-input{flex:1;min-width:180px;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.13);color:#fff;border-radius:100px;padding:11px 20px 11px 42px;font-family:'Inter',sans-serif;font-size:0.88rem;outline:none;transition:border-color 0.2s,background 0.2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' fill='none' stroke='rgba(255,255,255,0.30)' stroke-width='2' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:16px center;}
+    .search-input{flex:1;min-width:180px;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.13);color:#fff;border-radius:100px;padding:11px 20px 11px 42px;font-family:'Inter',sans-serif;font-size:1rem;outline:none;transition:border-color 0.2s,background 0.2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' fill='none' stroke='rgba(255,255,255,0.30)' stroke-width='2' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:16px center;}
     .search-input::placeholder{color:rgba(255,255,255,0.28);}
     .search-input:focus{border-color:var(--orange);background-color:rgba(255,255,255,0.10);}
     .loc-btn{display:flex;align-items:center;gap:5px;background:rgba(227,239,38,0.08);border:1.5px solid rgba(227,239,38,0.25);color:var(--orange);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.80rem;padding:11px 16px;border-radius:100px;cursor:pointer;white-space:nowrap;transition:background 0.2s,color 0.2s,border-color 0.2s;}
@@ -385,7 +385,7 @@
     .food-card__footer { display: flex; align-items: center; justify-content: space-between; }
     .food-card__price  { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 1.05rem; color: var(--green); }
     .food-card__portions { font-size: 0.75rem; color: var(--muted); }
-    .food-card__btn { width: 34px; height: 34px; border-radius: 50%; background: var(--orange); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--on-lime); font-weight: 700; transition: transform 0.2s; }
+    .food-card__btn { width: 44px; height: 44px; border-radius: 50%; background: var(--orange); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--on-lime); font-weight: 700; transition: transform 0.2s; }
     .food-card__btn:hover { transform: scale(1.12); }
     @media (max-width: 900px) { .food-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 480px) { .food-grid { grid-template-columns: 1fr; } }
@@ -608,7 +608,7 @@
     .food-card__dietary{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;}
     .food-card__tag{font-size:0.62rem;font-family:'Poppins',sans-serif;font-weight:600;padding:2px 8px;border-radius:100px;background:rgba(7,102,83,0.12);color:#3d9977;border:1px solid rgba(7,102,83,0.22);}
     .food-card__pickup{font-size:0.72rem;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:4px;}
-    .food-card__wa{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#25D366;text-decoration:none;font-size:1rem;transition:transform 0.2s;flex-shrink:0;}
+    .food-card__wa{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#25D366;text-decoration:none;font-size:1rem;transition:transform 0.2s;flex-shrink:0;}
     .food-card__wa:hover{transform:scale(1.12);}
 
     /* ── Onboarding modal ─────────────────────────────────── */
@@ -643,7 +643,7 @@
       <a href="news.html">📰 News</a>
     </div>
     <div class="nav__cta">
-      <a href="user-auth.html" class="btn btn--outline btn--sm">Find food</a>
+      <a href="#listings" class="btn btn--outline btn--sm">Find food</a>
       <a href="cook-register.html" class="btn btn--green btn--sm">Start cooking</a>
     </div>
     <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
