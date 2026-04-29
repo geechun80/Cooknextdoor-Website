@@ -210,15 +210,15 @@
 <!-- Top bar -->
 <div class="topbar">
   <a class="topbar__logo" href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:115px;height:72px;object-fit:contain;display:block;"/></a>
-  <a class="topbar__back" href="index.html">← Back to home</a>
+  <a class="topbar__back" href="index.html" data-i18n="guide.backHome">← Back to home</a>
 </div>
 
 <div class="page">
 
   <!-- Header & progress -->
   <div class="progress-header">
-    <h1>🍳 Become a <span style="color:var(--orange)">Neighborhood Cook</span></h1>
-    <p>Share your home-cooked food with neighbors. It takes about 5 minutes to set up your profile.</p>
+    <h1 data-i18n-html="reg.h1">🍳 Become a <span style="color:var(--orange)">Neighborhood Cook</span></h1>
+    <p data-i18n="reg.sub">Share your home-cooked food with neighbors. It takes about 5 minutes to set up your profile.</p>
     <div class="progress-bar" id="progressBar">
       <div class="prog-step active" data-step="1"><div class="prog-dot">1</div><div class="prog-label">Account</div></div>
       <div class="prog-step" data-step="2"><div class="prog-dot">2</div><div class="prog-label">Email</div></div>
@@ -1482,5 +1482,6 @@ function addThumb(input, containerId) {
 </script>
   <div id="cnd-chatbot"></div>
   <script src="widget/chatbot.js"></script>
+  <script src="i18n.js"></script>
 </body>
 </html>
