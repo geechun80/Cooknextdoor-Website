@@ -228,32 +228,32 @@
 <!-- Top bar -->
 <div class="topbar">
   <a class="topbar__logo" href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:115px;height:72px;object-fit:contain;display:block;"/></a>
-  <a class="topbar__back" href="index.html">← Back to home</a>
+  <a class="topbar__back" href="index.html" data-i18n="guide.backHome">← Back to home</a>
 </div>
 
 <!-- Hero -->
 <div class="guide-hero">
-  <div class="tag">📋 Complete guide</div>
-  <h1>How pickup &amp; payment<br/><em>actually works.</em></h1>
-  <p>No delivery. No platform. Just two neighbors arranging a simple food handoff — here's exactly how it goes from reservation to payment.</p>
+  <div class="tag" data-i18n="guide.heroTag">📋 Complete guide</div>
+  <h1 data-i18n-html="guide.heroH1">How pickup &amp; payment<br/><em>actually works.</em></h1>
+  <p data-i18n="guide.heroP">No delivery. No platform. Just two neighbors arranging a simple food handoff — here's exactly how it goes from reservation to payment.</p>
   <div class="hero-badges">
-    <div class="hero-badge"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="m6 8 6 2 6-2"/><path d="M12 10v4"/></svg> Self pickup only</div>
-    <div class="hero-badge"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg> Pay direct to cook</div>
-    <div class="hero-badge"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg> Verified members only</div>
-    <div class="hero-badge"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Rate after pickup</div>
+    <div class="hero-badge"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="m6 8 6 2 6-2"/><path d="M12 10v4"/></svg> <span data-i18n="guide.badge1">Self pickup only</span></div>
+    <div class="hero-badge"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg> <span data-i18n="guide.badge2">Pay direct to cook</span></div>
+    <div class="hero-badge"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg> <span data-i18n="guide.badge3">Verified members only</span></div>
+    <div class="hero-badge"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> <span data-i18n="guide.badge4">Rate after pickup</span></div>
   </div>
 </div>
 
 <!-- Flow Section -->
 <div class="section">
-  <div class="section-label">Step by step</div>
-  <h2>The complete <em>transaction flow</em></h2>
-  <p>Here's exactly what happens from the moment a buyer discovers food to the moment the cook gets paid.</p>
+  <div class="section-label" data-i18n="guide.flowLabel">Step by step</div>
+  <h2 data-i18n-html="guide.flowH2">The complete <em>transaction flow</em></h2>
+  <p data-i18n="guide.flowP">Here's exactly what happens from the moment a buyer discovers food to the moment the cook gets paid.</p>
 
   <div class="role-tabs">
-    <button class="role-tab active" onclick="showRole('both')">Full flow</button>
-    <button class="role-tab" onclick="showRole('buyer')">🛒 Buyer view</button>
-    <button class="role-tab" onclick="showRole('cook')">🍳 Cook view</button>
+    <button class="role-tab active" onclick="showRole('both')" data-i18n="guide.tabFull">Full flow</button>
+    <button class="role-tab" onclick="showRole('buyer')" data-i18n="guide.tabBuyer">🛒 Buyer view</button>
+    <button class="role-tab" onclick="showRole('cook')" data-i18n="guide.tabCook">🍳 Cook view</button>
   </div>
 
   <div class="flow" id="flow-both">
@@ -755,5 +755,6 @@ function cndCollapseMap(e) {
 
   <div id="cnd-chatbot"></div>
   <script src="widget/chatbot.js"></script>
+  <script src="i18n.js"></script>
 </body>
 </html>

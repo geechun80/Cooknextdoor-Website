@@ -636,28 +636,28 @@
   <div class="nav__inner">
     <a class="nav__logo" href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:115px;height:72px;object-fit:contain;display:block;"/></a>
     <div class="nav__links">
-      <a href="#listings">Browse food</a>
-      <a href="#how">How it works</a>
-      <a href="#why">Why us</a>
-      <a href="food-mood.html" style="color:var(--orange);font-weight:600;">🎭 Food Mood</a>
-      <a href="news.html">📰 News</a>
+      <a href="#listings" data-i18n="nav.browse">Browse food</a>
+      <a href="#how" data-i18n="nav.howItWorks">How it works</a>
+      <a href="#why" data-i18n="nav.whyUs">Why us</a>
+      <a href="food-mood.html" style="color:var(--orange);font-weight:600;" data-i18n="nav.foodMood">🎭 Food Mood</a>
+      <a href="news.html" data-i18n="nav.news">📰 News</a>
     </div>
     <div class="nav__cta">
-      <a href="#listings" class="btn btn--outline btn--sm">Find food</a>
-      <a href="cook-register.html" class="btn btn--green btn--sm">Start cooking</a>
+      <a href="#listings" class="btn btn--outline btn--sm" data-i18n="nav.findFood">Find food</a>
+      <a href="cook-register.html" class="btn btn--green btn--sm" data-i18n="nav.startCooking">Start cooking</a>
     </div>
     <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
   </div>
   <div class="mobile-menu" id="mobileMenu">
-    <a href="#listings" onclick="toggleMenu()">Browse food</a>
-    <a href="#how"      onclick="toggleMenu()">How it works</a>
-    <a href="#why"      onclick="toggleMenu()">Why us</a>
-    <a href="food-mood.html" onclick="toggleMenu()" style="color:var(--orange);font-weight:600;">🎭 Food Mood</a>
-    <a href="news.html" onclick="toggleMenu()">📰 News</a>
-    <a href="#listings" class="btn btn--orange">Browse food near me</a>
-    <a href="cook-register.html" class="btn btn--green">Start cooking</a>
+    <a href="#listings" onclick="toggleMenu()" data-i18n="nav.browse">Browse food</a>
+    <a href="#how"      onclick="toggleMenu()" data-i18n="nav.howItWorks">How it works</a>
+    <a href="#why"      onclick="toggleMenu()" data-i18n="nav.whyUs">Why us</a>
+    <a href="food-mood.html" onclick="toggleMenu()" style="color:var(--orange);font-weight:600;" data-i18n="nav.foodMood">🎭 Food Mood</a>
+    <a href="news.html" onclick="toggleMenu()" data-i18n="nav.news">📰 News</a>
+    <a href="#listings" class="btn btn--orange" data-i18n="nav.browseFoodNearMe">Browse food near me</a>
+    <a href="cook-register.html" class="btn btn--green" data-i18n="nav.startCooking">Start cooking</a>
   </div>
 </nav>
 
@@ -666,32 +666,32 @@
   <div class="container">
     <div class="hero__inner">
       <div class="hero__content fade-up">
-        <div class="hero__tag tag">🏘️ Hyperlocal · 1km · 0% commission</div>
-        <h1>Real food,<br/><em>real neighbors.</em></h1>
-        <p class="hero__sub">Discover home-cooked meals from people just around the corner — or share your own. No fees. No delivery. Just community.</p>
+        <div class="hero__tag tag" data-i18n="index.heroTag">🏘️ Hyperlocal · 1km · 0% commission</div>
+        <h1 data-i18n-html="index.heroH1">Real food,<br/><em>real neighbors.</em></h1>
+        <p class="hero__sub" data-i18n="index.heroSub">Discover home-cooked meals from people just around the corner — or share your own. No fees. No delivery. Just community.</p>
         <div class="hero__ctas">
-          <a href="#listings" class="btn btn--orange">🍜 Browse food near me</a>
-          <a href="cook-register.html" class="btn btn--dark">🍳 Start cooking</a>
+          <a href="#listings" class="btn btn--orange" data-i18n="index.browseFoodBtn">🍜 Browse food near me</a>
+          <a href="cook-register.html" class="btn btn--dark" data-i18n="nav.startCooking">🍳 Start cooking</a>
         </div>
         <div class="hero__metrics">
           <div class="hero__metric">
             <span class="hero__metric-val">0%</span>
-            <span class="hero__metric-label">Commission</span>
+            <span class="hero__metric-label" data-i18n="index.metricCommission">Commission</span>
           </div>
           <div class="hero__metric-divider"></div>
           <div class="hero__metric">
             <span class="hero__metric-val">1 km</span>
-            <span class="hero__metric-label">Radius</span>
+            <span class="hero__metric-label" data-i18n="index.metricRadius">Radius</span>
           </div>
           <div class="hero__metric-divider"></div>
           <div class="hero__metric">
             <span class="hero__metric-val">$0</span>
-            <span class="hero__metric-label">To start</span>
+            <span class="hero__metric-label" data-i18n="index.metricToStart">To start</span>
           </div>
           <div class="hero__metric-divider"></div>
           <div class="hero__metric">
             <span class="hero__metric-val">60s</span>
-            <span class="hero__metric-label">To post</span>
+            <span class="hero__metric-label" data-i18n="index.metricToPost">To post</span>
           </div>
         </div>
       </div>
@@ -746,23 +746,23 @@
   <div class="container">
     <div class="listings__header fade-up">
       <div>
-        <div class="tag" style="margin-bottom:12px">📍 Near you now</div>
-        <h2>What's cooking <span>next door?</span></h2>
+        <div class="tag" style="margin-bottom:12px" data-i18n="index.listingsTag">📍 Near you now</div>
+        <h2 data-i18n-html="index.listingsH2">What's cooking <span>next door?</span></h2>
       </div>
-      <a href="#listings" class="btn btn--outline btn--sm">See all listings →</a>
+      <a href="#listings" class="btn btn--outline btn--sm" data-i18n="index.listingsSeeAll">See all listings →</a>
     </div>
     <!-- Search + location -->
     <div class="listings__search fade-up">
-      <input type="text" id="search-input" class="search-input" placeholder="Search dishes, cooks or neighbourhood…" oninput="window.onSearch(this.value)" autocomplete="off"/>
-      <button class="loc-btn" id="loc-btn" onclick="window.requestLocation()">📍 Near me</button>
+      <input type="text" id="search-input" class="search-input" placeholder="Search dishes, cooks or neighbourhood…" data-i18n-ph="index.searchPh" oninput="window.onSearch(this.value)" autocomplete="off"/>
+      <button class="loc-btn" id="loc-btn" onclick="window.requestLocation()" data-i18n="index.nearMe">📍 Near me</button>
     </div>
     <div class="category-pills fade-up">
-      <button class="pill active">All</button>
-      <button class="pill">🍛 Rice &amp; Curry</button>
-      <button class="pill">🍜 Noodles</button>
-      <button class="pill">🥗 Healthy</button>
-      <button class="pill">🍱 Bento</button>
-      <button class="pill">🍰 Desserts</button>
+      <button class="pill active" data-i18n="index.pillAll">All</button>
+      <button class="pill" data-i18n="index.pillRice">🍛 Rice &amp; Curry</button>
+      <button class="pill" data-i18n="index.pillNoodles">🍜 Noodles</button>
+      <button class="pill" data-i18n="index.pillHealthy">🥗 Healthy</button>
+      <button class="pill" data-i18n="index.pillBento">🍱 Bento</button>
+      <button class="pill" data-i18n="index.pillDesserts">🍰 Desserts</button>
     </div>
     <div class="food-grid fade-up" id="food-grid">
       <!-- Skeleton loaders shown while Firestore loads -->
@@ -774,8 +774,8 @@
     <!-- Empty state (shown if no real dishes yet) -->
     <div id="food-empty" style="display:none;text-align:center;padding:56px 24px 32px;color:rgba(255,255,255,0.55);">
       <div style="font-size:3rem;margin-bottom:16px;">🍳</div>
-      <div style="font-family:Poppins,sans-serif;font-weight:800;font-size:1.25rem;color:rgba(255,255,255,0.80);margin-bottom:10px;">No food listed yet in your area</div>
-      <div style="font-size:0.92rem;line-height:1.7;max-width:380px;margin:0 auto 28px;">We're growing our community of home cooks. Be the first in your neighbourhood to share a dish!</div>
+      <div style="font-family:Poppins,sans-serif;font-weight:800;font-size:1.25rem;color:rgba(255,255,255,0.80);margin-bottom:10px;" data-i18n="index.emptyTitle">No food listed yet in your area</div>
+      <div style="font-size:0.92rem;line-height:1.7;max-width:380px;margin:0 auto 28px;" data-i18n="index.emptyDesc">We're growing our community of home cooks. Be the first in your neighbourhood to share a dish!</div>
       <a href="cook-register.html" style="display:inline-block;background:var(--orange);color:#06231D;font-family:Poppins,sans-serif;font-weight:700;font-size:0.95rem;padding:13px 28px;border-radius:100px;text-decoration:none;">🍽️ Start cooking →</a>
       <div style="margin-top:16px;font-size:0.80rem;color:rgba(255,255,255,0.30);">Meanwhile, here are some example listings to show you how it works:</div>
     </div>
@@ -838,12 +838,12 @@
   <div class="container">
     <div class="how__inner">
       <div class="how__left fade-up">
-        <div class="tag" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);margin-bottom:20px">Simple process</div>
-        <h2>Simple steps,<br/><em>real food.</em></h2>
-        <p>Whether you're hungry or you've cooked too much — it takes under 2 minutes to get started.</p>
+        <div class="tag" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);margin-bottom:20px" data-i18n="index.howTag">Simple process</div>
+        <h2 data-i18n-html="index.howH2">Simple steps,<br/><em>real food.</em></h2>
+        <p data-i18n="index.howSub">Whether you're hungry or you've cooked too much — it takes under 2 minutes to get started.</p>
         <div class="how__tabs">
-          <button class="how-tab active--orange" onclick="switchHow('buyers',this)">🛒 I want food</button>
-          <button class="how-tab" onclick="switchHow('cooks',this)">🍳 I want to sell</button>
+          <button class="how-tab active--orange" onclick="switchHow('buyers',this)" data-i18n="index.tabBuyers">🛒 I want food</button>
+          <button class="how-tab" onclick="switchHow('cooks',this)" data-i18n="index.tabCooks">🍳 I want to sell</button>
         </div>
         <div class="step-panel active" id="how-buyers">
           <div class="step-list">
@@ -851,24 +851,24 @@
               <div class="step-item__num step-item__num--orange">01</div>
               <div class="step-item__content">
                 <div class="step-item__icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
-                <div class="step-item__title">Discover nearby food</div>
-                <div class="step-item__desc">See home-cooked meals listed by neighbors within 1 km, updated in real time.</div>
+                <div class="step-item__title" data-i18n="index.buyStep1Title">Discover nearby food</div>
+                <div class="step-item__desc" data-i18n="index.buyStep1Desc">See home-cooked meals listed by neighbors within 1 km, updated in real time.</div>
               </div>
             </div>
             <div class="step-item">
               <div class="step-item__num step-item__num--orange">02</div>
               <div class="step-item__content">
                 <div class="step-item__icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg></div>
-                <div class="step-item__title">Reserve a portion</div>
-                <div class="step-item__desc">Tap to reserve — the cook gets notified instantly. No middlemen, no waiting.</div>
+                <div class="step-item__title" data-i18n="index.buyStep2Title">Reserve a portion</div>
+                <div class="step-item__desc" data-i18n="index.buyStep2Desc">Tap to reserve — the cook gets notified instantly. No middlemen, no waiting.</div>
               </div>
             </div>
             <div class="step-item">
               <div class="step-item__num step-item__num--orange">03</div>
               <div class="step-item__content">
                 <div class="step-item__icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
-                <div class="step-item__title">Pick up &amp; pay direct</div>
-                <div class="step-item__desc">Collect your meal and pay via PayNow, PayLah, or cash. Simple and direct.</div>
+                <div class="step-item__title" data-i18n="index.buyStep3Title">Pick up &amp; pay direct</div>
+                <div class="step-item__desc" data-i18n="index.buyStep3Desc">Collect your meal and pay via PayNow, PayLah, or cash. Simple and direct.</div>
               </div>
             </div>
           </div>
@@ -879,24 +879,24 @@
               <div class="step-item__num step-item__num--green">01</div>
               <div class="step-item__content">
                 <div class="step-item__icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></div>
-                <div class="step-item__title">Post your extra food</div>
-                <div class="step-item__desc">Cooked too much? Snap a photo, set your price and portions in 60 seconds.</div>
+                <div class="step-item__title" data-i18n="index.cookStep1Title">Post your extra food</div>
+                <div class="step-item__desc" data-i18n="index.cookStep1Desc">Cooked too much? Snap a photo, set your price and portions in 60 seconds.</div>
               </div>
             </div>
             <div class="step-item">
               <div class="step-item__num step-item__num--green">02</div>
               <div class="step-item__content">
                 <div class="step-item__icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div>
-                <div class="step-item__title">Get reservations</div>
-                <div class="step-item__desc">Neighbors see your listing and reserve portions. You get notified instantly.</div>
+                <div class="step-item__title" data-i18n="index.cookStep2Title">Get reservations</div>
+                <div class="step-item__desc" data-i18n="index.cookStep2Desc">Neighbors see your listing and reserve portions. You get notified instantly.</div>
               </div>
             </div>
             <div class="step-item">
               <div class="step-item__num step-item__num--green">03</div>
               <div class="step-item__content">
                 <div class="step-item__icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg></div>
-                <div class="step-item__title">Earn — keep 100%</div>
-                <div class="step-item__desc">They pick up and pay you directly. Zero commission. Every cent is yours.</div>
+                <div class="step-item__title" data-i18n="index.cookStep3Title">Earn — keep 100%</div>
+                <div class="step-item__desc" data-i18n="index.cookStep3Desc">They pick up and pay you directly. Zero commission. Every cent is yours.</div>
               </div>
             </div>
           </div>
@@ -939,7 +939,7 @@
         <div class="cnd-vid-play"><div class="cnd-vid-play-inner"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
         <div class="cnd-yt-badge">YT</div>
       </div>
-      <span class="cnd-vid-label">Eater guide</span>
+      <span class="cnd-vid-label" data-i18n="index.vidEater">Eater guide</span>
     </button>
     <button class="cnd-vid-btn" onclick="cndOpenVid('QD4JWVQBfgI')">
       <div class="cnd-vid-thumb">
@@ -947,7 +947,7 @@
         <div class="cnd-vid-play"><div class="cnd-vid-play-inner"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
         <div class="cnd-yt-badge">YT</div>
       </div>
-      <span class="cnd-vid-label">Cook guide</span>
+      <span class="cnd-vid-label" data-i18n="index.vidCook">Cook guide</span>
     </button>
     <button class="cnd-vid-btn" onclick="cndOpenVid('Jc9ULZJxG8w')">
       <div class="cnd-vid-thumb">
@@ -955,7 +955,7 @@
         <div class="cnd-vid-play"><div class="cnd-vid-play-inner"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
         <div class="cnd-yt-badge">YT</div>
       </div>
-      <span class="cnd-vid-label">Watch our intro</span>
+      <span class="cnd-vid-label" data-i18n="index.vidIntro">Watch our intro</span>
     </button>
   </div>
 </section>
@@ -965,21 +965,21 @@
   <div class="container">
     <div class="why__inner">
       <div class="why__text fade-up">
-        <div class="tag" style="margin-bottom:20px">Why us</div>
-        <h2 class="why__heading">Built for neighbors,<br/><span>not corporations.</span></h2>
-        <p class="why__desc">We take nothing. Every cent you earn goes directly to you. No delivery, no complex setup — just real food shared between real people.</p>
+        <div class="tag" style="margin-bottom:20px" data-i18n="index.whyTag">Why us</div>
+        <h2 class="why__heading" data-i18n-html="index.whyH2">Built for neighbors,<br/><span>not corporations.</span></h2>
+        <p class="why__desc" data-i18n="index.whyDesc">We take nothing. Every cent you earn goes directly to you. No delivery, no complex setup — just real food shared between real people.</p>
         <div class="why__grid">
-          <div class="why__card"><div class="why__card__icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg></div><div class="why__card__title">Zero commission</div><div class="why__card__desc">What you earn, you keep — always. No hidden fees, ever.</div></div>
-          <div class="why__card"><div class="why__card__icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="m6 8 6 2 6-2"/><path d="M12 10v4"/></svg></div><div class="why__card__title">No delivery</div><div class="why__card__desc">Self-pickup only. No drivers, no delays, no cold food.</div></div>
-          <div class="why__card"><div class="why__card__icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div><div class="why__card__title">Reduce waste</div><div class="why__card__desc">Turn extra portions into meals for someone who needs them.</div></div>
-          <div class="why__card"><div class="why__card__icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="why__card__title">Community first</div><div class="why__card__desc">Every purchase helps a real person in your neighborhood.</div></div>
+          <div class="why__card"><div class="why__card__icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg></div><div class="why__card__title" data-i18n="index.why1Title">Zero commission</div><div class="why__card__desc" data-i18n="index.why1Desc">What you earn, you keep — always. No hidden fees, ever.</div></div>
+          <div class="why__card"><div class="why__card__icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><path d="m9 20 3-6 3 6"/><path d="m6 8 6 2 6-2"/><path d="M12 10v4"/></svg></div><div class="why__card__title" data-i18n="index.why2Title">No delivery</div><div class="why__card__desc" data-i18n="index.why2Desc">Self-pickup only. No drivers, no delays, no cold food.</div></div>
+          <div class="why__card"><div class="why__card__icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div><div class="why__card__title" data-i18n="index.why3Title">Reduce waste</div><div class="why__card__desc" data-i18n="index.why3Desc">Turn extra portions into meals for someone who needs them.</div></div>
+          <div class="why__card"><div class="why__card__icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="why__card__title" data-i18n="index.why4Title">Community first</div><div class="why__card__desc" data-i18n="index.why4Desc">Every purchase helps a real person in your neighborhood.</div></div>
         </div>
       </div>
       <div class="why__stats fade-up" style="transition-delay:0.2s">
-        <div class="why__stat-card"><div class="why__stat-icon wsi--orange"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg></div><div><div class="why__stat-val">0%</div><div class="why__stat-label">Commission taken, ever</div></div></div>
-        <div class="why__stat-card"><div class="why__stat-icon wsi--green"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div><div><div class="why__stat-val">1 km</div><div class="why__stat-label">Hyperlocal radius only</div></div></div>
-        <div class="why__stat-card"><div class="why__stat-icon wsi--orange"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div><div class="why__stat-val">60 sec</div><div class="why__stat-label">To post your first listing</div></div></div>
-        <div class="why__stat-card"><div class="why__stat-icon wsi--green"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg></div><div><div class="why__stat-val">$0</div><div class="why__stat-label">To get started</div></div></div>
+        <div class="why__stat-card"><div class="why__stat-icon wsi--orange"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg></div><div><div class="why__stat-val">0%</div><div class="why__stat-label" data-i18n="index.stat1Label">Commission taken, ever</div></div></div>
+        <div class="why__stat-card"><div class="why__stat-icon wsi--green"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div><div><div class="why__stat-val">1 km</div><div class="why__stat-label" data-i18n="index.stat2Label">Hyperlocal radius only</div></div></div>
+        <div class="why__stat-card"><div class="why__stat-icon wsi--orange"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div><div class="why__stat-val">60 sec</div><div class="why__stat-label" data-i18n="index.stat3Label">To post your first listing</div></div></div>
+        <div class="why__stat-card"><div class="why__stat-icon wsi--green"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg></div><div><div class="why__stat-val">$0</div><div class="why__stat-label" data-i18n="index.stat4Label">To get started</div></div></div>
       </div>
     </div>
   </div>
@@ -1076,46 +1076,46 @@
 <section class="section" id="faq" style="background:rgba(0,0,0,0.20);">
   <div class="container">
     <div style="text-align:center;max-width:600px;margin:0 auto 56px;">
-      <div class="tag" style="margin-bottom:20px;">Questions answered</div>
-      <h2 style="font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.8rem,3.5vw,2.6rem);color:#fff;margin-bottom:16px;">Frequently asked <span style="color:#E3EF26;">questions</span></h2>
-      <p style="color:rgba(255,255,255,0.55);font-size:1rem;">Everything you need to know about CookNextDoor — whether you want to find food or start selling.</p>
+      <div class="tag" style="margin-bottom:20px;" data-i18n="index.faqTag">Questions answered</div>
+      <h2 style="font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.8rem,3.5vw,2.6rem);color:#fff;margin-bottom:16px;" data-i18n-html="index.faqH2">Frequently asked <span style="color:#E3EF26;">questions</span></h2>
+      <p style="color:rgba(255,255,255,0.55);font-size:1rem;" data-i18n="index.faqSub">Everything you need to know about CookNextDoor — whether you want to find food or start selling.</p>
     </div>
     <div style="max-width:760px;margin:0 auto;" id="faq-list">
       <details class="faq-item" open>
-        <summary class="faq-q">Is there delivery on CookNextDoor?</summary>
-        <div class="faq-a">No, CookNextDoor is a self-pickup only platform. You collect the food directly from the cook, who is within 1 km of you. This keeps things simple, personal, and free of delivery fees.</div>
+        <summary class="faq-q" data-i18n="index.faq1Q">Is there delivery on CookNextDoor?</summary>
+        <div class="faq-a" data-i18n="index.faq1A">No, CookNextDoor is a self-pickup only platform. You collect the food directly from the cook, who is within 1 km of you. This keeps things simple, personal, and free of delivery fees.</div>
       </details>
       <details class="faq-item">
-        <summary class="faq-q">How do I pay for food?</summary>
-        <div class="faq-a">Payment is made directly to the cook at pickup — you can use PayNow, PayLah, or cash. There is no payment processor or platform fee involved. Every cent goes straight to the cook.</div>
+        <summary class="faq-q" data-i18n="index.faq2Q">How do I pay for food?</summary>
+        <div class="faq-a" data-i18n="index.faq2A">Payment is made directly to the cook at pickup — you can use PayNow, PayLah, or cash. There is no payment processor or platform fee involved. Every cent goes straight to the cook.</div>
       </details>
       <details class="faq-item">
-        <summary class="faq-q">Is it free to join?</summary>
-        <div class="faq-a">Yes, completely free for everyone. Buyers pay nothing to browse or reserve food. Cooks pay zero commission — we take 0% of every sale. There are no subscription fees or hidden charges.</div>
+        <summary class="faq-q" data-i18n="index.faq3Q">Is it free to join?</summary>
+        <div class="faq-a" data-i18n="index.faq3A">Yes, completely free for everyone. Buyers pay nothing to browse or reserve food. Cooks pay zero commission — we take 0% of every sale. There are no subscription fees or hidden charges.</div>
       </details>
       <details class="faq-item">
-        <summary class="faq-q">How far away are the cooks from me?</summary>
-        <div class="faq-a">CookNextDoor is hyperlocal — all listings are from home cooks within a 1 km radius of your location. This keeps pickup quick, usually a short walk or a couple of minutes by car.</div>
+        <summary class="faq-q" data-i18n="index.faq4Q">How far away are the cooks from me?</summary>
+        <div class="faq-a" data-i18n="index.faq4A">CookNextDoor is hyperlocal — all listings are from home cooks within a 1 km radius of your location. This keeps pickup quick, usually a short walk or a couple of minutes by car.</div>
       </details>
       <details class="faq-item">
-        <summary class="faq-q">Is the food safe to eat?</summary>
-        <div class="faq-a">Our cooks are real neighbours who cook for their own families and share extra portions. Each cook profile includes ratings and reviews from the community. We encourage cooks to follow good food hygiene practices, and buyers can always message the cook about ingredients or allergies before pickup.</div>
+        <summary class="faq-q" data-i18n="index.faq5Q">Is the food safe to eat?</summary>
+        <div class="faq-a" data-i18n="index.faq5A">Our cooks are real neighbours who cook for their own families and share extra portions. Each cook profile includes ratings and reviews from the community. We encourage cooks to follow good food hygiene practices, and buyers can always message the cook about ingredients or allergies before pickup.</div>
       </details>
       <details class="faq-item">
-        <summary class="faq-q">Can I sell home-cooked food on CookNextDoor?</summary>
-        <div class="faq-a">Yes! If you cook at home and often have extra portions, you can register as a cook for free. Just create a profile, snap a photo of your dish, set your price, and your listing goes live to neighbours within 1 km. No commercial kitchen or licence is required — you keep 100% of what you earn.</div>
+        <summary class="faq-q" data-i18n="index.faq6Q">Can I sell home-cooked food on CookNextDoor?</summary>
+        <div class="faq-a" data-i18n="index.faq6A">Yes! If you cook at home and often have extra portions, you can register as a cook for free. Just create a profile, snap a photo of your dish, set your price, and your listing goes live to neighbours within 1 km. No commercial kitchen or licence is required — you keep 100% of what you earn.</div>
       </details>
       <details class="faq-item">
-        <summary class="faq-q">Is CookNextDoor available outside Singapore?</summary>
-        <div class="faq-a">CookNextDoor is currently focused on Singapore and Malaysia. We are expanding neighbourhood by neighbourhood. If you don't see cooks in your area yet, sign up to be notified when someone lists food near you.</div>
+        <summary class="faq-q" data-i18n="index.faq7Q">Is CookNextDoor available outside Singapore?</summary>
+        <div class="faq-a" data-i18n="index.faq7A">CookNextDoor is currently focused on Singapore and Malaysia. We are expanding neighbourhood by neighbourhood. If you don't see cooks in your area yet, sign up to be notified when someone lists food near you.</div>
       </details>
       <details class="faq-item">
-        <summary class="faq-q">How many portions can a cook sell?</summary>
-        <div class="faq-a">Each listing is designed for small, home-scale portions — typically 3 to 5 servings. This is intentional: CookNextDoor is about sharing genuine home-cooked food, not running a commercial operation from home.</div>
+        <summary class="faq-q" data-i18n="index.faq8Q">How many portions can a cook sell?</summary>
+        <div class="faq-a" data-i18n="index.faq8A">Each listing is designed for small, home-scale portions — typically 3 to 5 servings. This is intentional: CookNextDoor is about sharing genuine home-cooked food, not running a commercial operation from home.</div>
       </details>
     </div>
     <div style="text-align:center;margin-top:40px;">
-      <a href="contact.html" style="font-family:'Poppins',sans-serif;font-weight:600;font-size:0.9rem;color:rgba(255,255,255,0.50);text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.18);padding-bottom:2px;">Still have questions? Contact us →</a>
+      <a href="contact.html" style="font-family:'Poppins',sans-serif;font-weight:600;font-size:0.9rem;color:rgba(255,255,255,0.50);text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.18);padding-bottom:2px;" data-i18n="index.faqContact">Still have questions? Contact us →</a>
     </div>
   </div>
 </section>
@@ -1133,12 +1133,12 @@
 <!-- ── Final CTA ─────────────────────────────────────────────── -->
 <section class="final-cta">
   <div class="final-cta__inner container">
-    <h2 class="fade-up">Your next home-cooked<br/>meal is just next door.</h2>
-    <p class="fade-up">Join your neighbors — share food, reduce waste, and build community. One meal at a time.</p>
+    <h2 class="fade-up" data-i18n-html="index.ctaH2">Your next home-cooked<br/>meal is just next door.</h2>
+    <p class="fade-up" data-i18n="index.ctaSub">Join your neighbors — share food, reduce waste, and build community. One meal at a time.</p>
     <div class="final-cta__btns fade-up">
-      <a href="user-auth.html" class="btn btn--white">🍜 Find food near me</a>
-      <a href="cook-register.html" class="btn btn--dark">🍳 Start cooking</a>
-      <a href="contact.html" class="btn btn--dark" style="background:#25D366;border-color:#25D366;">💬 Join WhatsApp community</a>
+      <a href="user-auth.html" class="btn btn--white" data-i18n="index.ctaFindFood">🍜 Find food near me</a>
+      <a href="cook-register.html" class="btn btn--dark" data-i18n="index.ctaStartCooking">🍳 Start cooking</a>
+      <a href="contact.html" class="btn btn--dark" style="background:#25D366;border-color:#25D366;" data-i18n="index.ctaWhatsApp">💬 Join WhatsApp community</a>
     </div>
   </div>
 </section>
@@ -1147,9 +1147,9 @@
 <section style="background:#06231D;padding:64px 0 0;">
   <div class="container">
     <div style="text-align:center;margin-bottom:32px;">
-      <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#E3EF26;margin-bottom:8px;">FIND FOOD NEAR YOU</div>
-      <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.6rem,3vw,2.2rem);color:#fff;margin-bottom:10px;">Cooks on the map 📍</h2>
-      <p style="color:rgba(255,255,255,0.5);font-size:0.92rem;max-width:500px;margin:0 auto;">Click any pin to see the cook's listings and get directions. All pickup within 1 km of your neighbourhood.</p>
+      <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#E3EF26;margin-bottom:8px;" data-i18n="index.mapLabel">FIND FOOD NEAR YOU</div>
+      <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.6rem,3vw,2.2rem);color:#fff;margin-bottom:10px;" data-i18n="index.mapH2">Cooks on the map 📍</h2>
+      <p style="color:rgba(255,255,255,0.5);font-size:0.92rem;max-width:500px;margin:0 auto;" data-i18n="index.mapDesc">Click any pin to see the cook's listings and get directions. All pickup within 1 km of your neighbourhood.</p>
     </div>
 
     <!-- Leaflet map -->
@@ -1256,10 +1256,10 @@
 <section style="background:rgba(227,239,38,0.05);border-top:1px solid rgba(227,239,38,0.12);padding:32px 0;">
   <div class="container" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
     <div>
-      <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#fff;margin-bottom:3px;">☕ Keep CookNextDoor free</div>
-      <div style="font-size:0.83rem;color:rgba(255,255,255,0.45);max-width:380px;">No ads. No commissions. 100% community-supported. Every contribution helps keep the platform running.</div>
+      <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#fff;margin-bottom:3px;" data-i18n="support.title">☕ Keep CookNextDoor free</div>
+      <div style="font-size:0.83rem;color:rgba(255,255,255,0.45);max-width:380px;" data-i18n="support.desc">No ads. No commissions. 100% community-supported. Every contribution helps keep the platform running.</div>
     </div>
-    <button onclick="openDonationModal()" style="background:#E3EF26;color:#06231D;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.88rem;padding:13px 26px;border:none;border-radius:100px;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:transform 0.18s,box-shadow 0.18s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(227,239,38,0.35)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+    <button onclick="openDonationModal()" style="background:#E3EF26;color:#06231D;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.88rem;padding:13px 26px;border:none;border-radius:100px;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:transform 0.18s,box-shadow 0.18s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(227,239,38,0.35)'" onmouseout="this.style.transform='';this.style.boxShadow=''" data-i18n="support.btn">
       🙏 Support us
     </button>
   </div>
@@ -1310,14 +1310,14 @@
     <div class="footer__inner">
       <div class="footer__brand">
         <img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:115px;height:72px;object-fit:contain;display:block;"/>
-        <p>A free hyperlocal platform where neighborhood home cooks share extra food with people just around the corner.</p>
+        <p data-i18n="footer.tagline">A free hyperlocal platform where neighborhood home cooks share extra food with people just around the corner.</p>
       </div>
-      <div class="footer__col"><h4>Product</h4><ul><li><a href="#how">How it works</a></li><li><a href="user-auth.html">Find food</a></li><li><a href="cook-register.html">Start cooking</a></li><li><a href="food-mood.html">🎭 Food Mood</a></li><li><a href="news.html">📰 News</a></li><li><a href="meetup-guide.html">Meetup guide</a></li></ul></div>
-      <div class="footer__col"><h4>Company</h4><ul><li><a href="about.html">About us</a></li><li><a href="blog.html">Blog</a></li><li><a href="press.html">Press</a></li><li><a href="contact.html">Contact</a></li></ul></div>
-      <div class="footer__col"><h4>Legal</h4><ul><li><a href="terms.html">Terms</a></li><li><a href="privacy.html">Privacy</a></li><li><a href="cookies.html">Cookies</a></li></ul></div>
+      <div class="footer__col"><h4 data-i18n="footer.product">Product</h4><ul><li><a href="#how" data-i18n="footer.howItWorks">How it works</a></li><li><a href="user-auth.html" data-i18n="footer.findFood">Find food</a></li><li><a href="cook-register.html" data-i18n="footer.startCooking">Start cooking</a></li><li><a href="food-mood.html" data-i18n="footer.foodMood">🎭 Food Mood</a></li><li><a href="news.html" data-i18n="footer.news">📰 News</a></li><li><a href="meetup-guide.html" data-i18n="footer.meetupGuide">Meetup guide</a></li></ul></div>
+      <div class="footer__col"><h4 data-i18n="footer.company">Company</h4><ul><li><a href="about.html" data-i18n="footer.aboutUs">About us</a></li><li><a href="blog.html" data-i18n="footer.blog">Blog</a></li><li><a href="press.html" data-i18n="footer.press">Press</a></li><li><a href="contact.html" data-i18n="footer.contact">Contact</a></li></ul></div>
+      <div class="footer__col"><h4 data-i18n="footer.legal">Legal</h4><ul><li><a href="terms.html" data-i18n="footer.terms">Terms</a></li><li><a href="privacy.html" data-i18n="footer.privacy">Privacy</a></li><li><a href="cookies.html" data-i18n="footer.cookies">Cookies</a></li></ul></div>
     </div>
     <div class="footer__bottom">
-      <p>© 2026 CookNextDoor. Made with ❤️ for neighbors.</p>
+      <p data-i18n="footer.copyright">© 2026 CookNextDoor. Made with ❤️ for neighbors.</p>
       <div class="footer__social">
         <a href="contact.html" class="social-btn" aria-label="WhatsApp community" title="Join our WhatsApp community" style="background:#25D366;">💬</a>
         <a href="https://www.instagram.com/cooknextdoor_org/" target="_blank" rel="noopener" class="social-btn" aria-label="CookNextDoor on Instagram" title="Follow us on Instagram" style="background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285AEB 90%);">📸</a>
@@ -1712,5 +1712,6 @@
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   }
 </script>
+<script src="i18n.js"></script>
 </body>
 </html>

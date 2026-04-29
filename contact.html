@@ -88,19 +88,19 @@
 <nav>
   <a href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor" style="width:115px;height:72px;object-fit:contain;display:block;"/></a>
   <div class="nav__links">
-    <a href="index.html">Home</a>
-    <a href="food-mood.html">Food Mood</a>
-    <a href="news.html">News</a>
-    <a href="meetup-guide.html">How it works</a>
-    <a href="about.html">About</a>
-    <a href="user-auth.html" class="btn-nav">Find food</a>
+    <a href="index.html" data-i18n="nav.home">Home</a>
+    <a href="food-mood.html" data-i18n="nav.foodMood">Food Mood</a>
+    <a href="news.html" data-i18n="nav.news">News</a>
+    <a href="meetup-guide.html" data-i18n="nav.howItWorks">How it works</a>
+    <a href="about.html" data-i18n="nav.about">About</a>
+    <a href="user-auth.html" class="btn-nav" data-i18n="nav.findFood">Find food</a>
   </div>
 </nav>
 
 <div class="hero">
-  <div class="pill">💬 Get in touch</div>
-  <h1>We'd love to <span>hear from you.</span></h1>
-  <p>Whether you're a home cook, a food lover, press, or a potential partner — drop us a message.</p>
+  <div class="pill" data-i18n="contact.heroTag">💬 Get in touch</div>
+  <h1 data-i18n-html="contact.heroH1">We'd love to <span>hear from you.</span></h1>
+  <p data-i18n="contact.heroP">Whether you're a home cook, a food lover, press, or a potential partner — drop us a message.</p>
 </div>
 
 <div class="wrap">
@@ -109,57 +109,57 @@
     <div class="channel">
       <div class="ch-icon">📧</div>
       <div>
-        <div class="ch-label">All enquiries</div>
+        <div class="ch-label" data-i18n="contact.ch1Label">All enquiries</div>
         <div class="ch-value">service@cooknextdoor.org</div>
-        <div class="ch-note">We reply within 1–2 business days</div>
+        <div class="ch-note" data-i18n="contact.ch1Note">We reply within 1–2 business days</div>
       </div>
     </div>
     <div class="channel">
       <div class="ch-icon">📰</div>
       <div>
-        <div class="ch-label">Press & media</div>
+        <div class="ch-label" data-i18n="contact.ch2Label">Press & media</div>
         <div class="ch-value">service@cooknextdoor.org</div>
-        <div class="ch-note">Interview requests & press kits</div>
+        <div class="ch-note" data-i18n="contact.ch2Note">Interview requests & press kits</div>
       </div>
     </div>
     <div class="channel">
       <div class="ch-icon">🤝</div>
       <div>
-        <div class="ch-label">Partnerships</div>
+        <div class="ch-label" data-i18n="contact.ch3Label">Partnerships</div>
         <div class="ch-value">service@cooknextdoor.org</div>
-        <div class="ch-note">Community orgs, brands & NGOs</div>
+        <div class="ch-note" data-i18n="contact.ch3Note">Community orgs, brands & NGOs</div>
       </div>
     </div>
     <div class="channel">
       <div class="ch-icon">🐛</div>
       <div>
-        <div class="ch-label">Bug reports & feedback</div>
+        <div class="ch-label" data-i18n="contact.ch4Label">Bug reports & feedback</div>
         <div class="ch-value">service@cooknextdoor.org</div>
-        <div class="ch-note">Technical issues & suggestions</div>
+        <div class="ch-note" data-i18n="contact.ch4Note">Technical issues & suggestions</div>
       </div>
     </div>
     <div class="channel">
       <div class="ch-icon">📍</div>
       <div>
-        <div class="ch-label">Based in</div>
-        <div class="ch-value">Singapore 🇸🇬</div>
-        <div class="ch-note">Also serving Malaysia 🇲🇾</div>
+        <div class="ch-label" data-i18n="contact.ch5Label">Based in</div>
+        <div class="ch-value" data-i18n="contact.ch5Value">Singapore 🇸🇬</div>
+        <div class="ch-note" data-i18n="contact.ch5Note">Also serving Malaysia 🇲🇾</div>
       </div>
     </div>
   </div>
 
   <div class="form-card">
-    <h2>Send us a <span>message</span></h2>
+    <h2 data-i18n-html="contact.formTitle">Send us a <span>message</span></h2>
     <div class="field">
-      <label>Your name</label>
-      <input id="contact-name" type="text" placeholder="Jane Tan"/>
+      <label data-i18n="contact.nameLabel">Your name</label>
+      <input id="contact-name" type="text" placeholder="Jane Tan" data-i18n-ph="contact.namePh"/>
     </div>
     <div class="field">
-      <label>Email address</label>
-      <input id="contact-email" type="email" placeholder="jane@email.com"/>
+      <label data-i18n="contact.emailLabel">Email address</label>
+      <input id="contact-email" type="email" placeholder="jane@email.com" data-i18n-ph="contact.emailPh"/>
     </div>
     <div class="field">
-      <label>Topic</label>
+      <label data-i18n="contact.topicLabel">Topic</label>
       <select id="contact-topic">
         <option value="">Select a topic…</option>
         <option>General question</option>
@@ -172,10 +172,10 @@
       </select>
     </div>
     <div class="field">
-      <label>Message</label>
-      <textarea id="contact-msg" rows="5" placeholder="Tell us what's on your mind…"></textarea>
+      <label data-i18n="contact.msgLabel">Message</label>
+      <textarea id="contact-msg" rows="5" placeholder="Tell us what's on your mind…" data-i18n-ph="contact.msgPh"></textarea>
     </div>
-    <button class="btn-submit" id="contact-submit" onclick="submitContact()">Send message →</button>
+    <button class="btn-submit" id="contact-submit" onclick="submitContact()" data-i18n="contact.sendBtn">Send message →</button>
     <div id="contact-feedback" style="display:none;margin-top:12px;padding:12px 16px;border-radius:10px;font-size:0.85rem;font-family:'Poppins',sans-serif;font-weight:600;"></div>
     <p class="form-note">By submitting you agree to our <a href="privacy.html" style="color:var(--orange);text-decoration:none;">Privacy Policy</a>. We never share your data.</p>
   </div>
@@ -404,5 +404,6 @@
     }
   };
 </script>
+<script src="i18n.js"></script>
 </body>
 </html>
