@@ -788,12 +788,12 @@
     <!-- Notify me -->
     <div class="notify-band fade-up">
       <div class="notify-band__text">
-        <strong>🔔 Get notified when new food is listed near you</strong>
-        <span>A quick email when a home cook posts something new nearby — no spam, ever</span>
+        <strong data-i18n="index.notifyTitle">🔔 Get notified when new food is listed near you</strong>
+        <span data-i18n="index.notifySub">A quick email when a home cook posts something new nearby — no spam, ever</span>
       </div>
       <form class="notify-form" onsubmit="window.submitNotify(event)">
-        <input type="email" id="notify-email" placeholder="your@email.com" required/>
-        <button type="submit">Notify me</button>
+        <input type="email" id="notify-email" data-i18n-ph="index.notifyPh" placeholder="your@email.com" required/>
+        <button type="submit" data-i18n="index.notifyBtn">Notify me</button>
       </form>
     </div>
   </div>
@@ -999,19 +999,19 @@
         <div class="t-img t-img--sm2">
           <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=260&h=260&fit=crop&q=80" alt="Fresh healthy food" loading="lazy" />
         </div>
-        <div class="t-sold"><div class="t-sold__num">5</div><div class="t-sold__label">portions sold</div></div>
-        <div class="t-time"><div class="t-time__icon">⚡</div><div><div class="t-time__label">Sold out in 15 min</div><div class="t-time__sub">100% earnings kept</div></div></div>
+        <div class="t-sold"><div class="t-sold__num">5</div><div class="t-sold__label" data-i18n="index.portionsSold">portions sold</div></div>
+        <div class="t-time"><div class="t-time__icon">⚡</div><div><div class="t-time__label" data-i18n="index.soldOut">Sold out in 15 min</div><div class="t-time__sub" data-i18n="index.earningsKept">100% earnings kept</div></div></div>
       </div>
       <div class="testimonial__text fade-up" style="transition-delay:0.2s">
-        <div class="tag">Real story</div>
-        <h2>Real food.<br/>Real neighbors.<br/>Real impact.</h2>
+        <div class="tag" data-i18n="index.realStoryTag">Real story</div>
+        <h2 data-i18n-html="index.realStoryH2">Real food.<br/>Real neighbors.<br/>Real impact.</h2>
         <div class="quote-card">
           <div class="quote-stars">★★★★★</div>
-          <p>"I cooked extra curry for 5 people, posted it on CookNextDoor, and sold out in 15 minutes. My neighbors loved it and I made enough to cover ingredients — plus a little extra. No apps, no drivers, just real people."</p>
+          <p data-i18n="index.quoteText">"I cooked extra curry for 5 people, posted it on CookNextDoor, and sold out in 15 minutes. My neighbors loved it and I made enough to cover ingredients — plus a little extra. No apps, no drivers, just real people."</p>
         </div>
         <div class="quote-author">
           <div class="quote-avatar">👩</div>
-          <div><strong>Auntie Siti, Tampines</strong><span>Home cook · Listed 3× this week</span></div>
+          <div><strong data-i18n="index.quoteAuthor">Auntie Siti, Tampines</strong><span data-i18n="index.quoteMeta">Home cook · Listed 3× this week</span></div>
         </div>
       </div>
     </div>
@@ -1026,18 +1026,18 @@
         🍜🍛🍣🥗🍕🍱🥘🍝
       </div>
       <div class="food-mood-promo__content">
-        <div class="tag" style="background:rgba(248,123,49,0.18);color:var(--orange);border-color:rgba(248,123,49,0.25);">✨ New feature</div>
-        <h2>Not sure what to eat?<br/>Let your <em>mood</em> decide.</h2>
-        <p>Answer a few fun questions about how you're feeling and we'll match you with the perfect home-cooked meal nearby. Inspired by Google Arts &amp; Culture.</p>
-        <a href="food-mood.html" class="btn btn--orange" style="margin-top:8px;">🎭 Try Food Mood &rarr;</a>
+        <div class="tag" style="background:rgba(248,123,49,0.18);color:var(--orange);border-color:rgba(248,123,49,0.25);" data-i18n="index.moodTag">✨ New feature</div>
+        <h2 data-i18n-html="index.moodH2">Not sure what to eat?<br/>Let your <em>mood</em> decide.</h2>
+        <p data-i18n="index.moodP">Answer a few fun questions about how you're feeling and we'll match you with the perfect home-cooked meal nearby. Inspired by Google Arts &amp; Culture.</p>
+        <a href="food-mood.html" class="btn btn--orange" style="margin-top:8px;" data-i18n="index.moodBtn">🎭 Try Food Mood &rarr;</a>
       </div>
       <div class="food-mood-promo__cards" aria-hidden="true">
-        <div class="mood-card mood-card--1">😊<span>Happy</span></div>
-        <div class="mood-card mood-card--2">😴<span>Tired</span></div>
-        <div class="mood-card mood-card--3">🌶️<span>Spicy</span></div>
-        <div class="mood-card mood-card--4">🥰<span>Romantic</span></div>
-        <div class="mood-card mood-card--5">💪<span>Healthy</span></div>
-        <div class="mood-card mood-card--6">🎉<span>Excited</span></div>
+        <div class="mood-card mood-card--1">😊<span data-i18n="index.moodHappy">Happy</span></div>
+        <div class="mood-card mood-card--2">😴<span data-i18n="index.moodTired">Tired</span></div>
+        <div class="mood-card mood-card--3">🌶️<span data-i18n="index.moodSpicy">Spicy</span></div>
+        <div class="mood-card mood-card--4">🥰<span data-i18n="index.moodRomantic">Romantic</span></div>
+        <div class="mood-card mood-card--5">💪<span data-i18n="index.moodHealthy">Healthy</span></div>
+        <div class="mood-card mood-card--6">🎉<span data-i18n="index.moodExcited">Excited</span></div>
       </div>
     </div>
   </div>
@@ -1048,25 +1048,25 @@
   <div class="container">
     <div class="app-banner__inner">
       <div class="app-banner__text fade-up">
-        <div class="tag">Coming soon</div>
-        <h2>The app is on<br/>its way.</h2>
-        <p>We're building the CookNextDoor app for iOS and Android — so finding food next door is as easy as opening your phone.</p>
+        <div class="tag" data-i18n="index.appTag">Coming soon</div>
+        <h2 data-i18n-html="index.appH2">The app is on<br/>its way.</h2>
+        <p data-i18n="index.appP">We're building the CookNextDoor app for iOS and Android — so finding food next door is as easy as opening your phone.</p>
         <div class="app-btns">
           <a href="news.html" class="app-btn" style="opacity:0.55;cursor:default;" title="Coming soon — follow our news for launch updates">
             <div class="app-btn__icon">🍎</div>
-            <div><div class="app-btn__label">Coming soon</div><div class="app-btn__store">App Store</div></div>
+            <div><div class="app-btn__label" data-i18n="index.appComingSoon">Coming soon</div><div class="app-btn__store">App Store</div></div>
           </a>
           <a href="news.html" class="app-btn" style="opacity:0.55;cursor:default;" title="Coming soon — follow our news for launch updates">
             <div class="app-btn__icon">▶</div>
-            <div><div class="app-btn__label">Coming soon</div><div class="app-btn__store">Google Play</div></div>
+            <div><div class="app-btn__label" data-i18n="index.appComingSoon">Coming soon</div><div class="app-btn__store">Google Play</div></div>
           </a>
         </div>
       </div>
       <div class="app-banner__visual fade-up" style="transition-delay:0.2s">
-        <div class="app-feature-card" style="cursor:pointer;" onclick="appFeatureClick('Live map view — see food listings pinned on a real-time map near you.')"><div class="app-feature-card__icon">📍</div><div class="app-feature-card__title">Live map view</div><div class="app-feature-card__desc">See food listings on a real-time map near you</div><div style="font-size:0.68rem;color:rgba(255,255,255,0.30);margin-top:6px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:0.05em;">COMING IN APP</div></div>
-        <div class="app-feature-card" style="cursor:pointer;" onclick="appFeatureClick('Instant alerts — get notified the moment a cook near you posts food.')"><div class="app-feature-card__icon">🔔</div><div class="app-feature-card__title">Instant alerts</div><div class="app-feature-card__desc">Get notified when someone near you posts food</div><div style="font-size:0.68rem;color:rgba(255,255,255,0.30);margin-top:6px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:0.05em;">COMING IN APP</div></div>
-        <div class="app-feature-card" style="cursor:pointer;" onclick="appFeatureClick('Direct chat — message your cook to confirm pickup details, all in one place.')"><div class="app-feature-card__icon">💬</div><div class="app-feature-card__title">Direct chat</div><div class="app-feature-card__desc">Message your cook to confirm pickup details</div><div style="font-size:0.68rem;color:rgba(255,255,255,0.30);margin-top:6px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:0.05em;">COMING IN APP</div></div>
-        <div class="app-feature-card" style="cursor:pointer;" onclick="appFeatureClick('Ratings — rate your experience and help build community trust.')"><div class="app-feature-card__icon">⭐</div><div class="app-feature-card__title">Ratings</div><div class="app-feature-card__desc">Rate your experience and build community trust</div><div style="font-size:0.68rem;color:rgba(255,255,255,0.30);margin-top:6px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:0.05em;">COMING IN APP</div></div>
+        <div class="app-feature-card" style="cursor:pointer;" onclick="appFeatureClick('Live map view — see food listings pinned on a real-time map near you.')"><div class="app-feature-card__icon">📍</div><div class="app-feature-card__title" data-i18n="index.appFeat1Title">Live map view</div><div class="app-feature-card__desc" data-i18n="index.appFeat1Desc">See food listings on a real-time map near you</div><div style="font-size:0.68rem;color:rgba(255,255,255,0.30);margin-top:6px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:0.05em;" data-i18n="index.comingInApp">COMING IN APP</div></div>
+        <div class="app-feature-card" style="cursor:pointer;" onclick="appFeatureClick('Instant alerts — get notified the moment a cook near you posts food.')"><div class="app-feature-card__icon">🔔</div><div class="app-feature-card__title" data-i18n="index.appFeat2Title">Instant alerts</div><div class="app-feature-card__desc" data-i18n="index.appFeat2Desc">Get notified when someone near you posts food</div><div style="font-size:0.68rem;color:rgba(255,255,255,0.30);margin-top:6px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:0.05em;" data-i18n="index.comingInApp">COMING IN APP</div></div>
+        <div class="app-feature-card" style="cursor:pointer;" onclick="appFeatureClick('Direct chat — message your cook to confirm pickup details, all in one place.')"><div class="app-feature-card__icon">💬</div><div class="app-feature-card__title" data-i18n="index.appFeat3Title">Direct chat</div><div class="app-feature-card__desc" data-i18n="index.appFeat3Desc">Message your cook to confirm pickup details</div><div style="font-size:0.68rem;color:rgba(255,255,255,0.30);margin-top:6px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:0.05em;" data-i18n="index.comingInApp">COMING IN APP</div></div>
+        <div class="app-feature-card" style="cursor:pointer;" onclick="appFeatureClick('Ratings — rate your experience and help build community trust.')"><div class="app-feature-card__icon">⭐</div><div class="app-feature-card__title" data-i18n="index.appFeat4Title">Ratings</div><div class="app-feature-card__desc" data-i18n="index.appFeat4Desc">Rate your experience and build community trust</div><div style="font-size:0.68rem;color:rgba(255,255,255,0.30);margin-top:6px;font-family:Poppins,sans-serif;font-weight:600;letter-spacing:0.05em;" data-i18n="index.comingInApp">COMING IN APP</div></div>
       </div>
     </div>
   </div>
