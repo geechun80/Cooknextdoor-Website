@@ -157,7 +157,7 @@
 <!-- Nav -->
 <nav>
   <a class="nav__logo" href="index.html"><img src="brand_assets/logo.png?v=20260417" alt="CookNextDoor"/></a>
-  <a class="nav__back" href="index.html">← Home</a>
+  <a class="nav__back" href="index.html" data-i18n="profile.navBack">← Home</a>
 </nav>
 
 <!-- Loading state -->
@@ -173,9 +173,9 @@
 <div id="error-state" class="page" style="display:none;">
   <div class="state-screen">
     <div class="state-icon">🤷</div>
-    <div class="state-title">Cook not found</div>
-    <div class="state-sub">This cook profile doesn't exist or may have been removed. Browse other neighborhood cooks on our home page.</div>
-    <a href="index.html" style="margin-top:24px;display:inline-block;background:var(--orange);color:var(--on-lime);font-family:Poppins,sans-serif;font-weight:700;font-size:0.9rem;padding:13px 28px;border-radius:14px;text-decoration:none;">← Back to home</a>
+    <div class="state-title" data-i18n="profile.notFound">Cook not found</div>
+    <div class="state-sub" data-i18n="profile.notFoundSub">This cook profile doesn't exist or may have been removed. Browse other neighborhood cooks on our home page.</div>
+    <a href="index.html" data-i18n="profile.backToHome" style="margin-top:24px;display:inline-block;background:var(--orange);color:var(--on-lime);font-family:Poppins,sans-serif;font-weight:700;font-size:0.9rem;padding:13px 28px;border-radius:14px;text-decoration:none;">← Back to home</a>
   </div>
 </div>
 
@@ -188,35 +188,35 @@
       <div class="cook-avatar" id="prof-avatar">👨‍🍳</div>
       <div class="cook-hero-info">
         <div class="cook-name" id="prof-name">–</div>
-        <div class="cook-location">📍 <span id="prof-neighborhood">–</span> · within 1 km pickup</div>
+        <div class="cook-location">📍 <span id="prof-neighborhood">–</span> · <span data-i18n="profile.within1km">within 1 km pickup</span></div>
         <div class="cook-badges" id="prof-categories"></div>
-        <div class="cook-active" id="prof-active-badge">Available for pickup</div>
+        <div class="cook-active" id="prof-active-badge" data-i18n="profile.availablePickup">Available for pickup</div>
       </div>
     </div>
   </div>
 
   <!-- About -->
   <div class="info-card" id="prof-about-card" style="display:none;">
-    <h3>About this cook</h3>
+    <h3 data-i18n="profile.aboutH3">About this cook</h3>
     <p class="cook-description" id="prof-description"></p>
   </div>
 
   <!-- Live dish listings -->
   <div class="info-card" id="prof-listings-card" style="display:none;">
-    <h3>🍽️ Available now</h3>
+    <h3 data-i18n="profile.availableNowH3">🍽️ Available now</h3>
     <div id="prof-listings-list"></div>
   </div>
 
   <!-- Reviews -->
   <div class="info-card" id="prof-reviews-card">
-    <h3>⭐ Reviews</h3>
+    <h3 data-i18n="profile.reviewsH3">⭐ Reviews</h3>
     <div id="prof-reviews-avg" style="display:none;"></div>
     <div id="prof-reviews-list">
-      <div style="font-size:0.85rem;color:rgba(255,255,255,0.32);font-style:italic;">No reviews yet — be the first to share your experience!</div>
+      <div data-i18n="profile.noReviews" style="font-size:0.85rem;color:rgba(255,255,255,0.32);font-style:italic;">No reviews yet — be the first to share your experience!</div>
     </div>
     <!-- Leave a review (shown only to signed-in non-owners) -->
     <div id="prof-review-form" style="display:none;margin-top:20px;border-top:1px solid rgba(255,255,255,0.07);padding-top:20px;">
-      <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.78rem;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:12px;">Leave a review</div>
+      <div data-i18n="profile.leaveReview" style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.78rem;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:12px;">Leave a review</div>
       <div class="review-stars-input" id="review-stars-input" data-selected="0">
         <span class="review-star" data-v="1">★</span>
         <span class="review-star" data-v="2">★</span>
@@ -224,27 +224,27 @@
         <span class="review-star" data-v="4">★</span>
         <span class="review-star" data-v="5">★</span>
       </div>
-      <textarea id="review-text" class="review-textarea" placeholder="Share your experience with this cook…"></textarea>
+      <textarea id="review-text" class="review-textarea" data-i18n-ph="profile.reviewPh" placeholder="Share your experience with this cook…"></textarea>
       <div id="review-submit-error" style="display:none;color:#F87171;font-size:0.82rem;margin-bottom:8px;"></div>
-      <button class="review-submit-btn" onclick="window.submitReview()">Submit review</button>
+      <button class="review-submit-btn" data-i18n="profile.submitReview" onclick="window.submitReview()">Submit review</button>
     </div>
   </div>
 
   <!-- Pickup info -->
   <div class="info-card">
-    <h3>📦 How pickup works</h3>
+    <h3 data-i18n="profile.pickupH3">📦 How pickup works</h3>
     <div style="display:flex;flex-direction:column;gap:10px;">
       <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.87rem;color:rgba(255,255,255,0.75);">
         <span style="font-size:1.1rem;">🔒</span>
-        <span>Exact address and pickup instructions are shared only after you reserve — protecting the cook's privacy.</span>
+        <span data-i18n="profile.pickup1">Exact address and pickup instructions are shared only after you reserve — protecting the cook's privacy.</span>
       </div>
       <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.87rem;color:rgba(255,255,255,0.75);">
         <span style="font-size:1.1rem;">💸</span>
-        <span>Pay directly to the cook via PayNow, PayLah, or cash. CookNextDoor charges zero commission.</span>
+        <span data-i18n="profile.pickup2">Pay directly to the cook via PayNow, PayLah, or cash. CookNextDoor charges zero commission.</span>
       </div>
       <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.87rem;color:rgba(255,255,255,0.75);">
         <span style="font-size:1.1rem;">📱</span>
-        <span>After reserving, coordinate pickup time directly with the cook via chat or phone.</span>
+        <span data-i18n="profile.pickup3">After reserving, coordinate pickup time directly with the cook via chat or phone.</span>
       </div>
     </div>
   </div>
@@ -254,24 +254,24 @@
     <div id="warning-banner-title" style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.9rem;margin-bottom:6px;"></div>
     <div id="warning-banner-msg" style="font-size:0.82rem;line-height:1.6;margin-bottom:14px;"></div>
     <div id="appeal-section">
-      <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;opacity:0.7;">Submit your explanation</div>
-      <textarea id="appeal-text" placeholder="Explain the situation, what happened, and how you'll improve. Our team will review your response within 2–3 business days." style="width:100%;min-height:90px;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:0.82rem;padding:10px 14px;resize:vertical;box-sizing:border-box;"></textarea>
+      <div data-i18n="profile.appealTitle" style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;opacity:0.7;">Submit your explanation</div>
+      <textarea id="appeal-text" data-i18n-ph="profile.appealPh" placeholder="Explain the situation, what happened, and how you'll improve. Our team will review your response within 2–3 business days." style="width:100%;min-height:90px;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:0.82rem;padding:10px 14px;resize:vertical;box-sizing:border-box;"></textarea>
       <div id="appeal-status" style="font-size:0.75rem;margin-top:6px;min-height:16px;"></div>
-      <button onclick="submitAppeal()" style="margin-top:8px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.82rem;padding:9px 18px;border-radius:10px;cursor:pointer;">📨 Send explanation to admin</button>
+      <button data-i18n="profile.appealBtn" onclick="submitAppeal()" style="margin-top:8px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#fff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.82rem;padding:9px 18px;border-radius:10px;cursor:pointer;">📨 Send explanation to admin</button>
     </div>
   </div>
 
   <!-- Owner quick-action panel (shown only to the cook themselves) -->
   <div id="owner-panel" style="display:none;background:rgba(227,239,38,0.07);border:1.5px solid rgba(227,239,38,0.25);border-radius:20px;padding:20px 24px;margin-bottom:16px;">
-    <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.78rem;color:var(--orange);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:14px;">👨‍🍳 Your cook dashboard</div>
+    <div data-i18n="profile.dashTitle" style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.78rem;color:var(--orange);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:14px;">👨‍🍳 Your cook dashboard</div>
     <div style="display:flex;flex-direction:column;gap:10px;">
-      <a href="cook-list-dish.html" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--orange);color:#06231D;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;padding:14px 20px;border-radius:14px;text-decoration:none;transition:transform 0.2s;box-shadow:0 4px 16px rgba(227,239,38,0.25);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+      <a href="cook-list-dish.html" data-i18n="profile.addDish" style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--orange);color:#06231D;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;padding:14px 20px;border-radius:14px;text-decoration:none;transition:transform 0.2s;box-shadow:0 4px 16px rgba(227,239,38,0.25);" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
         🍽️ Add New Dish
       </a>
-      <a href="cook-register.html" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.80);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;padding:12px 20px;border-radius:14px;text-decoration:none;border:1px solid rgba(255,255,255,0.15);">
+      <a href="cook-register.html" data-i18n="profile.editProfile" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.80);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;padding:12px 20px;border-radius:14px;text-decoration:none;border:1px solid rgba(255,255,255,0.15);">
         ✏️ Edit profile
       </a>
-      <button id="upload-photo-btn" onclick="document.getElementById('avatar-file-input').click()" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.80);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;padding:12px 20px;border-radius:14px;border:1px solid rgba(255,255,255,0.15);cursor:pointer;width:100%;">
+      <button id="upload-photo-btn" data-i18n="profile.changePhoto" onclick="document.getElementById('avatar-file-input').click()" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.80);font-family:'Poppins',sans-serif;font-weight:600;font-size:0.88rem;padding:12px 20px;border-radius:14px;border:1px solid rgba(255,255,255,0.15);cursor:pointer;width:100%;">
         📷 Change profile photo
       </button>
     </div>
@@ -279,14 +279,14 @@
 
   <!-- Share row -->
   <div class="share-row">
-    <button class="share-btn" onclick="copyLink()">🔗 Copy link</button>
-    <a class="share-btn" id="wa-share-btn" href="#" target="_blank" rel="noopener">💬 Share on WhatsApp</a>
+    <button class="share-btn" data-i18n="profile.copyLink" onclick="copyLink()">🔗 Copy link</button>
+    <a class="share-btn" id="wa-share-btn" data-i18n="profile.shareWA" href="#" target="_blank" rel="noopener">💬 Share on WhatsApp</a>
   </div>
 
   <!-- Sticky CTA (shown to visitors; hidden for the cook owner) -->
   <div class="cta-section" id="cta-section">
     <div class="cta-card" id="cta-card">
-      <button class="btn-reserve" id="cta-reserve-btn" onclick="openReserveModal()" style="width:100%;">💬 Reserve via WhatsApp →</button>
+      <button class="btn-reserve" id="cta-reserve-btn" data-i18n="profile.reserveWA" onclick="openReserveModal()" style="width:100%;">💬 Reserve via WhatsApp →</button>
     </div>
   </div>
 
@@ -296,23 +296,23 @@
 <div id="edit-dish-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:1200;align-items:center;justify-content:center;padding:20px;">
   <div style="background:#0C342C;border:1px solid rgba(227,239,38,0.25);border-radius:24px;max-width:420px;width:100%;padding:28px 24px;position:relative;">
     <button onclick="closeEditDish()" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.08);border:none;font-size:1.1rem;color:rgba(255,255,255,0.6);cursor:pointer;width:32px;height:32px;border-radius:50%;">✕</button>
-    <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.05rem;color:#E3EF26;margin-bottom:4px;">✏️ Edit Dish</div>
+    <div data-i18n="profile.editDishTitle" style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.05rem;color:#E3EF26;margin-bottom:4px;">✏️ Edit Dish</div>
     <div id="edit-dish-name" style="font-size:0.82rem;color:rgba(255,255,255,0.45);margin-bottom:20px;"></div>
     <input type="hidden" id="edit-dish-id"/>
 
-    <label style="display:block;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.55);margin-bottom:5px;">Pickup date</label>
+    <label data-i18n="profile.editDateLabel" style="display:block;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.55);margin-bottom:5px;">Pickup date</label>
     <input type="date" id="edit-pickup-date" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.9rem;padding:10px 14px;box-sizing:border-box;margin-bottom:14px;"/>
 
-    <label style="display:block;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.55);margin-bottom:5px;">Pickup time</label>
+    <label data-i18n="profile.editTimeLabel" style="display:block;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.55);margin-bottom:5px;">Pickup time</label>
     <input type="time" id="edit-pickup-time" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.9rem;padding:10px 14px;box-sizing:border-box;margin-bottom:14px;"/>
 
-    <label style="display:block;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.55);margin-bottom:5px;">Portions available</label>
-    <input type="text" id="edit-portions" placeholder="e.g. 2 portions" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.9rem;padding:10px 14px;box-sizing:border-box;margin-bottom:14px;"/>
+    <label data-i18n="profile.editPortionsLabel" style="display:block;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.55);margin-bottom:5px;">Portions available</label>
+    <input type="text" id="edit-portions" data-i18n-ph="profile.editPortionsPh" placeholder="e.g. 2 portions" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.9rem;padding:10px 14px;box-sizing:border-box;margin-bottom:14px;"/>
 
-    <label style="display:block;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.55);margin-bottom:5px;">Price per portion</label>
-    <input type="text" id="edit-price" placeholder="e.g. $4" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.9rem;padding:10px 14px;box-sizing:border-box;margin-bottom:22px;"/>
+    <label data-i18n="profile.editPriceLabel" style="display:block;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.55);margin-bottom:5px;">Price per portion</label>
+    <input type="text" id="edit-price" data-i18n-ph="profile.editPricePh" placeholder="e.g. $4" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.9rem;padding:10px 14px;box-sizing:border-box;margin-bottom:22px;"/>
 
-    <button id="edit-save-btn" onclick="saveEditDish()" style="width:100%;background:#E3EF26;color:#06231D;font-family:'Poppins',sans-serif;font-weight:800;font-size:0.95rem;padding:14px;border:none;border-radius:14px;cursor:pointer;">Save changes</button>
+    <button id="edit-save-btn" data-i18n="profile.saveChanges" onclick="saveEditDish()" style="width:100%;background:#E3EF26;color:#06231D;font-family:'Poppins',sans-serif;font-weight:800;font-size:0.95rem;padding:14px;border:none;border-radius:14px;cursor:pointer;">Save changes</button>
   </div>
 </div>
 
@@ -329,17 +329,17 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
         <div style="background:rgba(255,255,255,0.06);border-radius:12px;padding:12px;text-align:center;">
           <div id="dish-modal-price" style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.2rem;color:#E3EF26;">–</div>
-          <div style="font-size:0.68rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;">per portion</div>
+          <div data-i18n="profile.perPortion" style="font-size:0.68rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;">per portion</div>
         </div>
         <div style="background:rgba(255,255,255,0.06);border-radius:12px;padding:12px;text-align:center;">
           <div id="dish-modal-portions" style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.2rem;color:#E3EF26;">–</div>
-          <div style="font-size:0.68rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;">portions</div>
+          <div data-i18n="profile.portionsUnit" style="font-size:0.68rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;">portions</div>
         </div>
       </div>
       <div id="dish-modal-datetime" style="background:rgba(255,255,255,0.05);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:rgba(255,255,255,0.65);margin-bottom:16px;display:none;">⏰ <span id="dish-modal-datetime-text"></span></div>
       <div id="dish-modal-desc" style="font-size:0.84rem;color:rgba(255,255,255,0.55);line-height:1.6;margin-bottom:20px;display:none;"></div>
       <a id="dish-modal-wa" href="#" target="_blank" rel="noopener" style="display:block;background:#25D366;color:#fff;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;padding:14px 24px;border-radius:14px;text-decoration:none;text-align:center;margin-bottom:10px;">💬 Reserve via WhatsApp</a>
-      <div style="font-size:0.72rem;color:rgba(255,255,255,0.25);text-align:center;">Zero commission · Pay directly via PayNow, PayLah or cash</div>
+      <div data-i18n="profile.zeroComm" style="font-size:0.72rem;color:rgba(255,255,255,0.25);text-align:center;">Zero commission · Pay directly via PayNow, PayLah or cash</div>
     </div>
   </div>
 </div>
@@ -349,11 +349,11 @@
   <div style="background:#0C342C;border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:32px;max-width:420px;width:100%;text-align:center;position:relative;">
     <button onclick="closeReserveModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.2rem;color:rgba(255,255,255,0.5);cursor:pointer;">✕</button>
     <div style="font-size:2.5rem;margin-bottom:12px;">💬</div>
-    <div style="font-family:Poppins,sans-serif;font-weight:800;font-size:1.2rem;color:#fff;margin-bottom:8px;">Reserve a pickup</div>
-    <div style="font-size:0.85rem;color:rgba(255,255,255,0.55);margin-bottom:24px;line-height:1.6;">Message this cook on WhatsApp to ask about availability, confirm your portion, and arrange a pickup time and spot. It's that simple — no middleman.</div>
-    <a id="modal-wa-btn" href="#" target="_blank" rel="noopener" style="display:block;background:#25D366;color:#fff;font-family:Poppins,sans-serif;font-weight:700;font-size:0.95rem;padding:14px 24px;border-radius:14px;text-decoration:none;margin-bottom:10px;">💬 Message on WhatsApp</a>
-    <div style="font-size:0.75rem;color:rgba(255,255,255,0.30);margin-top:4px;margin-bottom:16px;">Pay directly via PayNow, PayLah or cash — CookNextDoor takes zero commission.</div>
-    <a href="user-auth.html" style="display:block;font-family:Poppins,sans-serif;font-weight:600;font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;">New here? Create a free account →</a>
+    <div data-i18n="profile.reserveTitle" style="font-family:Poppins,sans-serif;font-weight:800;font-size:1.2rem;color:#fff;margin-bottom:8px;">Reserve a pickup</div>
+    <div data-i18n="profile.reserveSub" style="font-size:0.85rem;color:rgba(255,255,255,0.55);margin-bottom:24px;line-height:1.6;">Message this cook on WhatsApp to ask about availability, confirm your portion, and arrange a pickup time and spot. It's that simple — no middleman.</div>
+    <a id="modal-wa-btn" data-i18n="profile.msgWA" href="#" target="_blank" rel="noopener" style="display:block;background:#25D366;color:#fff;font-family:Poppins,sans-serif;font-weight:700;font-size:0.95rem;padding:14px 24px;border-radius:14px;text-decoration:none;margin-bottom:10px;">💬 Message on WhatsApp</a>
+    <div data-i18n="profile.reserveFooter" style="font-size:0.75rem;color:rgba(255,255,255,0.30);margin-top:4px;margin-bottom:16px;">Pay directly via PayNow, PayLah or cash — CookNextDoor takes zero commission.</div>
+    <a href="user-auth.html" data-i18n="profile.newHere" style="display:block;font-family:Poppins,sans-serif;font-weight:600;font-size:0.82rem;color:rgba(255,255,255,0.45);text-decoration:none;">New here? Create a free account →</a>
   </div>
 </div>
 
@@ -663,17 +663,18 @@
           : '';
 
         // Owner sees Remove + Edit; visitors see WhatsApp
+        const _t = (k, fb) => (window.CND_i18n && window.CND_i18n.t ? window.CND_i18n.t(k) : fb);
         let actionHtml = '';
         if (window._isOwner) {
           actionHtml = `
             <div style="display:flex;gap:8px;margin-top:10px;">
               <button onclick="openEditDish('${dishId}')"
                 style="flex:1;background:rgba(227,239,38,0.12);border:1px solid rgba(227,239,38,0.30);color:#E3EF26;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.78rem;padding:8px 12px;border-radius:100px;cursor:pointer;">
-                ✏️ Edit
+                ${_t('profile.editBtn', '✏️ Edit')}
               </button>
               <button onclick="removeDish('${dishId}', this)"
                 style="flex:1;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.30);color:#FCA5A5;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.78rem;padding:8px 12px;border-radius:100px;cursor:pointer;">
-                🗑️ Remove
+                ${_t('profile.removeBtn', '🗑️ Remove')}
               </button>
             </div>`;
         } else if (cookPhone) {
@@ -681,7 +682,7 @@
           const msg = encodeURIComponent('Hi! I saw your ' + (dish.dishName || 'dish') + ' on CookNextDoor — is it still available?');
           actionHtml = `<a href="https://wa.me/${num}?text=${msg}" target="_blank" rel="noopener"
             style="display:inline-flex;align-items:center;gap:6px;background:#25D366;color:#fff;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.78rem;padding:8px 14px;border-radius:100px;text-decoration:none;margin-top:10px;">
-            💬 Reserve via WhatsApp</a>`;
+            ${_t('profile.reserveWABtn', '💬 Reserve via WhatsApp')}</a>`;
         }
 
         const imgHtml = dish.imageUrl
@@ -698,7 +699,7 @@
             ${dietary ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;">${dietary}</div>` : ''}
             ${pickupLine ? `<div id="pickup-${dishId}" style="font-size:0.78rem;color:rgba(255,255,255,0.50);margin-bottom:4px;">⏰ ${escHtml(pickupLine)}</div>` : `<div id="pickup-${dishId}" style="font-size:0.78rem;color:rgba(255,255,255,0.50);margin-bottom:4px;display:none;"></div>`}
             <div id="portions-${dishId}" style="font-size:0.75rem;color:rgba(255,255,255,0.35);margin-bottom:4px;">${portions ? escHtml(portions) : ''}</div>
-            <div id="price-${dishId}" style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.05rem;color:#E3EF26;">${escHtml(dish.price || '–')} <span style="font-size:0.72rem;color:rgba(255,255,255,0.35);font-weight:400;">/ portion</span></div>
+            <div id="price-${dishId}" style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.05rem;color:#E3EF26;">${escHtml(dish.price || '–')} <span style="font-size:0.72rem;color:rgba(255,255,255,0.35);font-weight:400;">${_t('profile.perPortionShort', '/ portion')}</span></div>
             ${actionHtml}
           </div>`;
         list.appendChild(row);
@@ -903,16 +904,17 @@
 
   // ── Owner dish management (needs module-scope updateDoc + doc) ───
   window.removeDish = async function(dishId, btn) {
-    if (!confirm('Remove this dish listing? It will no longer appear to neighbours.')) return;
-    btn.textContent = '⏳ Removing…'; btn.disabled = true;
+    const _t = (k, fb) => (window.CND_i18n && window.CND_i18n.t ? window.CND_i18n.t(k) : fb);
+    if (!confirm(_t('profile.removeConfirm', 'Remove this dish listing? It will no longer appear to neighbours.'))) return;
+    btn.textContent = _t('profile.removing', '⏳ Removing…'); btn.disabled = true;
     try {
       await updateDoc(doc(db, 'dishes', dishId), { isActive: false });
       const row = document.getElementById('dish-row-' + dishId);
       if (row) { row.style.transition='opacity 0.4s'; row.style.opacity='0'; setTimeout(()=>row.remove(), 400); }
-      toast('✅ Dish removed from listings.');
+      toast(_t('profile.removedOk', '✅ Dish removed from listings.'));
     } catch(e) {
-      btn.textContent = '🗑️ Remove'; btn.disabled = false;
-      toast('❌ Remove failed — try again.');
+      btn.textContent = _t('profile.removeBtn', '🗑️ Remove'); btn.disabled = false;
+      toast(_t('profile.removeFail', '❌ Remove failed — try again.'));
     }
   };
 
@@ -940,7 +942,8 @@
     const newPrice = document.getElementById('edit-price').value.trim();
     const saveBtn  = document.getElementById('edit-save-btn');
     if (!dishId) return;
-    saveBtn.textContent = 'Saving…'; saveBtn.disabled = true;
+    const _t = (k, fb) => (window.CND_i18n && window.CND_i18n.t ? window.CND_i18n.t(k) : fb);
+    saveBtn.textContent = _t('profile.saving', 'Saving…'); saveBtn.disabled = true;
     try {
       await updateDoc(doc(db, 'dishes', dishId), {
         pickupDate: newDate, pickupTime: newTime, portions: newPort, price: newPrice
@@ -960,11 +963,11 @@
       if (portionsEl) portionsEl.textContent = newPort;
       if (priceEl) priceEl.innerHTML = newPrice + ' <span style="font-size:0.72rem;color:rgba(255,255,255,0.35);font-weight:400;">/ portion</span>';
       closeEditDish();
-      toast('✅ Dish updated successfully.');
-      saveBtn.textContent = 'Save changes'; saveBtn.disabled = false;
+      toast(_t('profile.savedOk', '✅ Dish updated successfully.'));
+      saveBtn.textContent = _t('profile.saveChanges', 'Save changes'); saveBtn.disabled = false;
     } catch(e) {
-      saveBtn.textContent = 'Save changes'; saveBtn.disabled = false;
-      toast('❌ Save failed — ' + e.message);
+      saveBtn.textContent = _t('profile.saveChanges', 'Save changes'); saveBtn.disabled = false;
+      toast('❌ ' + e.message);
     }
   };
 </script>
