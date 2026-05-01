@@ -381,6 +381,19 @@
   const auth    = getAuth(app);
   const storage = getStorage(app);
 
+  function fmtTime(t) {
+    if (!t) return '';
+    const [hh, mm] = t.split(':').map(Number);
+    return (hh % 12 || 12) + (mm ? ':' + String(mm).padStart(2,'0') : '') + ' ' + (hh >= 12 ? 'PM' : 'AM');
+  }
+  function fmtDate(ds) {
+    if (!ds) return '';
+    try {
+      const [y, m, d] = ds.split('-').map(Number);
+      return new Date(y, m-1, d).toLocaleDateString('en-SG', { weekday:'short', day:'numeric', month:'short' });
+    } catch(e) { return ds; }
+  }
+
   async function loadProfile() {
     const params = new URLSearchParams(window.location.search);
     const uid    = params.get('uid');
@@ -636,19 +649,6 @@
       // Store dishes globally so owner action functions can access them
       window._dishMap = window._dishMap || {};
 
-      function fmtTime(t) {
-        if (!t) return '';
-        const [hh, mm] = t.split(':').map(Number);
-        return (hh % 12 || 12) + (mm ? ':' + String(mm).padStart(2,'0') : '') + ' ' + (hh >= 12 ? 'PM' : 'AM');
-      }
-      function fmtDate(ds) {
-        if (!ds) return '';
-        try {
-          const [y, m, d] = ds.split('-').map(Number);
-          return new Date(y, m-1, d).toLocaleDateString('en-SG', { weekday:'short', day:'numeric', month:'short' });
-        } catch(e) { return ds; }
-      }
-
       activeDocs.forEach(docSnap => {
         const dishId = docSnap.id;
         const dish   = docSnap.data();
@@ -696,9 +696,9 @@
           <div style="flex:1;min-width:0;">
             <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#fff;margin-bottom:3px;">${escHtml(dish.dishName || '–')}</div>
             ${dietary ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;">${dietary}</div>` : ''}
-            ${pickupLine ? `<div style="font-size:0.78rem;color:rgba(255,255,255,0.50);margin-bottom:4px;">⏰ ${escHtml(pickupLine)}</div>` : ''}
-            ${portions ? `<div style="font-size:0.75rem;color:rgba(255,255,255,0.35);margin-bottom:4px;">${escHtml(portions)}</div>` : ''}
-            <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.05rem;color:#E3EF26;">${escHtml(dish.price || '–')} <span style="font-size:0.72rem;color:rgba(255,255,255,0.35);font-weight:400;">/ portion</span></div>
+            ${pickupLine ? `<div id="pickup-${dishId}" style="font-size:0.78rem;color:rgba(255,255,255,0.50);margin-bottom:4px;">⏰ ${escHtml(pickupLine)}</div>` : `<div id="pickup-${dishId}" style="font-size:0.78rem;color:rgba(255,255,255,0.50);margin-bottom:4px;display:none;"></div>`}
+            <div id="portions-${dishId}" style="font-size:0.75rem;color:rgba(255,255,255,0.35);margin-bottom:4px;">${portions ? escHtml(portions) : ''}</div>
+            <div id="price-${dishId}" style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.05rem;color:#E3EF26;">${escHtml(dish.price || '–')} <span style="font-size:0.72rem;color:rgba(255,255,255,0.35);font-weight:400;">/ portion</span></div>
             ${actionHtml}
           </div>`;
         list.appendChild(row);
@@ -949,6 +949,16 @@
       if (window._dishMap && window._dishMap[dishId]) {
         Object.assign(window._dishMap[dishId], { pickupDate: newDate, pickupTime: newTime, portions: newPort, price: newPrice });
       }
+      // Refresh the card DOM immediately
+      const dateStr    = fmtDate(newDate);
+      const timeStr    = fmtTime(newTime);
+      const pickupLine = [dateStr, timeStr].filter(Boolean).join(' · ');
+      const pickupEl   = document.getElementById('pickup-' + dishId);
+      const portionsEl = document.getElementById('portions-' + dishId);
+      const priceEl    = document.getElementById('price-' + dishId);
+      if (pickupEl) { pickupEl.textContent = pickupLine ? '⏰ ' + pickupLine : ''; pickupEl.style.display = pickupLine ? '' : 'none'; }
+      if (portionsEl) portionsEl.textContent = newPort;
+      if (priceEl) priceEl.innerHTML = newPrice + ' <span style="font-size:0.72rem;color:rgba(255,255,255,0.35);font-weight:400;">/ portion</span>';
       closeEditDish();
       toast('✅ Dish updated successfully.');
       saveBtn.textContent = 'Save changes'; saveBtn.disabled = false;
