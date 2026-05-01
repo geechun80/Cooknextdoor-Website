@@ -900,6 +900,63 @@
   window._cndAuth = auth;
 
   loadProfile();
+
+  // ── Owner dish management (needs module-scope updateDoc + doc) ───
+  window.removeDish = async function(dishId, btn) {
+    if (!confirm('Remove this dish listing? It will no longer appear to neighbours.')) return;
+    btn.textContent = '⏳ Removing…'; btn.disabled = true;
+    try {
+      await updateDoc(doc(db, 'dishes', dishId), { isActive: false });
+      const row = document.getElementById('dish-row-' + dishId);
+      if (row) { row.style.transition='opacity 0.4s'; row.style.opacity='0'; setTimeout(()=>row.remove(), 400); }
+      toast('✅ Dish removed from listings.');
+    } catch(e) {
+      btn.textContent = '🗑️ Remove'; btn.disabled = false;
+      toast('❌ Remove failed — try again.');
+    }
+  };
+
+  window.openEditDish = function(dishId) {
+    const dish = (window._dishMap || {})[dishId];
+    if (!dish) return;
+    document.getElementById('edit-dish-id').value    = dishId;
+    document.getElementById('edit-dish-name').textContent = dish.dishName || '';
+    document.getElementById('edit-pickup-date').value = dish.pickupDate || '';
+    document.getElementById('edit-pickup-time').value = dish.pickupTime || '';
+    document.getElementById('edit-portions').value    = dish.portions || '';
+    document.getElementById('edit-price').value       = dish.price || '';
+    document.getElementById('edit-dish-modal').style.display = 'flex';
+  };
+
+  window.closeEditDish = function() {
+    document.getElementById('edit-dish-modal').style.display = 'none';
+  };
+
+  window.saveEditDish = async function() {
+    const dishId   = document.getElementById('edit-dish-id').value;
+    const newDate  = document.getElementById('edit-pickup-date').value;
+    const newTime  = document.getElementById('edit-pickup-time').value;
+    const newPort  = document.getElementById('edit-portions').value.trim();
+    const newPrice = document.getElementById('edit-price').value.trim();
+    const saveBtn  = document.getElementById('edit-save-btn');
+    if (!dishId) return;
+    saveBtn.textContent = 'Saving…'; saveBtn.disabled = true;
+    try {
+      await updateDoc(doc(db, 'dishes', dishId), {
+        pickupDate: newDate, pickupTime: newTime, portions: newPort, price: newPrice
+      });
+      // Update local cache so re-opening the modal shows fresh values
+      if (window._dishMap && window._dishMap[dishId]) {
+        Object.assign(window._dishMap[dishId], { pickupDate: newDate, pickupTime: newTime, portions: newPort, price: newPrice });
+      }
+      closeEditDish();
+      toast('✅ Dish updated successfully.');
+      saveBtn.textContent = 'Save changes'; saveBtn.disabled = false;
+    } catch(e) {
+      saveBtn.textContent = 'Save changes'; saveBtn.disabled = false;
+      toast('❌ Save failed — ' + e.message);
+    }
+  };
 </script>
 
 <script>
@@ -1013,59 +1070,6 @@
     clearTimeout(t._tid);
     t._tid = setTimeout(function(){ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; }, ms);
   }
-
-  // ── Owner dish management ────────────────────────────────────────
-  window.removeDish = async function(dishId, btn) {
-    if (!confirm('Remove this dish listing? It will no longer appear to neighbours.')) return;
-    btn.textContent = '⏳ Removing…'; btn.disabled = true;
-    try {
-      await updateDoc(doc(db, 'dishes', dishId), { isActive: false });
-      const row = document.getElementById('dish-row-' + dishId);
-      if (row) { row.style.transition='opacity 0.4s'; row.style.opacity='0'; setTimeout(()=>row.remove(), 400); }
-      toast('✅ Dish removed from listings.');
-    } catch(e) {
-      btn.textContent = '🗑️ Remove'; btn.disabled = false;
-      toast('❌ Remove failed — try again.');
-    }
-  };
-
-  window.openEditDish = function(dishId) {
-    const dish = (window._dishMap || {})[dishId];
-    if (!dish) return;
-    document.getElementById('edit-dish-id').value    = dishId;
-    document.getElementById('edit-dish-name').textContent = dish.dishName || '';
-    document.getElementById('edit-pickup-date').value = dish.pickupDate || '';
-    document.getElementById('edit-pickup-time').value = dish.pickupTime || '';
-    document.getElementById('edit-portions').value    = dish.portions || '';
-    document.getElementById('edit-price').value       = dish.price || '';
-    document.getElementById('edit-dish-modal').style.display = 'flex';
-  };
-
-  window.closeEditDish = function() {
-    document.getElementById('edit-dish-modal').style.display = 'none';
-  };
-
-  window.saveEditDish = async function() {
-    const dishId   = document.getElementById('edit-dish-id').value;
-    const newDate  = document.getElementById('edit-pickup-date').value;
-    const newTime  = document.getElementById('edit-pickup-time').value;
-    const newPort  = document.getElementById('edit-portions').value.trim();
-    const newPrice = document.getElementById('edit-price').value.trim();
-    const saveBtn  = document.getElementById('edit-save-btn');
-    if (!dishId) return;
-    saveBtn.textContent = 'Saving…'; saveBtn.disabled = true;
-    try {
-      await updateDoc(doc(db, 'dishes', dishId), {
-        pickupDate: newDate, pickupTime: newTime, portions: newPort, price: newPrice
-      });
-      closeEditDish();
-      toast('✅ Dish updated — reload to see changes.');
-    } catch(e) {
-      saveBtn.textContent = 'Save changes'; saveBtn.disabled = false;
-      toast('❌ Save failed — ' + e.message);
-    }
-  };
-  // ─────────────────────────────────────────────────────────────────
 
   function copyLink() {
     const url = window._profileUrl || window.location.href;
