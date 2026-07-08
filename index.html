@@ -1279,6 +1279,85 @@
   })();
 </script>
 
+<!-- ── Invite & Earn ─────────────────────────────────────────── -->
+<style>
+  .invite-band{ background: linear-gradient(135deg, #06231D 0%, #0C342C 100%); position:relative; overflow:hidden; }
+  .invite-band::before{ content:''; position:absolute; width:460px; height:460px; border-radius:50%; background:radial-gradient(circle, rgba(227,239,38,0.10) 0%, transparent 70%); top:-140px; left:-80px; pointer-events:none; }
+  .invite-band__inner{ display:grid; grid-template-columns:1.3fr 1fr; gap:48px; align-items:center; position:relative; z-index:1; }
+  .invite-band__inner h2{ font-family:'Poppins',sans-serif; font-weight:900; font-size:clamp(1.8rem,3.5vw,2.6rem); color:#fff; margin:12px 0 14px; }
+  .invite-band__inner h2 span{ color:var(--orange); }
+  .invite-band__inner p{ color:rgba(255,255,255,0.6); max-width:440px; margin-bottom:24px; }
+  .invite-band__badges{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+  .invite-badge{ width:76px; height:76px; border-radius:18px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; }
+  .invite-badge__e{ font-size:1.7rem; line-height:1; }
+  .invite-badge__n{ font-size:0.56rem; font-family:'Poppins',sans-serif; font-weight:700; color:rgba(255,255,255,0.55); letter-spacing:0.03em; text-align:center; }
+  @media(max-width:800px){ .invite-band__inner{ grid-template-columns:1fr; gap:28px; } .invite-band__badges{ justify-content:flex-start; } }
+</style>
+<!-- ── Neighbourhood Leaderboard ─────────────────────────────── -->
+<style>
+  .leaderboard{ background: rgba(0,0,0,0.18); }
+  .leaderboard__head{ text-align:center; max-width:600px; margin:0 auto 40px; }
+  .leaderboard__head h2{ font-family:'Poppins',sans-serif; font-weight:900; font-size:clamp(1.8rem,3.5vw,2.6rem); color:#fff; margin-bottom:12px; }
+  .leaderboard__head h2 span{ color:var(--orange); }
+  .leaderboard__head p{ color:rgba(255,255,255,0.55); }
+  .lb-list{ max-width:640px; margin:0 auto; display:flex; flex-direction:column; gap:10px; }
+  .lb-row{ display:flex; align-items:center; gap:14px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:16px; padding:14px 18px; text-decoration:none; transition:transform .2s, border-color .2s, background .2s; }
+  .lb-row:hover{ transform:translateY(-3px); border-color:rgba(227,239,38,0.28); background:rgba(255,255,255,0.08); }
+  .lb-rank{ font-size:1.5rem; width:36px; text-align:center; flex-shrink:0; }
+  .lb-rank__num{ font-family:'Poppins',sans-serif; font-weight:800; font-size:1rem; color:rgba(255,255,255,0.4); }
+  .lb-info{ flex:1; min-width:0; }
+  .lb-name{ font-family:'Poppins',sans-serif; font-weight:700; font-size:0.95rem; color:#fff; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .lb-hood{ font-size:0.76rem; color:rgba(255,255,255,0.45); margin-top:2px; }
+  .lb-streak{ font-family:'Poppins',sans-serif; font-weight:700; font-size:0.66rem; color:#F6A623; background:rgba(246,166,35,0.14); border:1px solid rgba(246,166,35,0.3); border-radius:100px; padding:2px 8px; }
+  .lb-count{ text-align:center; flex-shrink:0; }
+  .lb-count__n{ font-family:'Poppins',sans-serif; font-weight:900; font-size:1.15rem; color:var(--orange); line-height:1; }
+  .lb-count__l{ font-size:0.62rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.05em; }
+  .lb-rating{ font-size:0.78rem; color:#F59E0B; flex-shrink:0; font-weight:600; }
+  .lb-skeleton{ height:66px; border-radius:16px; background:rgba(255,255,255,0.04); animation:lbShimmer 1.6s ease-in-out infinite; }
+  @keyframes lbShimmer{ 0%,100%{opacity:0.5;} 50%{opacity:0.9;} }
+  .lb-empty{ display:none; text-align:center; max-width:440px; margin:0 auto; padding:36px 24px; }
+  .lb-empty__icon{ font-size:2.6rem; margin-bottom:12px; }
+  .lb-empty__t{ font-family:'Poppins',sans-serif; font-weight:800; font-size:1.1rem; color:rgba(255,255,255,0.85); margin-bottom:8px; }
+  .lb-empty__s{ font-size:0.88rem; color:rgba(255,255,255,0.5); line-height:1.6; margin-bottom:20px; }
+</style>
+<section class="section leaderboard">
+  <div class="container">
+    <div class="leaderboard__head fade-up">
+      <div class="tag" style="margin-bottom:14px;" data-i18n="lb.tag">🏆 Community stars</div>
+      <h2 data-i18n-html="lb.h2">This week's <span>top cooks.</span></h2>
+      <p data-i18n="lb.sub">The neighbours sharing the most home-cooked food near you. Keep a weekly streak going to climb the ranks 🔥</p>
+    </div>
+    <div class="lb-list fade-up" id="leaderboard-list">
+      <div class="lb-skeleton"></div><div class="lb-skeleton"></div><div class="lb-skeleton"></div>
+    </div>
+    <div class="lb-empty" id="leaderboard-empty">
+      <div class="lb-empty__icon">🏆</div>
+      <div class="lb-empty__t" data-i18n="lb.emptyT">The leaderboard is waiting for its first star</div>
+      <div class="lb-empty__s" data-i18n="lb.emptyS">Be the first cook in your neighbourhood to list a dish — and claim the top spot.</div>
+      <a href="cook-register.html" class="btn btn--orange" data-i18n="lb.emptyBtn">🍳 Start cooking →</a>
+    </div>
+  </div>
+</section>
+
+<section class="section invite-band">
+  <div class="container">
+    <div class="invite-band__inner fade-up">
+      <div class="invite-band__content">
+        <div class="tag" style="background:rgba(227,239,38,0.10);color:var(--orange);border-color:rgba(227,239,38,0.28);" data-i18n="invite.tag">🎁 Invite &amp; earn</div>
+        <h2 data-i18n-html="invite.h2">Bring a neighbour,<br/><span>earn your badge.</span></h2>
+        <p data-i18n="invite.p">CookNextDoor grows one neighbour at a time. Share your invite link — every person you bring levels up your community badge, from 🌱 Newcomer to 👑 Founding Neighbour.</p>
+        <button class="btn btn--orange" onclick="openInviteModal()" data-i18n="invite.btn">🎁 Invite your neighbours →</button>
+      </div>
+      <div class="invite-band__badges" aria-hidden="true">
+        <div class="invite-badge"><span class="invite-badge__e">🌱</span><span class="invite-badge__n">Newcomer</span></div>
+        <div class="invite-badge"><span class="invite-badge__e">🔥</span><span class="invite-badge__n">Connector</span></div>
+        <div class="invite-badge"><span class="invite-badge__e">⭐</span><span class="invite-badge__n">Builder</span></div>
+        <div class="invite-badge"><span class="invite-badge__e">👑</span><span class="invite-badge__n">Founder</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ── Food Mood Feature ─────────────────────────────────────── -->
 <section class="food-mood-promo">
   <div class="container">
@@ -1844,7 +1923,7 @@
   import {
     initializeFirestore, persistentLocalCache, getFirestore,
     collection, query, orderBy, limit, onSnapshot,
-    addDoc, serverTimestamp
+    addDoc, serverTimestamp, getDocs
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -2064,7 +2143,78 @@
     });
   }
 
+  // ── Neighbourhood leaderboard + cook streaks ──────────
+  function weekIndex(date) {
+    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const day = (d.getDay() + 6) % 7;        // 0 = Monday
+    d.setDate(d.getDate() - day);            // Monday of that week
+    return Math.floor(d.getTime() / (7 * 86400000));
+  }
+  function streakWeeks(weekSet) {
+    if (!weekSet.size) return 0;
+    const weeks = Array.from(weekSet).sort((a, b) => b - a);  // desc
+    const now = weekIndex(new Date());
+    if (weeks[0] < now - 1) return 0;        // last listing older than last week → streak broken
+    let streak = 1;
+    for (let i = 1; i < weeks.length; i++) {
+      if (weeks[i] === weeks[i - 1] - 1) streak++; else break;
+    }
+    return streak;
+  }
+  function renderLeaderboard(rows) {
+    const list = document.getElementById('leaderboard-list');
+    const empty = document.getElementById('leaderboard-empty');
+    if (!list) return;
+    if (!rows.length) {
+      list.innerHTML = '';
+      if (empty) empty.style.display = 'block';
+      return;
+    }
+    if (empty) empty.style.display = 'none';
+    const medals = ['🥇', '🥈', '🥉'];
+    list.innerHTML = rows.map((r, i) => {
+      const rank = medals[i] || ('<span class="lb-rank__num">' + (i + 1) + '</span>');
+      const stars = r.rating ? '<span class="lb-rating">★ ' + r.rating.toFixed(1) + '</span>' : '';
+      const streak = r.streak >= 2 ? '<span class="lb-streak">🔥 ' + r.streak + ' wk</span>' : '';
+      const href = r.uid ? ('cook-profile.html?uid=' + r.uid) : '#';
+      return '<a class="lb-row" href="' + href + '">' +
+        '<div class="lb-rank">' + rank + '</div>' +
+        '<div class="lb-info"><div class="lb-name">' + (r.name || 'Home Cook') + streak + '</div>' +
+        '<div class="lb-hood">📍 ' + (r.hood || 'Singapore') + '</div></div>' +
+        '<div class="lb-count"><div class="lb-count__n">' + r.count + '</div><div class="lb-count__l">dish' + (r.count === 1 ? '' : 'es') + '</div></div>' +
+        stars +
+      '</a>';
+    }).join('');
+  }
+  async function loadLeaderboard() {
+    try {
+      const snap = await getDocs(query(collection(db, 'dishes'), orderBy('createdAt', 'desc'), limit(200)));
+      const cooks = {};
+      snap.forEach(doc => {
+        const d = doc.data();
+        if (d.isDemo || !d.cookUid) return;
+        const c = cooks[d.cookUid] || (cooks[d.cookUid] = { name: d.cookName, hood: d.neighborhood, count: 0, rs: 0, rn: 0, weeks: new Set() });
+        c.count++;
+        if (!c.name && d.cookName) c.name = d.cookName;
+        if (!c.hood && d.neighborhood) c.hood = d.neighborhood;
+        if (d.avgRating) { c.rs += Number(d.avgRating); c.rn++; }
+        const ts = d.createdAt && d.createdAt.toDate ? d.createdAt.toDate() : null;
+        if (ts) c.weeks.add(weekIndex(ts));
+      });
+      const arr = Object.keys(cooks).map(uid => {
+        const c = cooks[uid];
+        return { uid, name: c.name, hood: c.hood, count: c.count, rating: c.rn ? c.rs / c.rn : 0, streak: streakWeeks(c.weeks) };
+      });
+      arr.sort((a, b) => b.count - a.count || b.streak - a.streak || b.rating - a.rating);
+      renderLeaderboard(arr.slice(0, 6));
+    } catch (e) {
+      console.warn('[leaderboard]', e.code || '', e.message);
+      renderLeaderboard([]);
+    }
+  }
+
   loadDishes();
+  loadLeaderboard();
 </script>
 
 <!-- ── First-visit onboarding modal ──────────────────────── -->
@@ -2089,5 +2239,6 @@
 </script>
 <script src="i18n.js"></script>
 <script src="app-shell.js" defer></script>
+<script src="invite.js" defer></script>
 </body>
 </html>
