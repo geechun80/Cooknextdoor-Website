@@ -231,6 +231,62 @@
     </div>
   </div>
 
+  <!-- Income calculator (Phase 2, Ch 12) -->
+  <div class="card" id="earn-calc">
+    <h2 data-i18n="calc.title">💰 How much could you earn?</h2>
+    <p class="subtitle" data-i18n="calc.sub">You keep 100% of every sale — zero commission. Drag the sliders to see your potential.</p>
+    <div style="margin-bottom:18px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <label for="calcS1" style="font-size:0.85rem;font-weight:600;" data-i18n="calc.days">Cooking days per week</label>
+        <span id="calcV1" style="background:#E3EF26;color:#06231D;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.8rem;padding:2px 10px;border-radius:100px;">3</span>
+      </div>
+      <input type="range" min="1" max="7" value="3" id="calcS1" style="width:100%;accent-color:#076653;" oninput="cndCalc()"/>
+    </div>
+    <div style="margin-bottom:18px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <label for="calcS2" style="font-size:0.85rem;font-weight:600;" data-i18n="calc.portions">Portions per cooking day</label>
+        <span id="calcV2" style="background:#E3EF26;color:#06231D;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.8rem;padding:2px 10px;border-radius:100px;">4</span>
+      </div>
+      <input type="range" min="1" max="10" value="4" id="calcS2" style="width:100%;accent-color:#076653;" oninput="cndCalc()"/>
+    </div>
+    <div style="margin-bottom:22px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <label for="calcS3" style="font-size:0.85rem;font-weight:600;" data-i18n="calc.price">Price per portion</label>
+        <span id="calcV3" style="background:#E3EF26;color:#06231D;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.8rem;padding:2px 10px;border-radius:100px;">$5</span>
+      </div>
+      <input type="range" min="3" max="15" value="5" id="calcS3" style="width:100%;accent-color:#076653;" oninput="cndCalc()"/>
+    </div>
+    <div style="background:#F0FAF3;border:1px solid #C3E6CB;border-radius:14px;padding:18px;text-align:center;">
+      <div style="font-size:0.8rem;color:#076653;margin-bottom:4px;" data-i18n="calc.resultLabel">You could earn up to</div>
+      <div style="font-family:'Poppins',sans-serif;font-weight:900;font-size:2.1rem;color:#076653;line-height:1;"><span id="calcOut">$260</span><span style="font-size:0.95rem;font-weight:600;opacity:0.7;" data-i18n="calc.perMonth">/month</span></div>
+      <div style="font-size:0.74rem;color:#666;margin-top:8px;" data-i18n="calc.note">Estimate only — and every cent is yours. 0% commission, always.</div>
+    </div>
+  </div>
+  <script>
+    var _calcCur = 0;
+    function cndCalc() {
+      var d  = +document.getElementById('calcS1').value;
+      var p  = +document.getElementById('calcS2').value;
+      var pr = +document.getElementById('calcS3').value;
+      document.getElementById('calcV1').textContent = d;
+      document.getElementById('calcV2').textContent = p;
+      document.getElementById('calcV3').textContent = '$' + pr;
+      var target = Math.round(d * p * pr * 4.33 / 10) * 10;
+      var out = document.getElementById('calcOut');
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        _calcCur = target; out.textContent = '$' + target.toLocaleString(); return;
+      }
+      var from = _calcCur, t0 = performance.now();
+      (function step(now) {
+        var k = Math.min(1, ((now || performance.now()) - t0) / 500);
+        var v = Math.round(from + (target - from) * (1 - Math.pow(1 - k, 3)));
+        out.textContent = '$' + v.toLocaleString();
+        if (k < 1) requestAnimationFrame(step); else _calcCur = target;
+      })(t0);
+    }
+    cndCalc();
+  </script>
+
   <!-- STEP 1 — Account Setup -->
   <div class="card" id="step-1">
     <h2>Step 1: <span>Account Setup</span></h2>

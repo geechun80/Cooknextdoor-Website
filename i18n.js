@@ -109,6 +109,40 @@
       'trust.s5T': 'Pay direct & enjoy',
       'trust.s5D': 'PayNow, PayLah or cash — every cent goes to your neighbour.',
 
+      /* ── Kitchen-to-table journey (index) ─────── */
+      'journey.t1': 'Cooked in a real home kitchen',
+      'journey.d1': 'Small batches, family recipes — never factory food.',
+      'journey.t2': 'Listed in 60 seconds',
+      'journey.d2': 'Your neighbour snaps a photo and sets a fair price.',
+      'journey.t3': 'Reserved with one tap',
+      'journey.d3': 'The cook knows you\'re coming — nothing gets wasted.',
+      'journey.t4': 'Picked up around the corner',
+      'journey.d4': 'A short stroll away. Still warm when you get home.',
+      'journey.t5': 'Enjoyed — and 100% goes to the cook',
+      'journey.d5': 'No commission. No middlemen. Just neighbours.',
+
+      /* ── Homemade vs apps (index) ─────────────── */
+      'vs.tag':   '🥗 Why homemade',
+      'vs.h2':    'Same hunger.<br/><span style="color:#E3EF26;">A better answer.</span>',
+      'vs.homeT': '🏡 Home-cooked next door',
+      'vs.home1': '0% commission — the cook keeps every cent',
+      'vs.home2': 'Fresh from a real kitchen, within 1 km',
+      'vs.home3': 'Pay direct — PayNow, PayLah or cash',
+      'vs.appT':  '📱 Typical delivery apps',
+      'vs.app1':  'Up to ~30% platform commissions on cooks',
+      'vs.app2':  'Cold by the time it survives the ride',
+      'vs.app3':  'Delivery fees and surcharges on top',
+
+      /* ── Income calculator (cook-register) ────── */
+      'calc.title':       '💰 How much could you earn?',
+      'calc.sub':         'You keep 100% of every sale — zero commission. Drag the sliders to see your potential.',
+      'calc.days':        'Cooking days per week',
+      'calc.portions':    'Portions per cooking day',
+      'calc.price':       'Price per portion',
+      'calc.resultLabel': 'You could earn up to',
+      'calc.perMonth':    '/month',
+      'calc.note':        'Estimate only — and every cent is yours. 0% commission, always.',
+
       /* ── index.html ───────────────────────────── */
       'index.heroTag':  '🏘️ Hyperlocal · 1km · 0% commission',
       'index.heroH1':   'Real food,<br/><em>real neighbors.</em>',
@@ -601,6 +635,40 @@
       'trust.s4D': '步行取餐，新鲜到手。无外送员、无运费、无冷掉的饭菜。',
       'trust.s5T': '直接付款，开动',
       'trust.s5D': 'PayNow、PayLah或现金——每一分钱都归邻居所有。',
+
+      /* ── Kitchen-to-table journey (index) ─────── */
+      'journey.t1': '在真实的家庭厨房烹制',
+      'journey.d1': '小锅小灶，家传食谱——绝非工厂流水线。',
+      'journey.t2': '60秒上架',
+      'journey.d2': '邻居拍张照片，定个实在价。',
+      'journey.t3': '一键预订',
+      'journey.d3': '厨师知道你要来——一点也不浪费。',
+      'journey.t4': '转角自取',
+      'journey.d4': '步行几分钟，到家还是热的。',
+      'journey.t5': '开动——收入100%归厨师',
+      'journey.d5': '零佣金，无中间商，只有邻里。',
+
+      /* ── Homemade vs apps (index) ─────────────── */
+      'vs.tag':   '🥗 为什么选家常菜',
+      'vs.h2':    '同样的饥饿，<br/><span style="color:#E3EF26;">更好的答案。</span>',
+      'vs.homeT': '🏡 隔壁的家常菜',
+      'vs.home1': '0%佣金——收入全归厨师',
+      'vs.home2': '真实厨房现做，1公里以内',
+      'vs.home3': '直接支付——PayNow、PayLah或现金',
+      'vs.appT':  '📱 一般外卖平台',
+      'vs.app1':  '对厨师抽成高达约30%',
+      'vs.app2':  '一路颠簸，送到已凉',
+      'vs.app3':  '运费、杂费层层叠加',
+
+      /* ── Income calculator (cook-register) ────── */
+      'calc.title':       '💰 你能赚多少？',
+      'calc.sub':         '每一笔收入100%归你——零佣金。拖动滑块估算你的潜力。',
+      'calc.days':        '每周烹饪天数',
+      'calc.portions':    '每天出售份数',
+      'calc.price':       '每份价格',
+      'calc.resultLabel': '你每月最多可赚',
+      'calc.perMonth':    '/月',
+      'calc.note':        '仅供估算——每一分钱都归你。永远零佣金。',
 
       /* ── index.html ─────────────────────────────── */
       'index.heroTag':  '🏘️ 超本地 · 1公里 · 0%佣金',
