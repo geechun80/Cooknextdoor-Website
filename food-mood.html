@@ -384,6 +384,30 @@
 <!-- ══════════════════════════════════════════════════════════ -->
 <!-- SCREEN 5: RESULTS                                          -->
 <!-- ══════════════════════════════════════════════════════════ -->
+<style>
+  /* ── Food Mood — shareable result ─────────────────────── */
+  .mood-share{max-width:900px;margin:0 auto 26px;background:linear-gradient(135deg,rgba(227,239,38,0.12),rgba(7,102,83,0.16));border:1px solid rgba(227,239,38,0.25);border-radius:18px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;}
+  .mood-share__title{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.05rem;color:#fff;margin-bottom:4px;}
+  .mood-share__sub{font-size:0.83rem;color:rgba(255,255,255,0.6);max-width:430px;line-height:1.5;}
+  .mood-share__btn{background:var(--orange);color:var(--on-lime);border:none;border-radius:100px;padding:13px 26px;font-family:'Poppins',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer;white-space:nowrap;transition:transform 0.2s,box-shadow 0.2s;}
+  .mood-share__btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(227,239,38,0.35);}
+  .share-modal{display:none;position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,0.82);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:20px;}
+  .share-modal.open{display:flex;}
+  .share-modal__card{background:#0C342C;border:1px solid rgba(227,239,38,0.20);border-radius:24px;max-width:400px;width:100%;padding:24px 22px;position:relative;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,0.55);max-height:92vh;overflow-y:auto;}
+  .share-modal__close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.08);border:none;color:rgba(255,255,255,0.6);cursor:pointer;width:32px;height:32px;border-radius:50%;font-size:1rem;}
+  .share-modal__title{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.15rem;color:#fff;margin-bottom:16px;}
+  .share-preview{border-radius:16px;overflow:hidden;margin-bottom:16px;background:rgba(255,255,255,0.04);min-height:180px;display:flex;align-items:center;justify-content:center;}
+  .share-preview img{width:100%;display:block;border-radius:16px;}
+  .share-preview__loading{color:rgba(255,255,255,0.5);font-size:0.85rem;padding:70px 0;}
+  .share-actions{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+  .share-act{flex:1;min-width:96px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:#fff;border-radius:12px;padding:12px 8px;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.8rem;cursor:pointer;transition:background 0.2s;}
+  .share-act:hover{background:rgba(255,255,255,0.15);}
+  .share-act--primary{background:var(--orange);color:var(--on-lime);border-color:var(--orange);}
+  .share-socials{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .share-soc{display:flex;align-items:center;justify-content:center;gap:6px;color:#fff;text-decoration:none;font-family:'Poppins',sans-serif;font-weight:700;font-size:0.8rem;padding:11px;border-radius:12px;transition:transform 0.2s,filter 0.2s;}
+  .share-soc:hover{transform:translateY(-2px);filter:brightness(1.08);}
+  @media(max-width:520px){ .mood-share{flex-direction:column;align-items:stretch;text-align:center;} .mood-share__btn{width:100%;} }
+</style>
 <div id="screen-results">
   <div class="results-header">
     <div class="results-tag">✨ Mood matched</div>
@@ -410,6 +434,15 @@
       <div class="match-score__num" id="matchScore">97%</div>
       <div class="match-score__label">mood match</div>
     </div>
+  </div>
+
+  <!-- Share your food mood -->
+  <div class="mood-share">
+    <div class="mood-share__text">
+      <div class="mood-share__title" data-i18n="mood.shareTitle">📸 Share your food mood</div>
+      <div class="mood-share__sub" data-i18n="mood.shareSub">Post your match to your story or send it to a friend — dare them to find theirs.</div>
+    </div>
+    <button class="mood-share__btn" onclick="openShareModal()" data-i18n="mood.shareBtn">📤 Share my result</button>
   </div>
 
   <!-- Results grid -->
@@ -451,6 +484,30 @@
     </button>
   </div>
 </section>
+
+<!-- Food Mood share modal -->
+<div class="share-modal" id="shareModal" onclick="if(event.target===this)closeShareModal()">
+  <div class="share-modal__card">
+    <button class="share-modal__close" onclick="closeShareModal()" aria-label="Close">✕</button>
+    <div class="share-modal__title" data-i18n="mood.shareModalTitle">Share your food mood 🎉</div>
+    <div class="share-preview">
+      <div class="share-preview__loading" data-i18n="mood.shareLoading">Creating your card…</div>
+      <img id="sharePreviewImg" alt="Your food mood card" style="display:none;"/>
+    </div>
+    <div class="share-actions">
+      <button class="share-act share-act--primary" id="shareNativeBtn" onclick="doWebShare()" data-i18n="mood.shareNative">📤 Share</button>
+      <button class="share-act" onclick="saveShareImage()" data-i18n="mood.shareSave">⬇ Save image</button>
+      <button class="share-act" onclick="copyShareLink(this)" data-i18n="mood.shareCopy">🔗 Copy link</button>
+    </div>
+    <div class="share-socials">
+      <a class="share-soc" id="shareWA" target="_blank" rel="noopener" style="background:#25D366;">💬 WhatsApp</a>
+      <a class="share-soc" id="shareTG" target="_blank" rel="noopener" style="background:#229ED9;">✈️ Telegram</a>
+      <a class="share-soc" id="shareTW" target="_blank" rel="noopener" style="background:#111;">𝕏 Post</a>
+      <a class="share-soc" id="shareFB" target="_blank" rel="noopener" style="background:#1877F2;">f Facebook</a>
+    </div>
+  </div>
+  <canvas id="shareCanvas" width="1080" height="1350" style="display:none;"></canvas>
+</div>
 
 <!-- Donation Modal -->
 <div id="donation-modal" onclick="if(event.target===this)closeDonationModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.78);backdrop-filter:blur(10px);z-index:3000;align-items:center;justify-content:center;padding:20px;">
@@ -873,6 +930,18 @@ function buildResults(data) {
   document.getElementById('matchDesc').textContent  = hero.why + '. ' + hero.cook + ' · ' + hero.dist;
   document.getElementById('matchScore').textContent  = Math.min(99, hero._score) + '%';
 
+  // Capture the result so it can be shared
+  window._moodResult = {
+    moodKey:   (selectedMood && selectedMood.key) || '',
+    moodEmoji: data.emoji,
+    moodLabel: data.label,
+    dishName:  hero.name,
+    dishEmoji: hero.emoji,
+    dishImg:   hero.img,
+    score:     Math.min(99, hero._score),
+    craving:   selectedCravings[0] || ''
+  };
+
   // Results grid
   const grid = document.getElementById('resultsGrid');
   grid.innerHTML = '';
@@ -1058,6 +1127,197 @@ showScreen('intro');
       tick();
     })();
   </script>
+<script>
+/* ── Food Mood — shareable result card ─────────────────────── */
+(function () {
+  window._moodResult = window._moodResult || null;
+  var _cardBlob = null, _cardURL = null;
+
+  function shareURL() {
+    var r = window._moodResult, base = location.origin + location.pathname;
+    return (r && r.moodKey) ? (base + '?m=' + encodeURIComponent(r.moodKey)) : base;
+  }
+  function shareText() {
+    var r = window._moodResult;
+    if (!r) return 'Find your food mood on CookNextDoor!';
+    return "I'm in a " + (r.moodEmoji || '') + ' ' + r.moodLabel + ' mood — CookNextDoor matched me with '
+         + r.dishName + ' (' + r.score + '% match)! What’s yours?';
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  function wrapText(ctx, text, x, y, maxW, lh) {
+    var words = (text || '').split(' '), line = '', lines = [];
+    for (var i = 0; i < words.length; i++) {
+      var test = line + words[i] + ' ';
+      if (ctx.measureText(test).width > maxW && i > 0) { lines.push(line); line = words[i] + ' '; }
+      else line = test;
+    }
+    lines.push(line);
+    var startY = y - (lines.length - 1) * lh / 2;
+    lines.forEach(function (l, idx) { ctx.fillText(l.trim(), x, startY + idx * lh); });
+  }
+
+  // Build a branded 1080×1350 share card. Resolves to a PNG Blob (or null).
+  window._buildShareCard = function () {
+    return new Promise(function (resolve) {
+      var r = window._moodResult;
+      if (!r) { resolve(null); return; }
+      var c = document.getElementById('shareCanvas'), ctx = c.getContext('2d');
+      var W = 1080, H = 1350;
+
+      function render(im) {
+        ctx.clearRect(0, 0, W, H);
+        var g = ctx.createLinearGradient(0, 0, W, H);
+        g.addColorStop(0, '#0C342C'); g.addColorStop(0.5, '#076653'); g.addColorStop(1, '#06231D');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+        var rg = ctx.createRadialGradient(W * 0.32, H * 0.26, 60, W * 0.32, H * 0.26, 640);
+        rg.addColorStop(0, 'rgba(227,239,38,0.16)'); rg.addColorStop(1, 'rgba(227,239,38,0)');
+        ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
+
+        ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+        ctx.fillStyle = '#E3EF26'; ctx.font = '800 48px Poppins, Arial, sans-serif';
+        ctx.fillText('CookNextDoor', W / 2, 116);
+        ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.font = '500 25px Inter, Arial, sans-serif';
+        ctx.fillText('home-cooked food near you', W / 2, 156);
+        ctx.fillStyle = 'rgba(255,255,255,0.65)'; ctx.font = '700 28px Poppins, Arial, sans-serif';
+        ctx.fillText('MY FOOD MOOD', W / 2, 248);
+
+        ctx.font = '150px Arial'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff';
+        ctx.fillText(r.moodEmoji || '🍽️', W / 2, 380);
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillStyle = '#fff'; ctx.font = '800 62px Poppins, Arial, sans-serif';
+        ctx.fillText((r.moodLabel || '') + ' mood', W / 2, 525);
+
+        var cxp = W / 2, cyp = 770, rad = 190;
+        ctx.save(); ctx.beginPath(); ctx.arc(cxp, cyp, rad, 0, Math.PI * 2); ctx.clip();
+        if (im) {
+          var iw = im.naturalWidth || im.width, ih = im.naturalHeight || im.height, side = Math.min(iw, ih);
+          ctx.drawImage(im, (iw - side) / 2, (ih - side) / 2, side, side, cxp - rad, cyp - rad, rad * 2, rad * 2);
+        } else {
+          ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fillRect(cxp - rad, cyp - rad, rad * 2, rad * 2);
+          ctx.fillStyle = '#fff'; ctx.font = '150px Arial'; ctx.textBaseline = 'middle';
+          ctx.fillText(r.dishEmoji || '🍛', cxp, cyp); ctx.textBaseline = 'alphabetic';
+        }
+        ctx.restore();
+        ctx.beginPath(); ctx.arc(cxp, cyp, rad, 0, Math.PI * 2);
+        ctx.lineWidth = 8; ctx.strokeStyle = 'rgba(227,239,38,0.9)'; ctx.stroke();
+
+        var pillW = 230, pillH = 62, pillY = cyp + rad - 30;
+        ctx.fillStyle = '#E3EF26'; roundRect(ctx, W / 2 - pillW / 2, pillY, pillW, pillH, pillH / 2); ctx.fill();
+        ctx.fillStyle = '#06231D'; ctx.font = '800 32px Poppins, Arial, sans-serif'; ctx.textBaseline = 'middle';
+        ctx.fillText((r.score || 0) + '% match', W / 2, pillY + pillH / 2 + 2); ctx.textBaseline = 'alphabetic';
+
+        ctx.fillStyle = '#fff'; ctx.font = '800 50px Poppins, Arial, sans-serif';
+        wrapText(ctx, r.dishName || '', W / 2, 1090, 920, 58);
+
+        ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.font = '600 30px Inter, Arial, sans-serif';
+        ctx.fillText('Find your food mood →', W / 2, 1240);
+        ctx.fillStyle = '#E3EF26'; ctx.font = '700 34px Poppins, Arial, sans-serif';
+        ctx.fillText('cooknextdoor.org', W / 2, 1290);
+      }
+
+      function tryBlob() { try { c.toBlob(function (b) { resolve(b); }, 'image/png'); return true; } catch (e) { return false; } }
+      function finalize(im) {
+        render(im);
+        if (!tryBlob()) {                 // canvas tainted (cross-origin image) → redraw without it
+          if (im) { render(null); if (!tryBlob()) resolve(null); }
+          else resolve(null);
+        }
+      }
+
+      if (r.dishImg) {
+        var im = new Image(); im.crossOrigin = 'anonymous'; var done = false;
+        im.onload = function () { if (!done) { done = true; finalize(im); } };
+        im.onerror = function () { if (!done) { done = true; finalize(null); } };
+        im.src = r.dishImg;
+        setTimeout(function () { if (!done) { done = true; finalize(null); } }, 3500);
+      } else finalize(null);
+    });
+  };
+
+  window.openShareModal = function () {
+    if (!window._moodResult) return;
+    var modal = document.getElementById('shareModal');
+    modal.classList.add('open'); document.body.style.overflow = 'hidden';
+
+    var url = shareURL(), txt = shareText();
+    document.getElementById('shareWA').href = 'https://wa.me/?text=' + encodeURIComponent(txt + ' ' + url);
+    document.getElementById('shareTG').href = 'https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(txt);
+    document.getElementById('shareTW').href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(txt) + '&url=' + encodeURIComponent(url);
+    document.getElementById('shareFB').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url);
+    document.getElementById('shareNativeBtn').style.display = navigator.share ? '' : 'none';
+
+    var img = document.getElementById('sharePreviewImg');
+    var load = document.querySelector('.share-preview__loading');
+    img.style.display = 'none'; if (load) load.style.display = '';
+    window._buildShareCard().then(function (blob) {
+      _cardBlob = blob;
+      if (_cardURL) URL.revokeObjectURL(_cardURL);
+      _cardURL = blob ? URL.createObjectURL(blob) : null;
+      if (_cardURL) { img.src = _cardURL; img.style.display = 'block'; if (load) load.style.display = 'none'; }
+      else if (load) { load.textContent = 'Preview unavailable — you can still share the link.'; }
+    });
+  };
+  window.closeShareModal = function () {
+    document.getElementById('shareModal').classList.remove('open'); document.body.style.overflow = '';
+  };
+
+  window.doWebShare = async function () {
+    var url = shareURL(), txt = shareText();
+    try {
+      var file = null;
+      if (_cardBlob && navigator.canShare) {
+        var f = new File([_cardBlob], 'my-food-mood.png', { type: 'image/png' });
+        if (navigator.canShare({ files: [f] })) file = f;
+      }
+      if (file) await navigator.share({ title: 'My CookNextDoor Food Mood', text: txt, url: url, files: [file] });
+      else if (navigator.share) await navigator.share({ title: 'My CookNextDoor Food Mood', text: txt, url: url });
+    } catch (e) { /* user cancelled or unsupported */ }
+  };
+
+  window.saveShareImage = function () {
+    if (!_cardBlob) return;
+    var a = document.createElement('a');
+    a.href = _cardURL || URL.createObjectURL(_cardBlob);
+    a.download = 'my-food-mood.png';
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+
+  window.copyShareLink = function (btn) {
+    var url = shareURL();
+    var done = function () { var o = btn.textContent; btn.textContent = '✓ Copied!'; setTimeout(function () { btn.textContent = o; }, 1600); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done).catch(done);
+    else { var t = document.createElement('textarea'); t.value = url; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (e) {} t.remove(); done(); }
+  };
+
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeShareModal(); });
+
+  // Recipient banner — when opened from a shared ?m= link
+  (function () {
+    try {
+      var m = new URLSearchParams(location.search).get('m');
+      if (!m || typeof MOOD_DATA === 'undefined' || !MOOD_DATA[m]) return;
+      var d = MOOD_DATA[m], intro = document.getElementById('screen-intro');
+      if (!intro) return;
+      var b = document.createElement('div');
+      b.style.cssText = 'max-width:560px;margin:0 auto 22px;background:rgba(227,239,38,0.12);border:1px solid rgba(227,239,38,0.3);border-radius:16px;padding:14px 20px;color:#fff;font-family:Poppins,sans-serif;font-weight:600;font-size:0.92rem;line-height:1.5;';
+      b.innerHTML = '🎉 A friend is in a ' + d.emoji + ' <b>' + d.label + '</b> mood. Discover <b>your</b> food mood 👇';
+      var anchor = intro.querySelector('.intro-tag');
+      if (anchor) intro.insertBefore(b, anchor); else intro.insertBefore(b, intro.firstChild);
+    } catch (e) {}
+  })();
+})();
+</script>
 <script src="i18n.js"></script>
+<script src="scroll-animations.js" defer></script>
+<script src="app-shell.js" defer></script>
 </body>
 </html>

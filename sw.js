@@ -1,4 +1,4 @@
-const CACHE = 'cnd-v1';
+const CACHE = 'cnd-v2';
 const PRECACHE = [
   '/',
   '/index.html',
