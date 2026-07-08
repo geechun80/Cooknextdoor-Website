@@ -710,8 +710,45 @@
     .onboarding-skip{font-size:0.78rem;color:rgba(255,255,255,0.35);cursor:pointer;border:none;background:none;margin-top:14px;display:inline-block;}
     .onboarding-skip:hover{color:rgba(255,255,255,0.60);}
   </style>
+  <!-- ── Scroll animation enhancements (GSAP progressive enhancement) ── -->
+  <style>
+    /* Scroll progress bar */
+    .scroll-progress {
+      position: fixed; top: 0; left: 0; height: 3px; width: 100%;
+      transform: scaleX(0); transform-origin: 0 50%;
+      background: linear-gradient(90deg, #E3EF26, #9ee27a, #E3EF26);
+      box-shadow: 0 0 12px rgba(227,239,38,0.55);
+      z-index: 300; pointer-events: none; will-change: transform;
+    }
+    /* Subtle logo shrink once scrolled */
+    nav .nav__logo img { transition: transform 0.3s ease; }
+    nav.scrolled .nav__logo img { transform: scale(0.92); }
+
+    /* Firestore food-card staggered entrance */
+    @keyframes cardIn { from { opacity: 0; transform: translateY(28px) scale(0.98); } to { opacity: 1; transform: none; } }
+    .food-card--reveal { animation: cardIn 0.6s cubic-bezier(0.16,0.84,0.44,1) both; }
+
+    /* GPU hint + let GSAP own the timing when it's driving reveals */
+    .fade-up { will-change: transform, opacity; }
+    body.gsap-mode .fade-up { transition: none !important; }
+
+    /* ── Accessibility: honor reduced-motion ─────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+      .fade-up { opacity: 1 !important; transform: none !important; }
+      .scroll-progress { display: none; }
+    }
+  </style>
 </head>
 <body>
+
+<!-- Scroll progress indicator -->
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
 <!-- ── Nav ─────────────────────────────────────────────────── -->
 <nav id="mainNav">
@@ -779,31 +816,31 @@
       </div>
       <div class="hero__visual fade-up" style="transition-delay:0.15s">
         <div class="food-hero-img fhi--tl">
-          <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=300&h=300&fit=crop&q=80" alt="Chicken Biryani" loading="lazy" />
+          <img src="food_images/nasi-lemak.jpg" alt="Nasi Lemak" loading="lazy" />
         </div>
         <div class="food-hero-img fhi--tr">
-          <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=240&h=240&fit=crop&q=80" alt="Fresh Salad Bowl" loading="lazy" />
+          <img src="food_images/penang-asam-laksa.jpg" alt="Penang Asam Laksa" loading="lazy" />
         </div>
         <div class="food-hero-img fhi--main">
-          <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=520&h=520&fit=crop&q=80" alt="Prawn Noodle Soup" loading="lazy" />
+          <img src="food_images/nasi-briyani-mutton.jpg" alt="Nasi Briyani with Mutton" loading="lazy" />
         </div>
         <div class="food-hero-img fhi--bl">
-          <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?w=260&h=260&fit=crop&q=80" alt="Japanese Bento" loading="lazy" />
+          <img src="food_images/prawn-noodles.jpg" alt="Prawn Noodles" loading="lazy" />
         </div>
         <div class="food-hero-img fhi--br">
-          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=320&h=320&fit=crop&q=80" alt="Home Cooked Meal" loading="lazy" />
+          <img src="food_images/singapore-laksa.jpg" alt="Singapore Laksa" loading="lazy" />
         </div>
         <div class="sticker sticker--orange sticker--1" data-i18n="index.sticker1">✦ 0% commission</div>
         <div class="sticker sticker--green  sticker--2" data-i18n="index.sticker2">📍 Within 1 km</div>
         <div class="sticker sticker--white  sticker--3" data-i18n="index.sticker3">🤝 Self pickup</div>
         <div class="food-info-card fic--top">
-          <img class="fic__thumb" src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=84&h=84&fit=crop&q=80" alt="Biryani" loading="lazy" />
-          <div><div class="fic__label" data-i18n="index.ficLabel1">Chicken Biryani</div><div class="fic__sub">0.3 km · Auntie Siti</div></div>
+          <img class="fic__thumb" src="food_images/nasi-briyani-mutton.jpg" alt="Nasi Briyani" loading="lazy" />
+          <div><div class="fic__label" data-i18n="index.ficLabel1">Nasi Briyani</div><div class="fic__sub">0.3 km · Auntie Siti</div></div>
           <div class="fic__price">$5</div>
         </div>
         <div class="food-info-card fic--bot">
-          <img class="fic__thumb" src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=84&h=84&fit=crop&q=80" alt="Prawn Mee" loading="lazy" />
-          <div><div class="fic__label" data-i18n="index.ficLabel2">Prawn Mee</div><div class="fic__sub">0.6 km · Uncle Tan</div></div>
+          <img class="fic__thumb" src="food_images/singapore-laksa.jpg" alt="Singapore Laksa" loading="lazy" />
+          <div><div class="fic__label" data-i18n="index.ficLabel2">Singapore Laksa</div><div class="fic__sub">0.6 km · Uncle Tan</div></div>
           <div class="fic__price">$4</div>
         </div>
       </div>
@@ -1006,18 +1043,18 @@
             <div class="phone-screen">
               <div class="phone-header">📍 Near you — 1 km</div>
               <div class="phone-card">
-                <div class="phone-card__img"><img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=80&h=80&fit=crop&q=80" alt="Biryani" loading="lazy" /></div>
-                <div><div class="phone-card__name">Chicken Biryani</div><div class="phone-card__info">Auntie Siti · 0.3 km</div></div>
+                <div class="phone-card__img"><img src="food_images/nasi-briyani-mutton.jpg" alt="Nasi Briyani" loading="lazy" /></div>
+                <div><div class="phone-card__name">Nasi Briyani</div><div class="phone-card__info">Auntie Siti · 0.3 km</div></div>
                 <div class="phone-card__price">$5</div>
               </div>
               <div class="phone-card">
-                <div class="phone-card__img"><img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=80&h=80&fit=crop&q=80" alt="Prawn Mee" loading="lazy" /></div>
-                <div><div class="phone-card__name">Prawn Mee Soup</div><div class="phone-card__info">Uncle Tan · 0.5 km</div></div>
+                <div class="phone-card__img"><img src="food_images/prawn-noodles.jpg" alt="Prawn Noodles" loading="lazy" /></div>
+                <div><div class="phone-card__name">Prawn Noodles</div><div class="phone-card__info">Uncle Tan · 0.5 km</div></div>
                 <div class="phone-card__price">$4</div>
               </div>
               <div class="phone-card">
-                <div class="phone-card__img"><img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?w=80&h=80&fit=crop&q=80" alt="Rendang" loading="lazy" /></div>
-                <div><div class="phone-card__name">Beef Rendang</div><div class="phone-card__info">Mdm Lim · 0.8 km</div></div>
+                <div class="phone-card__img"><img src="food_images/penang-asam-laksa.jpg" alt="Penang Asam Laksa" loading="lazy" /></div>
+                <div><div class="phone-card__name">Penang Asam Laksa</div><div class="phone-card__info">Mdm Lim · 0.8 km</div></div>
                 <div class="phone-card__price">$6</div>
               </div>
               <button class="phone-btn">Reserve a portion →</button>
@@ -1088,13 +1125,13 @@
     <div class="testimonial__inner">
       <div class="testimonial__visual fade-up">
         <div class="t-img t-img--main">
-          <img src="https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=560&h=560&fit=crop&q=80" alt="Home cooked curry" loading="lazy" />
+          <img src="food_images/nasi-briyani-mutton.jpg" alt="Nasi Briyani" loading="lazy" />
         </div>
         <div class="t-img t-img--sm1">
-          <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=300&h=300&fit=crop&q=80" alt="Food from above" loading="lazy" />
+          <img src="food_images/penang-asam-laksa.jpg" alt="Penang Asam Laksa" loading="lazy" />
         </div>
         <div class="t-img t-img--sm2">
-          <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=260&h=260&fit=crop&q=80" alt="Fresh healthy food" loading="lazy" />
+          <img src="food_images/nasi-lemak.jpg" alt="Nasi Lemak" loading="lazy" />
         </div>
         <div class="t-sold"><div class="t-sold__num">5</div><div class="t-sold__label" data-i18n="index.portionsSold">portions sold</div></div>
         <div class="t-time"><div class="t-time__icon">⚡</div><div><div class="t-time__label" data-i18n="index.soldOut">Sold out in 15 min</div><div class="t-time__sub" data-i18n="index.earningsKept">100% earnings kept</div></div></div>
@@ -1114,6 +1151,133 @@
     </div>
   </div>
 </section>
+
+<!-- ── Community & Social ────────────────────────────────────── -->
+<style>
+  .community { background: rgba(0,0,0,0.15); }
+  .community__head { text-align:center; max-width:620px; margin:0 auto 44px; }
+  .community__live { display:inline-flex; align-items:center; gap:9px; background:rgba(37,211,102,0.10); border:1px solid rgba(37,211,102,0.30); color:#4ade80; font-family:'Poppins',sans-serif; font-weight:600; font-size:0.80rem; padding:7px 16px; border-radius:100px; margin-bottom:18px; }
+  .community__live .dot { width:8px; height:8px; border-radius:50%; background:#4ade80; animation:livePulse 2s infinite; flex-shrink:0; }
+  @keyframes livePulse { 0%{box-shadow:0 0 0 0 rgba(74,222,128,0.6);} 70%{box-shadow:0 0 0 9px rgba(74,222,128,0);} 100%{box-shadow:0 0 0 0 rgba(74,222,128,0);} }
+  .community__head h2 { font-family:'Poppins',sans-serif; font-weight:900; font-size:clamp(1.8rem,3.5vw,2.6rem); color:#fff; margin-bottom:14px; }
+  .community__head h2 span { color:var(--orange); }
+  .community__head p { color:rgba(255,255,255,0.55); }
+  .community__grid { display:grid; grid-template-columns:1.1fr 1fr; gap:32px; align-items:start; }
+  .community__col-label { font-family:'Poppins',sans-serif; font-weight:700; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.45); margin-bottom:16px; }
+  .reel-rail { display:flex; gap:14px; overflow-x:auto; padding-bottom:8px; scroll-snap-type:x mandatory; }
+  .reel-rail::-webkit-scrollbar { height:6px; }
+  .reel-rail::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.15); border-radius:100px; }
+  .reel { position:relative; flex:0 0 148px; aspect-ratio:9/16; border-radius:18px; overflow:hidden; cursor:pointer; scroll-snap-align:start; border:1px solid rgba(255,255,255,0.10); background:#0C342C; transition:transform 0.25s, box-shadow 0.25s; text-decoration:none; }
+  .reel:hover { transform:translateY(-5px); box-shadow:0 18px 40px rgba(0,0,0,0.42); }
+  .reel img { width:100%; height:100%; object-fit:cover; display:block; opacity:0.92; transition:transform 0.45s ease, opacity 0.25s; }
+  .reel:hover img { transform:scale(1.07); opacity:1; }
+  .reel__overlay { position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.78) 0%, transparent 58%); display:flex; align-items:flex-end; padding:12px; }
+  .reel__play { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,0.94); display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(0,0,0,0.35); transition:transform 0.2s; }
+  .reel:hover .reel__play { transform:translate(-50%,-50%) scale(1.1); }
+  .reel__play svg { width:16px; height:16px; fill:#0C342C; margin-left:2px; }
+  .reel__badge { position:absolute; top:10px; left:10px; z-index:2; background:rgba(0,0,0,0.55); color:#fff; font-size:0.6rem; font-family:'Poppins',sans-serif; font-weight:700; padding:3px 8px; border-radius:100px; letter-spacing:0.04em; }
+  .reel__label { position:relative; z-index:2; color:#fff; font-family:'Poppins',sans-serif; font-weight:700; font-size:0.80rem; line-height:1.3; }
+  .reel--cta { display:flex; align-items:center; justify-content:center; background:linear-gradient(150deg,#0C342C,#06231D); }
+  .reel--cta .reel__cta-inner { text-align:center; padding:14px; }
+  .reel--cta .reel__cta-icon { font-size:1.8rem; margin-bottom:8px; }
+  .social-cards { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .social-card { display:flex; align-items:center; gap:12px; padding:15px 16px; border-radius:16px; text-decoration:none; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); transition:transform 0.2s, border-color 0.2s, box-shadow 0.2s; }
+  .social-card:hover { transform:translateY(-3px); border-color:rgba(255,255,255,0.28); box-shadow:0 12px 30px rgba(0,0,0,0.28); }
+  .social-card__icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0; color:#fff; }
+  .social-card__t { font-family:'Poppins',sans-serif; font-weight:700; font-size:0.86rem; color:#fff; }
+  .social-card__s { font-size:0.72rem; color:rgba(255,255,255,0.55); }
+  @media (max-width:860px) { .community__grid { grid-template-columns:1fr; gap:28px; } }
+  @media (max-width:420px) { .social-cards { grid-template-columns:1fr; } }
+</style>
+<section class="section community">
+  <div class="container">
+    <div class="community__head fade-up">
+      <div class="community__live">
+        <span class="dot"></span>
+        <span id="communityLiveText" data-i18n="community.liveDefault">Fresh home-cooked meals added every week</span>
+      </div>
+      <h2 data-i18n-html="community.h2">Loved by the <span>neighbourhood.</span></h2>
+      <p data-i18n="community.sub">See what neighbours are cooking, watch how it works, and follow along for daily home-cooked inspiration.</p>
+    </div>
+    <div class="community__grid">
+      <!-- Short-form video rail -->
+      <div class="community__reels fade-up">
+        <div class="community__col-label" data-i18n="community.watchLabel">▶ Watch the vibe</div>
+        <div class="reel-rail">
+          <div class="reel" onclick="cndOpenVid('Jc9ULZJxG8w')" role="button" tabindex="0" aria-label="Play CookNextDoor intro">
+            <img src="https://img.youtube.com/vi/Jc9ULZJxG8w/maxresdefault.jpg" alt="Meet CookNextDoor" loading="lazy"/>
+            <div class="reel__badge">▶ WATCH</div>
+            <div class="reel__play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="reel__overlay"><div class="reel__label" data-i18n="community.reel1">Meet CookNextDoor</div></div>
+          </div>
+          <div class="reel" onclick="cndOpenVid('Xpl1-o4ZUxI')" role="button" tabindex="0" aria-label="Play guide for eaters">
+            <img src="https://img.youtube.com/vi/Xpl1-o4ZUxI/maxresdefault.jpg" alt="Guide for eaters" loading="lazy"/>
+            <div class="reel__badge">▶ WATCH</div>
+            <div class="reel__play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="reel__overlay"><div class="reel__label" data-i18n="community.reel2">Guide for eaters</div></div>
+          </div>
+          <div class="reel" onclick="cndOpenVid('QD4JWVQBfgI')" role="button" tabindex="0" aria-label="Play guide for cooks">
+            <img src="https://img.youtube.com/vi/QD4JWVQBfgI/maxresdefault.jpg" alt="Guide for cooks" loading="lazy"/>
+            <div class="reel__badge">▶ WATCH</div>
+            <div class="reel__play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="reel__overlay"><div class="reel__label" data-i18n="community.reel3">Guide for cooks</div></div>
+          </div>
+          <a class="reel reel--cta" href="https://www.tiktok.com/@cooknextdoor" target="_blank" rel="noopener" aria-label="More on TikTok">
+            <div class="reel__cta-inner">
+              <div class="reel__cta-icon">🎵</div>
+              <div class="reel__label" data-i18n="community.reelMore">More on TikTok →</div>
+            </div>
+          </a>
+        </div>
+      </div>
+      <!-- Follow the community -->
+      <div class="community__social fade-up">
+        <div class="community__col-label" data-i18n="community.followLabel">✦ Follow the community</div>
+        <div class="social-cards">
+          <a class="social-card" href="https://www.tiktok.com/@cooknextdoor" target="_blank" rel="noopener">
+            <div class="social-card__icon" style="background:#111;">🎵</div>
+            <div><div class="social-card__t">TikTok</div><div class="social-card__s">@cooknextdoor</div></div>
+          </a>
+          <a class="social-card" href="https://www.instagram.com/cooknextdoor_org/" target="_blank" rel="noopener">
+            <div class="social-card__icon" style="background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285AEB 90%);">📸</div>
+            <div><div class="social-card__t">Instagram</div><div class="social-card__s">@cooknextdoor_org</div></div>
+          </a>
+          <a class="social-card" href="https://www.facebook.com/profile.php?id=61570689063836" target="_blank" rel="noopener">
+            <div class="social-card__icon" style="background:#1877F2;">f</div>
+            <div><div class="social-card__t">Facebook</div><div class="social-card__s" data-i18n="community.fbSub">Community page</div></div>
+          </a>
+          <a class="social-card" href="contact.html">
+            <div class="social-card__icon" style="background:#25D366;">💬</div>
+            <div><div class="social-card__t">WhatsApp</div><div class="social-card__s" data-i18n="community.waSub">Join the chat</div></div>
+          </a>
+        </div>
+        <a href="cook-register.html" class="btn btn--orange" style="margin-top:16px;width:100%;justify-content:center;" data-i18n="community.cta">🍳 Share your first dish →</a>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  // Live activity pill — reflects real Firestore cook count when available
+  (function () {
+    var el = document.getElementById('communityLiveText');
+    if (!el) return;
+    var stopAt = Date.now() + 20000;
+    var iv = setInterval(function () {
+      var d = window._allDishes;
+      if (Array.isArray(d)) {
+        var cooks = {};
+        d.forEach(function (x) { if (x && x.cookUid && !x.isDemo) cooks[x.cookUid] = 1; });
+        var n = Object.keys(cooks).length;
+        if (n > 0) {
+          el.textContent = (localStorage.getItem('cnd_lang') === 'zh')
+            ? ('附近有 ' + n + ' 位家厨正在分享美食')
+            : (n + (n === 1 ? ' home cook' : ' home cooks') + ' sharing near you right now');
+        }
+      }
+      if (Date.now() > stopAt) clearInterval(iv);
+    }, 1500);
+  })();
+</script>
 
 <!-- ── Food Mood Feature ─────────────────────────────────────── -->
 <section class="food-mood-promo">
@@ -1429,14 +1593,40 @@
 
 <script>
   document.body.classList.add('js-ready');
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-  }, { threshold: 0.08 });
-  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
 
-  window.addEventListener('scroll', () => {
-    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 10);
-  });
+  // ── Scroll-reveal coordinator ─────────────────────────
+  // GSAP + ScrollTrigger takes over reveals if it loads; otherwise this
+  // lightweight IntersectionObserver fallback runs so content is never stuck hidden.
+  window._cndRevealClaimed = false;
+  window._cndRevealFallback = function () {
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.fade-up:not(.visible)').forEach(el => obs.observe(el));
+  };
+  setTimeout(() => {
+    if (!window._cndRevealClaimed) { window._cndRevealClaimed = true; window._cndRevealFallback(); }
+  }, 1400);
+
+  // ── Scroll progress bar + nav state (rAF, dependency-free) ──
+  (function () {
+    const bar = document.getElementById('scrollProgress');
+    const nav = document.getElementById('mainNav');
+    let ticking = false;
+    function update() {
+      ticking = false;
+      const h = document.documentElement;
+      const scrolled = h.scrollTop || document.body.scrollTop;
+      const height = h.scrollHeight - h.clientHeight;
+      const pct = height > 0 ? scrolled / height : 0;
+      if (bar) bar.style.transform = 'scaleX(' + pct + ')';
+      if (nav) nav.classList.toggle('scrolled', scrolled > 10);
+    }
+    window.addEventListener('scroll', () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    update();
+  })();
 
   function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
 
@@ -1572,6 +1762,82 @@
     }
   };
 </script>
+
+<!-- ── GSAP + ScrollTrigger: professional scroll animations (progressive enhancement) ── -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script defer>
+  window.addEventListener('load', function () {
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || typeof window.gsap === 'undefined' || typeof window.ScrollTrigger === 'undefined') {
+      // GSAP unavailable or motion reduced — the IntersectionObserver fallback handles reveals.
+      return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+    document.body.classList.add('gsap-mode');
+    var EASE = 'power3.out';
+
+    // 1) Take over section reveals — only if the IO fallback hasn't already claimed them.
+    var gsapOwnsReveal = false;
+    if (!window._cndRevealClaimed) {
+      window._cndRevealClaimed = true;
+      gsapOwnsReveal = true;
+      gsap.set('.fade-up', { opacity: 0, y: 40 });
+      ScrollTrigger.batch('.fade-up', {
+        start: 'top 85%',
+        once: true,
+        onEnter: function (batch) {
+          gsap.to(batch, { opacity: 1, y: 0, duration: 0.9, ease: EASE, stagger: 0.15, overwrite: true });
+        }
+      });
+    }
+
+    // 2) Grouped child staggers + count-up — only when GSAP owns the reveal
+    //    (skipping these if the fallback already ran avoids a hide-then-show flash).
+    if (gsapOwnsReveal) {
+      ['.why__card', '.why__stat-card', '.app-feature-card', '.mood-card',
+       '#how-buyers .step-item', '.quote-card'].forEach(function (sel) {
+        var els = gsap.utils.toArray(sel);
+        if (!els.length) return;
+        gsap.from(els, {
+          opacity: 0, y: 30, duration: 0.7, ease: EASE, stagger: 0.12,
+          scrollTrigger: { trigger: els[0].parentNode, start: 'top 85%', once: true }
+        });
+      });
+
+      // Count-up on numeric stats (skips values that are just 0)
+      function countUp(el) {
+        var raw = el.textContent.trim();
+        var m = raw.match(/^([^\d]*)(\d[\d,]*)(.*)$/);
+        if (!m) return;
+        var prefix = m[1], suffix = m[3];
+        var target = parseFloat(m[2].replace(/,/g, ''));
+        if (!target) return;
+        var obj = { v: 0 };
+        gsap.to(obj, {
+          v: target, duration: 1.6, ease: 'power2.out',
+          onUpdate: function () { el.textContent = prefix + Math.round(obj.v).toLocaleString() + suffix; },
+          onComplete: function () { el.textContent = raw; }
+        });
+      }
+      gsap.utils.toArray('.why__stat-val, .hero__metric-val, .t-sold__num').forEach(function (el) {
+        ScrollTrigger.create({ trigger: el, start: 'top 90%', once: true, onEnter: function () { countUp(el); } });
+      });
+    }
+
+    // 3) Subtle hero parallax (desktop only; hero visual is hidden on mobile)
+    if (window.innerWidth > 900) {
+      gsap.to('.hero__visual', {
+        yPercent: -12, ease: 'none',
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+      });
+    }
+
+    ScrollTrigger.refresh();
+  });
+</script>
+
 <!-- Load live dish listings from Firestore (real-time) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -1626,10 +1892,11 @@
 
   // ── Demo fallback cards ───────────────────────────────
   const DEMO = [
-    { dishName:'Chicken Biryani',     cookName:'Auntie Siti', neighborhood:'Tampines', price:'$5', portions:'3 portions', imageUrl:'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&h=340&fit=crop&q=80', isDemo:true },
-    { dishName:'Prawn Mee Soup',      cookName:'Uncle Tan',   neighborhood:'Bedok',    price:'$4', portions:'5 portions', imageUrl:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&h=340&fit=crop&q=80', isDemo:true },
-    { dishName:'Beef Rendang & Rice', cookName:'Mdm Lim',     neighborhood:'Pasir Ris',price:'$6', portions:'2 portions', imageUrl:'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&h=340&fit=crop&q=80', isDemo:true },
-    { dishName:'Japanese Bento Box',  cookName:'Kenji',       neighborhood:'Hougang',  price:'$7', portions:'4 portions', imageUrl:'https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=600&h=340&fit=crop&q=80', isDemo:true },
+    { dishName:'Nasi Briyani with Mutton', cookName:'Auntie Siti', neighborhood:'Tampines',  price:'$6', portions:'3 portions', imageUrl:'food_images/nasi-briyani-mutton.jpg', isDemo:true },
+    { dishName:'Nasi Lemak',               cookName:'Mdm Aishah',  neighborhood:'Bedok',     price:'$4', portions:'5 portions', imageUrl:'food_images/nasi-lemak.jpg', isDemo:true },
+    { dishName:'Penang Asam Laksa',        cookName:'Auntie Mei',  neighborhood:'Pasir Ris', price:'$5', portions:'4 portions', imageUrl:'food_images/penang-asam-laksa.jpg', isDemo:true },
+    { dishName:'Prawn Noodles',            cookName:'Uncle Tan',   neighborhood:'Hougang',   price:'$5', portions:'4 portions', imageUrl:'food_images/prawn-noodles.jpg', isDemo:true },
+    { dishName:'Singapore Laksa',          cookName:'Mdm Lim',     neighborhood:'Serangoon', price:'$5', portions:'3 portions', imageUrl:'food_images/singapore-laksa.jpg', isDemo:true },
   ];
 
   // ── WhatsApp link builder ─────────────────────────────
@@ -1654,7 +1921,7 @@
         window.location.href = dest;
       });
     }
-    const imgSrc  = d.imageUrl || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=340&fit=crop&q=80';
+    const imgSrc  = d.imageUrl || 'food_images/nasi-lemak.jpg';
     const badge   = d.portions ? '<div class="food-card__badge">' + d.portions.replace(' portions','') + ' left</div>' : '';
     const demoTag = d.isDemo   ? '<div style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.55);color:#fff;font-size:0.6rem;font-family:Poppins,sans-serif;font-weight:700;padding:3px 7px;border-radius:100px;letter-spacing:0.05em;">DEMO</div>' : '';
     const dist    = distLabel(d);
@@ -1751,7 +2018,18 @@
     grid.innerHTML = '';
     const isEmpty = filtered.length === 0 && (window._searchTerm || window._activeCategory !== 'All');
     if (noResults) noResults.style.display = isEmpty ? 'block' : 'none';
-    filtered.forEach(d => grid.appendChild(buildCard(d)));
+    // Stagger the cards in on first render only (avoids re-popping on every keystroke)
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const animateCards = !reduceMotion && !window._cardsAnimated;
+    filtered.forEach((d, i) => {
+      const card = buildCard(d);
+      if (animateCards) {
+        card.classList.add('food-card--reveal');
+        card.style.animationDelay = Math.min(i * 0.07, 0.7) + 's';
+      }
+      grid.appendChild(card);
+    });
+    if (animateCards && filtered.length) window._cardsAnimated = true;
   };
 
   // ── Notify subscription ───────────────────────────────
@@ -1810,5 +2088,6 @@
   }
 </script>
 <script src="i18n.js"></script>
+<script src="app-shell.js" defer></script>
 </body>
 </html>
