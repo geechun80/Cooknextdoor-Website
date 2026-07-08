@@ -74,6 +74,26 @@
       'community.waSub':       'Join the chat',
       'community.cta':         '🍳 Share your first dish →',
 
+      /* ── Invite & Earn (index + invite.js) ────── */
+      'invite.tag':      '🎁 Invite & earn',
+      'invite.h2':       'Bring a neighbour,<br/><span>earn your badge.</span>',
+      'invite.p':        'CookNextDoor grows one neighbour at a time. Share your invite link — every person you bring levels up your community badge, from 🌱 Newcomer to 👑 Founding Neighbour.',
+      'invite.btn':      '🎁 Invite your neighbours →',
+      'invite.title':    'Invite your neighbours 🎁',
+      'invite.sub':      'Share CookNextDoor with people nearby. Every neighbour you bring grows the community — and levels up your badge.',
+      'invite.copy':     'Copy',
+      'invite.share':    '📤 Share',
+      'invite.welcomeT': 'A neighbour invited you!',
+      'invite.welcomeS': 'Discover home-cooked food within 1 km — free to browse.',
+
+      /* ── Leaderboard (index) ──────────────────── */
+      'lb.tag':      '🏆 Community stars',
+      'lb.h2':       'This week\'s <span>top cooks.</span>',
+      'lb.sub':      'The neighbours sharing the most home-cooked food near you. Keep a weekly streak going to climb the ranks 🔥',
+      'lb.emptyT':   'The leaderboard is waiting for its first star',
+      'lb.emptyS':   'Be the first cook in your neighbourhood to list a dish — and claim the top spot.',
+      'lb.emptyBtn': '🍳 Start cooking →',
+
       /* ── index.html ───────────────────────────── */
       'index.heroTag':  '🏘️ Hyperlocal · 1km · 0% commission',
       'index.heroH1':   'Real food,<br/><em>real neighbors.</em>',
@@ -531,6 +551,26 @@
       'community.fbSub':       '社区主页',
       'community.waSub':       '加入群聊',
       'community.cta':         '🍳 分享你的第一道菜 →',
+
+      /* ── Invite & Earn (index + invite.js) ────── */
+      'invite.tag':      '🎁 邀请赢徽章',
+      'invite.h2':       '邀请邻居，<br/><span>赢取你的徽章。</span>',
+      'invite.p':        'CookNextDoor 靠邻里一个个加入而成长。分享你的邀请链接——每邀请一位邻居，你的社区徽章就会升级，从 🌱 新人一路到 👑 创始邻居。',
+      'invite.btn':      '🎁 邀请你的邻居 →',
+      'invite.title':    '邀请你的邻居 🎁',
+      'invite.sub':      '把 CookNextDoor 分享给附近的人。每邀请一位邻居，社区就会壮大——你的徽章也会升级。',
+      'invite.copy':     '复制',
+      'invite.share':    '📤 分享',
+      'invite.welcomeT': '一位邻居邀请了你！',
+      'invite.welcomeS': '发现 1 公里内的家常美食——免费浏览。',
+
+      /* ── Leaderboard (index) ──────────────────── */
+      'lb.tag':      '🏆 社区之星',
+      'lb.h2':       '本周<span>顶尖厨师。</span>',
+      'lb.sub':      '在你附近分享最多家常菜的邻居。保持每周连续上架，冲上排行榜 🔥',
+      'lb.emptyT':   '排行榜正在等待第一位明星厨师',
+      'lb.emptyS':   '成为你社区第一位上架菜品的厨师——抢占榜首。',
+      'lb.emptyBtn': '🍳 开始烹饪 →',
 
       /* ── index.html ─────────────────────────────── */
       'index.heroTag':  '🏘️ 超本地 · 1公里 · 0%佣金',
