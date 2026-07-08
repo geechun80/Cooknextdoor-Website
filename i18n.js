@@ -94,6 +94,21 @@
       'lb.emptyS':   'Be the first cook in your neighbourhood to list a dish — and claim the top spot.',
       'lb.emptyBtn': '🍳 Start cooking →',
 
+      /* ── Trust journey (index) ────────────────── */
+      'trust.tag': '🛡️ How trust works',
+      'trust.h2':  'From your neighbour\'s kitchen<br/><span style="color:#E3EF26;">to your table.</span>',
+      'trust.sub': 'Five simple steps keep every meal safe, personal, and commission-free.',
+      'trust.s1T': 'Verified neighbours',
+      'trust.s1D': 'Every cook has a public profile with community ratings and reviews.',
+      'trust.s2T': 'Hygiene & allergies',
+      'trust.s2D': 'Good home-hygiene practices — and you can ask about ingredients before pickup.',
+      'trust.s3T': 'Reserve in a tap',
+      'trust.s3D': 'Reserve your portion instantly — the cook is notified right away.',
+      'trust.s4T': 'Self-pickup, 1 km',
+      'trust.s4D': 'Stroll over and collect it fresh. No drivers, no fees, no cold food.',
+      'trust.s5T': 'Pay direct & enjoy',
+      'trust.s5D': 'PayNow, PayLah or cash — every cent goes to your neighbour.',
+
       /* ── index.html ───────────────────────────── */
       'index.heroTag':  '🏘️ Hyperlocal · 1km · 0% commission',
       'index.heroH1':   'Real food,<br/><em>real neighbors.</em>',
@@ -571,6 +586,21 @@
       'lb.emptyT':   '排行榜正在等待第一位明星厨师',
       'lb.emptyS':   '成为你社区第一位上架菜品的厨师——抢占榜首。',
       'lb.emptyBtn': '🍳 开始烹饪 →',
+
+      /* ── Trust journey (index) ────────────────── */
+      'trust.tag': '🛡️ 信任如何建立',
+      'trust.h2':  '从邻居的厨房，<br/><span style="color:#E3EF26;">到你的餐桌。</span>',
+      'trust.sub': '五个简单步骤，让每一餐都安全、贴心、零佣金。',
+      'trust.s1T': '认证邻居',
+      'trust.s1D': '每位厨师都有公开主页，附社区评分与评价。',
+      'trust.s2T': '卫生与过敏原',
+      'trust.s2D': '良好的家庭卫生习惯，取餐前可随时咨询食材。',
+      'trust.s3T': '一键预订',
+      'trust.s3D': '即时预订您的份额——厨师会立刻收到通知。',
+      'trust.s4T': '1公里内自取',
+      'trust.s4D': '步行取餐，新鲜到手。无外送员、无运费、无冷掉的饭菜。',
+      'trust.s5T': '直接付款，开动',
+      'trust.s5D': 'PayNow、PayLah或现金——每一分钱都归邻居所有。',
 
       /* ── index.html ─────────────────────────────── */
       'index.heroTag':  '🏘️ 超本地 · 1公里 · 0%佣金',
