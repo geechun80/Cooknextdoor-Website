@@ -133,6 +133,11 @@
       'vs.app2':  'Cold by the time it survives the ride',
       'vs.app3':  'Delivery fees and surcharges on top',
 
+      /* ── Interactive kitchen (index) ──────────── */
+      'kitchen.tag': '👩‍🍳 Live from the kitchen',
+      'kitchen.h2':  'Made with love,<br/><span style="color:#E3EF26;">next door.</span>',
+      'kitchen.sub': 'Somewhere within a kilometre of you, dinner is already on the stove.',
+
       /* ── Income calculator (cook-register) ────── */
       'calc.title':       '💰 How much could you earn?',
       'calc.sub':         'You keep 100% of every sale — zero commission. Drag the sliders to see your potential.',
@@ -659,6 +664,11 @@
       'vs.app1':  '对厨师抽成高达约30%',
       'vs.app2':  '一路颠簸，送到已凉',
       'vs.app3':  '运费、杂费层层叠加',
+
+      /* ── Interactive kitchen (index) ──────────── */
+      'kitchen.tag': '👩‍🍳 厨房现场',
+      'kitchen.h2':  '用心烹制，<br/><span style="color:#E3EF26;">就在隔壁。</span>',
+      'kitchen.sub': '离你不到一公里的地方，晚餐已经在炉子上了。',
 
       /* ── Income calculator (cook-register) ────── */
       'calc.title':       '💰 你能赚多少？',
