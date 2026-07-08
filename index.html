@@ -1123,6 +1123,92 @@
   </div>
 </section>
 
+<!-- ── Kitchen-to-Table Journey (Phase 2, Ch 5) ──────────────── -->
+<style>
+  .journey{position:relative;background:#06231D;}
+  .journey__track{position:relative;}
+  .journey__slide{position:relative;height:62vh;min-height:380px;background-size:cover;background-position:center;overflow:hidden;}
+  .journey__slide::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(6,35,29,0.92) 0%,rgba(6,35,29,0.35) 45%,rgba(6,35,29,0.25) 100%);}
+  .journey__caption{position:absolute;left:6%;bottom:8%;z-index:2;max-width:520px;}
+  .journey__num{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:0.2em;color:#E3EF26;margin-bottom:10px;}
+  .journey__caption h3{font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.5rem,3.2vw,2.4rem);color:#fff;line-height:1.15;margin-bottom:10px;}
+  .journey__caption p{font-size:0.95rem;color:rgba(255,255,255,0.72);line-height:1.6;}
+  .journey__dots{display:none;}
+  /* Pinned cinematic mode — enabled by JS on desktop when GSAP is running */
+  .journey--pin .journey__track{height:100vh;overflow:hidden;}
+  .journey--pin .journey__slide{position:absolute;inset:0;height:100%;opacity:0;will-change:opacity,transform;}
+  .journey--pin .journey__slide:first-child{opacity:1;}
+  .journey--pin .journey__dots{display:flex;flex-direction:column;gap:10px;position:absolute;right:26px;top:50%;transform:translateY(-50%);z-index:3;}
+  .journey--pin .journey__dots span{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.25);transition:background .3s,transform .3s;}
+  .journey--pin .journey__dots span.on{background:#E3EF26;transform:scale(1.4);}
+</style>
+<section class="journey" id="journey" aria-label="From kitchen to table">
+  <div class="journey__track">
+    <div class="journey__slide" style="background-image:url('food_images/nasi-briyani-mutton.jpg')">
+      <div class="journey__caption"><div class="journey__num">01 / 05</div><h3 data-i18n="journey.t1">Cooked in a real home kitchen</h3><p data-i18n="journey.d1">Small batches, family recipes — never factory food.</p></div>
+    </div>
+    <div class="journey__slide" style="background-image:url('food_images/nasi-lemak.jpg')">
+      <div class="journey__caption"><div class="journey__num">02 / 05</div><h3 data-i18n="journey.t2">Listed in 60 seconds</h3><p data-i18n="journey.d2">Your neighbour snaps a photo and sets a fair price.</p></div>
+    </div>
+    <div class="journey__slide" style="background-image:url('food_images/singapore-laksa.jpg')">
+      <div class="journey__caption"><div class="journey__num">03 / 05</div><h3 data-i18n="journey.t3">Reserved with one tap</h3><p data-i18n="journey.d3">The cook knows you're coming — nothing gets wasted.</p></div>
+    </div>
+    <div class="journey__slide" style="background-image:url('food_images/prawn-noodles.jpg')">
+      <div class="journey__caption"><div class="journey__num">04 / 05</div><h3 data-i18n="journey.t4">Picked up around the corner</h3><p data-i18n="journey.d4">A short stroll away. Still warm when you get home.</p></div>
+    </div>
+    <div class="journey__slide" style="background-image:url('food_images/penang-asam-laksa.jpg')">
+      <div class="journey__caption"><div class="journey__num">05 / 05</div><h3 data-i18n="journey.t5">Enjoyed — and 100% goes to the cook</h3><p data-i18n="journey.d5">No commission. No middlemen. Just neighbours.</p></div>
+    </div>
+    <div class="journey__dots" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span><span></span></div>
+  </div>
+</section>
+
+<!-- ── Homemade vs Apps (Phase 2, Ch 6) ──────────────────────── -->
+<style>
+  .vs{background:rgba(0,0,0,0.16);}
+  .vs__head{text-align:center;max-width:600px;margin:0 auto 44px;}
+  .vs__grid{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:880px;margin:0 auto;}
+  .vs__side{border-radius:20px;padding:30px 28px;border:1px solid rgba(255,255,255,0.10);}
+  .vs__side--home{background:linear-gradient(160deg,rgba(227,239,38,0.12),rgba(7,102,83,0.18));border-color:rgba(227,239,38,0.3);}
+  .vs__side--app{background:rgba(255,255,255,0.04);}
+  .vs__side h3{font-family:'Poppins',sans-serif;font-weight:800;font-size:1.05rem;color:#fff;margin-bottom:16px;}
+  .vs__side--home h3{color:#E3EF26;}
+  .vs__side li{list-style:none;display:flex;gap:10px;align-items:flex-start;font-size:0.88rem;color:rgba(255,255,255,0.72);line-height:1.55;margin-bottom:12px;}
+  .vs__side li .m{flex-shrink:0;font-weight:800;font-family:'Poppins',sans-serif;}
+  .vs__side--home li .m{color:#E3EF26;}
+  .vs__side--app li{color:rgba(255,255,255,0.45);}
+  .vs__side--app li .m{color:rgba(255,255,255,0.35);}
+  .vs__badge{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:#06231D;border:2px solid #E3EF26;color:#E3EF26;font-family:'Poppins',sans-serif;font-weight:900;font-size:0.85rem;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 8px 30px rgba(0,0,0,0.4);}
+  @media(max-width:700px){.vs__grid{grid-template-columns:1fr;}.vs__badge{display:none;}}
+</style>
+<section class="section vs" id="vs">
+  <div class="container">
+    <div class="vs__head fade-up">
+      <div class="tag" style="margin-bottom:16px;" data-i18n="vs.tag">🥗 Why homemade</div>
+      <h2 style="font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.8rem,3.5vw,2.6rem);color:#fff;" data-i18n-html="vs.h2">Same hunger.<br/><span style="color:#E3EF26;">A better answer.</span></h2>
+    </div>
+    <div class="vs__grid">
+      <div class="vs__side vs__side--home fade-up">
+        <h3 data-i18n="vs.homeT">🏡 Home-cooked next door</h3>
+        <ul>
+          <li><span class="m">✓</span><span data-i18n="vs.home1">0% commission — the cook keeps every cent</span></li>
+          <li><span class="m">✓</span><span data-i18n="vs.home2">Fresh from a real kitchen, within 1 km</span></li>
+          <li><span class="m">✓</span><span data-i18n="vs.home3">Pay direct — PayNow, PayLah or cash</span></li>
+        </ul>
+      </div>
+      <div class="vs__badge" aria-hidden="true">VS</div>
+      <div class="vs__side vs__side--app fade-up">
+        <h3 data-i18n="vs.appT">📱 Typical delivery apps</h3>
+        <ul>
+          <li><span class="m">✗</span><span data-i18n="vs.app1">Up to ~30% platform commissions on cooks</span></li>
+          <li><span class="m">✗</span><span data-i18n="vs.app2">Cold by the time it survives the ride</span></li>
+          <li><span class="m">✗</span><span data-i18n="vs.app3">Delivery fees and surcharges on top</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ── Why ──────────────────────────────────────────────────── -->
 <section class="section why" id="why">
   <div class="container">
@@ -1254,6 +1340,7 @@
   .community__head h2 span { color:var(--orange); }
   .community__head p { color:rgba(255,255,255,0.55); }
   .community__grid { display:grid; grid-template-columns:1.1fr 1fr; gap:32px; align-items:start; }
+  .community__grid > * { min-width:0; }
   .community__col-label { font-family:'Poppins',sans-serif; font-weight:700; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.45); margin-bottom:16px; }
   .reel-rail { display:flex; gap:14px; overflow-x:auto; padding-bottom:8px; scroll-snap-type:x mandatory; }
   .reel-rail::-webkit-scrollbar { height:6px; }
@@ -1811,6 +1898,37 @@
 
   function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
 
+  // ── Phone mockup: auto-cycling screens (Browse → Reserve → Pickup → Review)
+  (function () {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var screen = document.querySelector('.phone-screen');
+    if (!screen) return;
+    var SCREENS = [
+      screen.innerHTML,
+      '<div class="phone-header">🍛 Nasi Briyani</div>' +
+      '<div class="phone-card"><div class="phone-card__img"><img src="food_images/nasi-briyani-mutton.jpg" alt="Nasi Briyani" loading="lazy"/></div>' +
+      '<div><div class="phone-card__name">Nasi Briyani</div><div class="phone-card__info">Auntie Siti · 0.3 km</div></div><div class="phone-card__price">$5</div></div>' +
+      '<div class="phone-card"><div><div class="phone-card__name">Portions</div><div class="phone-card__info">3 left today</div></div><div class="phone-card__price">− 1 +</div></div>' +
+      '<button class="phone-btn">Confirm reservation ✓</button>',
+      '<div class="phone-header">🚶 Pickup at 6:30 PM</div>' +
+      '<div class="phone-card"><div><div class="phone-card__name">Auntie Siti</div><div class="phone-card__info">📍 0.3 km · Tampines St 21</div></div><div class="phone-card__price">🗺️</div></div>' +
+      '<div class="phone-card"><div><div class="phone-card__name">Pay at pickup</div><div class="phone-card__info">PayNow · PayLah · Cash</div></div><div class="phone-card__price">$5</div></div>' +
+      '<button class="phone-btn">I\'m on my way →</button>',
+      '<div class="phone-header">⭐ How was it?</div>' +
+      '<div style="text-align:center;font-size:1.9rem;letter-spacing:6px;color:#F59E0B;padding:18px 0 6px;">★★★★★</div>' +
+      '<div style="text-align:center;font-size:0.78rem;color:rgba(255,255,255,0.55);padding-bottom:10px;">Delicious! Tasted like my grandma\'s.</div>' +
+      '<button class="phone-btn">Submit review</button>'
+    ];
+    screen.style.minHeight = screen.offsetHeight + 'px';
+    screen.style.transition = 'opacity 0.25s ease';
+    var idx = 0;
+    setInterval(function () {
+      idx = (idx + 1) % SCREENS.length;
+      screen.style.opacity = 0;
+      setTimeout(function () { screen.innerHTML = SCREENS[idx]; screen.style.opacity = 1; }, 260);
+    }, 3800);
+  })();
+
   function switchHow(panel, btn) {
     document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.how-tab').forEach(b => b.classList.remove('active--orange','active--green'));
@@ -2043,6 +2161,31 @@
           batch.forEach(function (n, i) { setTimeout(function () { n.classList.add('drawn'); }, i * 220); });
           gsap.from(batch, { opacity: 0, y: 26, duration: 0.7, ease: EASE, stagger: 0.18 });
         }
+      });
+    }
+
+    // 6) Kitchen-to-table journey: pinned cinematic scrub (desktop only;
+    //    mobile & fallbacks keep the stacked layout from CSS)
+    var journey = document.querySelector('.journey');
+    if (journey && window.innerWidth > 700) {
+      journey.classList.add('journey--pin');
+      var jSlides = gsap.utils.toArray('.journey__slide');
+      var jDots = journey.querySelectorAll('.journey__dots span');
+      var jTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: '.journey', start: 'top top',
+          end: '+=' + (jSlides.length * 75) + '%',
+          pin: true, scrub: 0.6, anticipatePin: 1,
+          onUpdate: function (self) {
+            var idx = Math.min(jSlides.length - 1, Math.round(self.progress * (jSlides.length - 1)));
+            jDots.forEach(function (d, i) { d.classList.toggle('on', i === idx); });
+          }
+        }
+      });
+      jSlides.forEach(function (s, i) {
+        if (i === 0) return;
+        jTl.fromTo(s, { opacity: 0, scale: 1.06 }, { opacity: 1, scale: 1, duration: 1, ease: 'none' }, i);
+        jTl.from(s.querySelector('.journey__caption'), { y: 36, opacity: 0, duration: 0.5 }, i + 0.25);
       });
     }
 
