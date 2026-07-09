@@ -920,12 +920,12 @@
       <button class="loc-btn" id="loc-btn" onclick="window.requestLocation()" data-i18n="index.nearMe">📍 Near me</button>
     </div>
     <div class="category-pills fade-up">
-      <button class="pill active" data-i18n="index.pillAll">All</button>
-      <button class="pill" data-i18n="index.pillRice">🍛 Rice &amp; Curry</button>
-      <button class="pill" data-i18n="index.pillNoodles">🍜 Noodles</button>
-      <button class="pill" data-i18n="index.pillHealthy">🥗 Healthy</button>
-      <button class="pill" data-i18n="index.pillBento">🍱 Bento</button>
-      <button class="pill" data-i18n="index.pillDesserts">🍰 Desserts</button>
+      <button class="pill active" data-cat="All" data-i18n="index.pillAll">All</button>
+      <button class="pill" data-cat="rice" data-i18n="index.pillRice">🍛 Rice &amp; Curry</button>
+      <button class="pill" data-cat="noodles" data-i18n="index.pillNoodles">🍜 Noodles</button>
+      <button class="pill" data-cat="healthy" data-i18n="index.pillHealthy">🥗 Healthy</button>
+      <button class="pill" data-cat="bento" data-i18n="index.pillBento">🍱 Bento</button>
+      <button class="pill" data-cat="desserts" data-i18n="index.pillDesserts">🍰 Desserts</button>
     </div>
     <div class="food-grid fade-up" id="food-grid">
       <!-- Skeleton loaders shown while Firestore loads -->
@@ -1070,7 +1070,7 @@
           <div class="how__mockup-phone">
             <div class="phone-notch"></div>
             <div class="phone-screen">
-              <div class="phone-header">📍 Near you — 1 km</div>
+              <div class="phone-header"><svg class="cnd-ico" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> Near you — 1 km</div>
               <div class="phone-card">
                 <div class="phone-card__img"><img src="food_images/nasi-briyani-mutton.jpg" alt="Nasi Briyani" loading="lazy" /></div>
                 <div><div class="phone-card__name">Nasi Briyani</div><div class="phone-card__info">Auntie Siti · 0.3 km</div></div>
@@ -1481,7 +1481,11 @@
   .lb-list{ max-width:640px; margin:0 auto; display:flex; flex-direction:column; gap:10px; }
   .lb-row{ display:flex; align-items:center; gap:14px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:16px; padding:14px 18px; text-decoration:none; transition:transform .2s, border-color .2s, background .2s; }
   .lb-row:hover{ transform:translateY(-3px); border-color:rgba(227,239,38,0.28); background:rgba(255,255,255,0.08); }
-  .lb-rank{ font-size:1.5rem; width:36px; text-align:center; flex-shrink:0; }
+  .lb-rank{ font-size:1.5rem; width:36px; text-align:center; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .lb-medal{ width:24px; height:24px; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .lb-medal--1{ stroke:#E3EF26; }
+  .lb-medal--2{ stroke:rgba(255,255,255,0.80); }
+  .lb-medal--3{ stroke:rgba(255,255,255,0.45); }
   .lb-rank__num{ font-family:'Poppins',sans-serif; font-weight:800; font-size:1rem; color:rgba(255,255,255,0.4); }
   .lb-info{ flex:1; min-width:0; }
   .lb-name{ font-family:'Poppins',sans-serif; font-weight:700; font-size:0.95rem; color:#fff; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
@@ -1998,16 +2002,16 @@
     if (!screen) return;
     var SCREENS = [
       screen.innerHTML,
-      '<div class="phone-header">🍛 Nasi Briyani</div>' +
+      '<div class="phone-header"><svg class="cnd-ico" viewBox="0 0 24 24"><path d="M4 12h16a8 8 0 0 1-16 0Z"/><path d="M8 12a4 4 0 0 1 8 0"/><path d="M12 4v2.5"/></svg> Nasi Briyani</div>' +
       '<div class="phone-card"><div class="phone-card__img"><img src="food_images/nasi-briyani-mutton.jpg" alt="Nasi Briyani" loading="lazy"/></div>' +
       '<div><div class="phone-card__name">Nasi Briyani</div><div class="phone-card__info">Auntie Siti · 0.3 km</div></div><div class="phone-card__price">$5</div></div>' +
       '<div class="phone-card"><div><div class="phone-card__name">Portions</div><div class="phone-card__info">3 left today</div></div><div class="phone-card__price">− 1 +</div></div>' +
       '<button class="phone-btn">Confirm reservation ✓</button>',
-      '<div class="phone-header">🚶 Pickup at 6:30 PM</div>' +
-      '<div class="phone-card"><div><div class="phone-card__name">Auntie Siti</div><div class="phone-card__info">📍 0.3 km · Tampines St 21</div></div><div class="phone-card__price">🗺️</div></div>' +
+      '<div class="phone-header"><svg class="cnd-ico" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> Pickup at 6:30 PM</div>' +
+      '<div class="phone-card"><div><div class="phone-card__name">Auntie Siti</div><div class="phone-card__info">0.3 km · Tampines St 21</div></div><div class="phone-card__price"><svg class="cnd-ico cnd-ico--solo" viewBox="0 0 24 24"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></svg></div></div>' +
       '<div class="phone-card"><div><div class="phone-card__name">Pay at pickup</div><div class="phone-card__info">PayNow · PayLah · Cash</div></div><div class="phone-card__price">$5</div></div>' +
       '<button class="phone-btn">I\'m on my way →</button>',
-      '<div class="phone-header">⭐ How was it?</div>' +
+      '<div class="phone-header"><svg class="cnd-ico" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> How was it?</div>' +
       '<div style="text-align:center;font-size:1.9rem;letter-spacing:6px;color:#F59E0B;padding:18px 0 6px;">★★★★★</div>' +
       '<div style="text-align:center;font-size:0.78rem;color:rgba(255,255,255,0.55);padding-bottom:10px;">Delicious! Tasted like my grandma\'s.</div>' +
       '<button class="phone-btn">Submit review</button>'
@@ -2034,7 +2038,7 @@
     pill.addEventListener('click', () => {
       document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
       pill.classList.add('active');
-      window._activeCategory = pill.textContent.trim();
+      window._activeCategory = pill.dataset.cat || 'All';
       if (typeof window.filterAndRender === 'function') window.filterAndRender();
     });
   });
@@ -2322,11 +2326,11 @@
 
   // ── Category keyword map ──────────────────────────────
   const CATEGORY_MAP = {
-    '🍛 Rice & Curry': ['rice','curry','biryani','rendang','nasi','briyani','fried rice'],
-    '🍜 Noodles':      ['noodle','mee','pasta','laksa','ramen','pho','bee hoon','char kway'],
-    '🥗 Healthy':      ['salad','healthy','vegan','vegetarian','soup','greens','grain','quinoa'],
-    '🍱 Bento':        ['bento','japanese','sushi','onigiri','don','teishoku'],
-    '🍰 Desserts':     ['dessert','cake','sweet','kueh','pudding','pie','tart','kue'],
+    'rice':     ['rice','curry','biryani','rendang','nasi','briyani','fried rice'],
+    'noodles':  ['noodle','mee','pasta','laksa','ramen','pho','bee hoon','char kway'],
+    'healthy':  ['salad','healthy','vegan','vegetarian','soup','greens','grain','quinoa'],
+    'bento':    ['bento','japanese','sushi','onigiri','don','teishoku'],
+    'desserts': ['dessert','cake','sweet','kueh','pudding','pie','tart','kue'],
   };
 
   // ── Haversine distance (km) ───────────────────────────
@@ -2548,7 +2552,8 @@
       return;
     }
     if (empty) empty.style.display = 'none';
-    const medals = ['🥇', '🥈', '🥉'];
+    const medalSvg = (n) => '<svg class="lb-medal lb-medal--' + n + '" viewBox="0 0 24 24"><path d="M7.21 15 2.66 7.14a2 2 0 0 1 .13-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.14a2 2 0 0 1 .14 2.2L16.79 15"/><path d="M11 12 5.12 2.2"/><path d="m13 12 5.88-9.8"/><path d="M8 7h8"/><circle cx="12" cy="17" r="5"/><path d="M12 18v-2h-.5"/></svg>';
+    const medals = [medalSvg(1), medalSvg(2), medalSvg(3)];
     list.innerHTML = rows.map((r, i) => {
       const rank = medals[i] || ('<span class="lb-rank__num">' + (i + 1) + '</span>');
       const stars = r.rating ? '<span class="lb-rating">★ ' + r.rating.toFixed(1) + '</span>' : '';
