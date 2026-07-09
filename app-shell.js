@@ -21,12 +21,20 @@
 
   var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
+  function tabSvg(paths) {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + paths + '</svg>';
+  }
   var TABS = [
-    { icon: '🏠', label: 'Home', href: 'index.html',          file: 'index.html',        hash: '' },
-    { icon: '🍜', label: 'Food', href: 'index.html#listings', file: 'index.html',        hash: '#listings' },
-    { icon: '🎭', label: 'Mood', href: 'food-mood.html',      file: 'food-mood.html',    hash: '' },
-    { icon: '🍳', label: 'Cook', href: 'cook-register.html',  file: 'cook-register.html',hash: '' },
-    { icon: '📰', label: 'News', href: 'news.html',           file: 'news.html',         hash: '' }
+    { icon: tabSvg('<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>'),
+      label: 'Home', href: 'index.html',          file: 'index.html',        hash: '' },
+    { icon: tabSvg('<path d="M4 11h16a8 8 0 0 1-16 0Z"/><path d="M9 8V6"/><path d="M15 8V6"/><path d="M12 7V4"/>'),
+      label: 'Food', href: 'index.html#listings', file: 'index.html',        hash: '#listings' },
+    { icon: tabSvg('<path d="M7 3h10v7a5 5 0 0 1-10 0Z"/><path d="M9.5 7h.01"/><path d="M14.5 7h.01"/><path d="M10 10.5c.7.7 3.3.7 4 0"/><path d="M7 5 4 7"/><path d="m17 5 3 2"/>'),
+      label: 'Mood', href: 'food-mood.html',      file: 'food-mood.html',    hash: '' },
+    { icon: tabSvg('<path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" x2="18" y1="17" y2="17"/>'),
+      label: 'Cook', href: 'cook-register.html',  file: 'cook-register.html',hash: '' },
+    { icon: tabSvg('<path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/>'),
+      label: 'News', href: 'news.html',           file: 'news.html',         hash: '' }
   ];
 
   var CSS =
@@ -38,7 +46,8 @@
     '.cnd-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-decoration:none;' +
       'color:rgba(255,255,255,0.55);font-family:"Poppins",sans-serif;font-weight:600;font-size:0.62rem;letter-spacing:0.02em;' +
       'transition:color 0.2s;position:relative;-webkit-tap-highlight-color:transparent;}' +
-    '.cnd-tab__icon{font-size:1.25rem;line-height:1;transition:transform 0.2s;}' +
+    '.cnd-tab__icon{font-size:1.25rem;line-height:1;transition:transform 0.2s;display:flex;align-items:center;justify-content:center;}' +
+    '.cnd-tab__icon svg{width:21px;height:21px;display:block;}' +
     '.cnd-tab:active .cnd-tab__icon{transform:scale(0.86);}' +
     '.cnd-tab.active{color:#E3EF26;}' +
     '.cnd-tab.active::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:26px;height:3px;border-radius:0 0 3px 3px;background:#E3EF26;}' +
