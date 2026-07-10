@@ -78,6 +78,59 @@ app.get('/api/health', (req, res) => {
 });
 
 // ============================================================================
+// INSTAGRAM FEED (read-only proxy — keeps the Meta access token server-side)
+// ============================================================================
+
+// In-memory cache: Instagram's media_url is a signed CDN link that expires,
+// and we don't want every homepage visit hitting the Graph API directly.
+let igFeedCache = { data: null, fetchedAt: 0 };
+const IG_FEED_TTL_MS = 20 * 60 * 1000; // 20 minutes
+
+app.get('/api/instagram/recent', async (req, res) => {
+  try {
+    const now = Date.now();
+    if (igFeedCache.data && (now - igFeedCache.fetchedAt) < IG_FEED_TTL_MS) {
+      return res.json({ posts: igFeedCache.data, cached: true });
+    }
+
+    const token = process.env.META_PAGE_ACCESS_TOKEN;
+    const acct = process.env.INSTAGRAM_ACCOUNT_ID;
+    if (!token || !acct) {
+      return res.status(503).json({ error: 'Instagram feed not configured' });
+    }
+
+    const limit = Math.min(parseInt(req.query.limit, 10) || 6, 12);
+    const url = `https://graph.facebook.com/v22.0/${acct}/media`;
+    const resp = await fetch(`${url}?fields=id,caption,media_type,media_url,permalink,timestamp&limit=${limit}&access_token=${token}`);
+    const data = await resp.json();
+    if (!resp.ok || !Array.isArray(data.data)) {
+      throw new Error((data.error && data.error.message) || 'Unexpected Instagram API response');
+    }
+
+    const posts = data.data
+      .filter(p => p.media_type === 'IMAGE' || p.media_type === 'CAROUSEL_ALBUM')
+      .map(p => {
+        const caption = (p.caption || '').split('\n')[0].slice(0, 140); // first line as the "hook"
+        return {
+          id: p.id,
+          hook: caption,
+          image: p.media_url,
+          permalink: p.permalink,
+          timestamp: p.timestamp
+        };
+      });
+
+    igFeedCache = { data: posts, fetchedAt: now };
+    res.json({ posts, cached: false });
+  } catch (error) {
+    console.error('Instagram feed error:', error.message);
+    // Serve stale cache rather than an empty feed if Meta's API hiccups
+    if (igFeedCache.data) return res.json({ posts: igFeedCache.data, cached: true, stale: true });
+    res.status(502).json({ error: 'Could not load Instagram feed' });
+  }
+});
+
+// ============================================================================
 // AUTHENTICATION ROUTES
 // ============================================================================
 
