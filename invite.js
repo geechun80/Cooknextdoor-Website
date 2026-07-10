@@ -30,6 +30,16 @@
     appId: "1:924339275437:web:a97a0a2ba0089dd58e824"
   };
 
+  // Real brand marks for the share sheet — kept as literal SVG so the
+  // generic emoji auto-icon system (icons.js) never touches these.
+  var ICO = 'style="vertical-align:-3px;margin-right:4px;flex-shrink:0;" aria-hidden="true"';
+  var CND_BRAND = {
+    whatsapp: '<svg width="15" height="15" viewBox="0 0 24 24" fill="#fff" ' + ICO + '><path d="M12.04 2c-5.52 0-10 4.48-10 10 0 1.76.46 3.48 1.34 5l-1.4 5.14 5.26-1.38A9.96 9.96 0 0 0 12.04 22c5.52 0 10-4.48 10-10S17.56 2 12.04 2Zm5.87 14.24c-.25.7-1.45 1.33-2 1.42-.51.08-1.15.11-1.86-.12-.43-.14-.98-.32-1.68-.63-2.96-1.28-4.89-4.25-5.04-4.45-.15-.2-1.2-1.6-1.2-3.05 0-1.45.76-2.16 1.03-2.46.27-.3.59-.37.79-.37.2 0 .4 0 .57.01.18.01.43-.07.67.51.25.6.85 2.07.92 2.22.07.15.12.33.02.53-.1.2-.15.32-.3.5-.15.18-.31.4-.44.54-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.36 1.46.3.15.48.13.66-.08.18-.2.75-.87.95-1.17.2-.3.4-.25.68-.15.28.1 1.75.83 2.05.98.3.15.5.23.57.35.07.13.07.73-.18 1.43Z"/></svg>',
+    telegram: '<svg width="15" height="15" viewBox="0 0 24 24" fill="#fff" ' + ICO + '><path d="M21.9 4.65 18.6 20.3c-.25 1.13-.9 1.4-1.83.88l-5.06-3.73-2.44 2.35c-.27.27-.5.5-1.02.5l.36-5.16 9.4-8.49c.41-.37-.09-.57-.63-.2L6.1 13.47l-5.1-1.6c-1.1-.35-1.13-1.1.23-1.63L20.5 3.13c.92-.35 1.73.22 1.4 1.52Z"/></svg>',
+    x: '<svg width="14" height="14" viewBox="0 0 24 24" fill="#fff" style="vertical-align:-2px;margin-right:4px;flex-shrink:0;" aria-hidden="true"><path d="M17.75 3h3.07l-6.7 7.66L22 21h-6.17l-4.83-6.32L5.46 21H2.39l7.17-8.19L2 3h6.33l4.37 5.78L17.75 3Zm-1.08 16.17h1.7L7.4 4.73H5.58l11.09 14.44Z"/></svg>',
+    facebook: '<svg width="15" height="15" viewBox="0 0 24 24" fill="#fff" ' + ICO + '><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.884v2.27h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>'
+  };
+
   var TIERS = [
     { n: 0,  badge: '🌱', name: 'Newcomer' },
     { n: 1,  badge: '🤝', name: 'Neighbour' },
@@ -119,10 +129,10 @@
         '<div class="cnd-invite-link"><input id="cndInviteLink" readonly value=""/><button class="cnd-invite-copy" onclick="cndInviteCopy(this)" data-i18n="invite.copy">Copy</button></div>' +
         '<div class="cnd-invite-share">' +
           '<button class="sh-native" id="cndInviteNative" onclick="cndInviteShare(\'native\')" data-i18n="invite.share">📤 Share</button>' +
-          '<a href="#" id="cndShWA" target="_blank" rel="noopener" style="background:#25D366;" onclick="cndInviteShare(\'wa\')">💬 WhatsApp</a>' +
-          '<a href="#" id="cndShTG" target="_blank" rel="noopener" style="background:#229ED9;" onclick="cndInviteShare(\'tg\')">✈️ Telegram</a>' +
-          '<a href="#" id="cndShTW" target="_blank" rel="noopener" style="background:#111;" onclick="cndInviteShare(\'tw\')">𝕏 Post</a>' +
-          '<a href="#" id="cndShFB" target="_blank" rel="noopener" style="background:#1877F2;" onclick="cndInviteShare(\'fb\')">f Facebook</a>' +
+          '<a href="#" id="cndShWA" target="_blank" rel="noopener" style="background:#25D366;" onclick="cndInviteShare(\'wa\')">' + CND_BRAND.whatsapp + ' WhatsApp</a>' +
+          '<a href="#" id="cndShTG" target="_blank" rel="noopener" style="background:#229ED9;" onclick="cndInviteShare(\'tg\')">' + CND_BRAND.telegram + ' Telegram</a>' +
+          '<a href="#" id="cndShTW" target="_blank" rel="noopener" style="background:#111;" onclick="cndInviteShare(\'tw\')">' + CND_BRAND.x + ' Post</a>' +
+          '<a href="#" id="cndShFB" target="_blank" rel="noopener" style="background:#1877F2;" onclick="cndInviteShare(\'fb\')">' + CND_BRAND.facebook + ' Facebook</a>' +
         '</div>' +
         '<div class="cnd-invite-tiers" id="cndInviteTiers"></div>' +
       '</div>';
