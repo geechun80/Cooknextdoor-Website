@@ -72,6 +72,7 @@
       'community.followLabel': '✦ Follow the community',
       'community.fbSub':       'Community page',
       'community.waSub':       'Join the chat',
+      'community.igLabel':     '📸 Fresh from Instagram',
       'community.cta':         '🍳 Share your first dish →',
 
       /* ── Invite & Earn (index + invite.js) ────── */
@@ -604,6 +605,7 @@
       'community.followLabel': '✦ 关注社区',
       'community.fbSub':       '社区主页',
       'community.waSub':       '加入群聊',
+      'community.igLabel':     '📸 Instagram 最新动态',
       'community.cta':         '🍳 分享你的第一道菜 →',
 
       /* ── Invite & Earn (index + invite.js) ────── */
