@@ -252,10 +252,47 @@
     }).catch(function () { /* rules may deny — non-blocking */ });
   }
 
+  // ── UTM traffic-source landing (e.g. ?utm_source=instagram) ──
+  // Closes the loop on the IG agent's tracked CTAs — without this, there was
+  // no way to tell whether any of those posts ever drove a real visit.
+  function handleUtmSource() {
+    var params = new URLSearchParams(location.search);
+    var source = params.get('utm_source');
+    if (!source) return;
+    var medium = params.get('utm_medium') || '';
+    var campaign = params.get('utm_campaign') || '';
+    var content = params.get('utm_content') || '';
+    // Dedup per browser tab session (not permanent) — a reload/scroll-back
+    // shouldn't re-log, but a genuinely new visit later still should.
+    var dedupKey = 'cnd_utm_logged_' + source + '_' + campaign;
+    try { if (sessionStorage.getItem(dedupKey)) return; } catch (e) {}
+    logTrafficSource(source, medium, campaign, content);
+    try { sessionStorage.setItem(dedupKey, '1'); } catch (e) {}
+  }
+
+  // Best-effort log to Firestore `traffic_sources` — silently ignored if
+  // security rules don't allow it yet (same non-blocking pattern as referrals).
+  function logTrafficSource(source, medium, campaign, content) {
+    Promise.all([
+      import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js'),
+      import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
+    ]).then(function (mods) {
+      var appMod = mods[0], fs = mods[1];
+      var apps = appMod.getApps();
+      var app = apps.length ? apps[0] : appMod.initializeApp(FB_CONFIG);
+      var db = fs.getFirestore(app);
+      return fs.addDoc(fs.collection(db, 'traffic_sources'), {
+        source: source, medium: medium, campaign: campaign, content: content,
+        ts: fs.serverTimestamp(), page: location.pathname
+      });
+    }).catch(function () { /* rules may deny — non-blocking */ });
+  }
+
   function onReady(fn) { if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
   onReady(function () {
     injectCSS();
     handleReferral();
+    handleUtmSource();
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') window.closeInviteModal && window.closeInviteModal(); });
 })();
