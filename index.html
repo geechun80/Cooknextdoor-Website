@@ -1787,6 +1787,91 @@
   </div>
 </section>
 
+<!-- ── Kitchen Gear (affiliate) ──────────────────────────────── -->
+<style>
+  .gear{ background: rgba(0,0,0,0.16); }
+  .gear__head{ max-width:600px; margin:0 auto 32px; text-align:center; }
+  .gear__disc{ font-size:0.74rem; color:rgba(255,255,255,0.4); margin-top:10px; }
+  .gear-rail{ display:flex; gap:14px; overflow-x:auto; padding-bottom:10px; scroll-snap-type:x mandatory; }
+  .gear-rail::-webkit-scrollbar{ height:6px; }
+  .gear-rail::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.15); border-radius:100px; }
+  .gear-card{ flex:0 0 168px; scroll-snap-align:start; border-radius:16px; overflow:hidden; background:#0C342C; border:1px solid rgba(227,239,38,0.14); text-decoration:none; transition:transform .25s, box-shadow .25s, border-color .25s; }
+  .gear-card:hover{ transform:translateY(-5px); box-shadow:0 16px 36px rgba(0,0,0,0.4); border-color:rgba(227,239,38,0.35); }
+  .gear-card__img{ height:150px; background:#fff; display:flex; align-items:center; justify-content:center; }
+  .gear-card__img img{ width:100%; height:100%; object-fit:contain; }
+  .gear-card__body{ padding:12px; }
+  .gear-card__name{ font-family:'Poppins',sans-serif; font-weight:700; font-size:0.76rem; color:#fff; line-height:1.3; margin-bottom:6px; min-height:2.6em; }
+  .gear-card__row{ display:flex; align-items:center; justify-content:space-between; gap:6px; }
+  .gear-card__price{ font-family:'Poppins',sans-serif; font-weight:800; font-size:0.8rem; color:#E3EF26; }
+  .gear-card__off{ font-family:'Poppins',sans-serif; font-weight:700; font-size:0.6rem; color:#06231D; background:#E3EF26; padding:2px 7px; border-radius:100px; white-space:nowrap; }
+</style>
+<section class="section gear" id="gear">
+  <div class="container">
+    <div class="gear__head fade-up">
+      <div class="tag" style="margin-bottom:16px;" data-i18n="gear.tag">🎁 Affiliate · TOKIT</div>
+      <h2 style="font-family:'Poppins',sans-serif;font-weight:900;font-size:clamp(1.8rem,3.5vw,2.6rem);color:#fff;margin-bottom:12px;" data-i18n-html="gear.h2">Gear for your<br/><span style="color:#E3EF26;">next home-cooked meal.</span></h2>
+      <p style="color:rgba(255,255,255,0.55);" data-i18n="gear.sub">A few kitchen essentials we like, from our friends at TOKIT. Use code LEONGGEECHUN for 10% off.</p>
+    </div>
+    <div class="gear-rail fade-up" id="gearRail"></div>
+    <div class="gear__disc" data-i18n="gear.disclosure">These are affiliate links — CookNextDoor may earn a commission at no extra cost to you. This is unrelated to your food purchases, which stay commission-free.</div>
+  </div>
+</section>
+<script>
+  (function () {
+    var AFF_URL = 'https://hk.tokit.com/discount/LEONGGEECHUN?ref=oxbuyddq';
+    var TOKIT_PRODUCTS = [
+      { name: 'TOKIT Omni Cook Basic Bundle',        price: 'HK$8,000', img: 'https://hk.tokit.com/cdn/shop/products/TOKITOmniCook_600x.jpg?v=1657765109' },
+      { name: 'TOKIT Omni Cook Premium Bundle',       price: 'HK$8,749', img: 'https://hk.tokit.com/cdn/shop/products/TOKITOmniCook_cbccf685-ef4a-4d08-9ea2-02a66d0b8dc8_600x.jpg?v=1660363745' },
+      { name: 'TOKIT Rice Cooker 1.5 L',              price: 'HK$506',   img: 'https://hk.tokit.com/cdn/shop/files/ricecookergreen_600x.jpg?v=1691480687' },
+      { name: 'TOKIT Air Fryer',                      price: 'HK$814',   img: 'https://hk.tokit.com/cdn/shop/files/TransparentAirFryertokit2_2_600x.jpg?v=1691484117' },
+      { name: 'TOKIT Induction Cooker',               price: 'HK$1,127', img: 'https://hk.tokit.com/cdn/shop/products/3_600x.jpg?v=1673405536' },
+      { name: 'TOKIT Mixing Bowl Set',                price: 'HK$1,329', img: 'https://hk.tokit.com/cdn/shop/products/1_1d0ce4bc-2530-43a8-830c-986f8281311a_600x.png?v=1635321383' },
+      { name: 'Blade Set of TOKIT Omni Cook',         price: 'HK$469',   img: 'https://hk.tokit.com/cdn/shop/products/2_48e88962-f1c6-4019-b39e-5a8a8d525cdd_600x.png?v=1635321378' },
+      { name: 'Measuring Cup of TOKIT Omni Cook',     price: 'HK$119',   img: 'https://hk.tokit.com/cdn/shop/products/1_d77372e7-3ee4-4e91-bd34-20d04bfa5b72_600x.png?v=1635321379' },
+      { name: 'TOKIT Scraper',                        price: 'HK$119',   img: 'https://hk.tokit.com/cdn/shop/products/1_a3612665-3102-46ff-8fc6-7d4c80caa46b_600x.png?v=1635321385' },
+      { name: 'TOKIT Slow-cook Plug',                 price: 'HK$319',   img: 'https://hk.tokit.com/cdn/shop/products/1_e3659495-ebf6-4b38-bcc7-4a4fce4b6e65_600x.png?v=1635321388' }
+    ];
+    var rail = document.getElementById('gearRail');
+    if (!rail) return;
+    TOKIT_PRODUCTS.forEach(function (p) {
+      var a = document.createElement('a');
+      a.className = 'gear-card';
+      a.href = AFF_URL;
+      a.target = '_blank';
+      a.rel = 'noopener sponsored';
+      a.setAttribute('aria-label', p.name + ' — affiliate link');
+      a.innerHTML =
+        '<div class="gear-card__img"><img src="' + p.img + '" alt="' + p.name + '"/></div>' +
+        '<div class="gear-card__body"><div class="gear-card__name">' + p.name + '</div>' +
+        '<div class="gear-card__row"><span class="gear-card__price">' + p.price + '</span><span class="gear-card__off">10% off</span></div></div>';
+      a.addEventListener('click', function () {
+        try {
+          Promise.all([
+            import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js'),
+            import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
+          ]).then(function (mods) {
+            var appMod = mods[0], fs = mods[1];
+            var apps = appMod.getApps();
+            var fbApp = apps.length ? apps[0] : appMod.initializeApp({
+              apiKey: "AIzaSyC3ynPUHYnPQ9msdLJNB5l-gM--CogrXAQ",
+              authDomain: "cooknextdoor-eedbe.firebaseapp.com",
+              projectId: "cooknextdoor-eedbe",
+              storageBucket: "cooknextdoor-eedbe.firebasestorage.app",
+              messagingSenderId: "924339275437",
+              appId: "1:924339275437:web:a97a0a2ba0089dd58e824"
+            });
+            var db = fs.getFirestore(fbApp);
+            return fs.addDoc(fs.collection(db, 'affiliate_clicks'), {
+              product: p.name, partner: 'tokit', page: location.pathname, ts: fs.serverTimestamp()
+            });
+          }).catch(function () {});
+        } catch (e) {}
+      });
+      rail.appendChild(a);
+    });
+  })();
+</script>
+
 <!-- ── Final CTA ─────────────────────────────────────────────── -->
 <section class="final-cta">
   <div class="final-cta__inner container">
