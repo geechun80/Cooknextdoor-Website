@@ -115,7 +115,10 @@
     .photo-upload__title{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.88rem;color:var(--dark);margin-bottom:3px;}
     .photo-upload__sub{font-size:0.74rem;color:var(--muted);}
     .photo-previews{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
-    .photo-thumb{width:80px;height:80px;border-radius:10px;object-fit:cover;border:2.5px solid var(--green);}
+    .photo-thumb{width:80px;height:80px;border-radius:10px;object-fit:cover;border:2.5px solid var(--green);display:block;}
+    .photo-thumb-wrap{position:relative;display:inline-block;}
+    .photo-thumb-remove{position:absolute;top:-7px;right:-7px;width:22px;height:22px;border-radius:50%;background:#EF4444;color:#fff;border:2px solid #fff;font-size:0.7rem;line-height:1;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;}
+    .photo-thumb-remove:hover{background:#DC2626;}
 
     /* ── Selected photo preview ── */
     .selected-preview{display:none;border:2px solid var(--green);border-radius:14px;overflow:hidden;margin-top:14px;}
@@ -319,11 +322,12 @@
       <!-- Upload panel -->
       <div id="uploadPanel">
         <label class="photo-upload">
-          <input type="file" accept="image/*" multiple onchange="addThumb(this,'foodThumbs')"/>
+          <input type="file" accept="image/jpeg,image/png,image/webp" id="dishPhotoInput" onchange="handleDishPhotoUpload(this)"/>
           <div class="photo-upload__icon">🍽️</div>
           <div class="photo-upload__title">Upload your food photo</div>
-          <div class="photo-upload__sub">Use natural light for best results · JPG or PNG · Max 5 MB</div>
+          <div class="photo-upload__sub">JPG, PNG or WEBP · Max 5 MB · Recommended 1200 × 1200 px</div>
         </label>
+        <div id="dishPhotoError" style="display:none;background:#FDECEA;border:1px solid #F5C6CB;color:#991B1B;font-size:0.8rem;border-radius:10px;padding:10px 14px;margin-top:10px;"></div>
         <div class="photo-previews" id="foodThumbs"></div>
         <div style="background:#F9F9F9;border-radius:12px;padding:14px;margin-top:12px;display:flex;flex-direction:column;gap:8px;">
           <div style="font-size:0.78rem;color:var(--muted);display:flex;gap:8px;"><span>☀️</span><span>Take photos in natural daylight — avoid flash or harsh shadows</span></div>
@@ -783,6 +787,9 @@ function resetDishForm() {
   const thumbs = document.getElementById('foodThumbs');
   if (thumbs) thumbs.innerHTML = '';
   window._uploadedPhotoDataUrl = null;
+  const dishInp = document.getElementById('dishPhotoInput');
+  if (dishInp) dishInp.value = '';
+  if (typeof dishPhotoError === 'function') dishPhotoError(null);
   clearSelection();
   buildLibGrid(currentFilter);
 }
@@ -934,20 +941,95 @@ function updateYtPreview() {
 function toggleChip(el)    { el.classList.toggle('selected'); }
 function togglePayChip(el) { el.classList.toggle('selected'); }
 
-function addThumb(input, containerId) {
-  const container = document.getElementById(containerId);
-  Array.from(input.files).forEach(file => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      window._uploadedPhotoDataUrl = e.target.result; // track for review
-      const img = document.createElement('img');
-      img.src = e.target.result;
-      img.className = 'photo-thumb';
-      container.appendChild(img);
+/* ── Photo validation + compression ── */
+const CND_PHOTO_MAX_BYTES = 5 * 1024 * 1024; // 5 MB
+const CND_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+function cndValidatePhoto(file) {
+  if (!CND_PHOTO_TYPES.includes(file.type)) {
+    return 'Unsupported file type — please upload a JPG, PNG, or WEBP photo.';
+  }
+  if (file.size > CND_PHOTO_MAX_BYTES) {
+    return 'That photo is ' + (file.size / (1024 * 1024)).toFixed(1) + ' MB — please upload a photo under 5 MB.';
+  }
+  return null;
+}
+
+function cndDownscalePhoto(file, maxSide, quality) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale = Math.min(1, (maxSide || 1000) / Math.max(img.width, img.height));
+      const w = Math.max(1, Math.round(img.width * scale));
+      const h = Math.max(1, Math.round(img.height * scale));
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(c.toDataURL('image/jpeg', quality || 0.82));
     };
-    reader.readAsDataURL(file);
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Could not read that photo — the file may be corrupted or in an unsupported format.')); };
+    img.src = url;
   });
 }
+
+// Downscales + compresses; if the encoded result is still large, retries at lower quality.
+async function cndProcessPhoto(file, maxSide, quality) {
+  let q = quality || 0.82;
+  let dataUrl = await cndDownscalePhoto(file, maxSide, q);
+  let tries = 0;
+  while (dataUrl.length > 700000 && tries < 3) {
+    q = Math.max(0.4, q - 0.15);
+    dataUrl = await cndDownscalePhoto(file, maxSide, q);
+    tries++;
+  }
+  return dataUrl;
+}
+
+function dishPhotoError(msg) {
+  const err = document.getElementById('dishPhotoError');
+  if (!err) return;
+  if (!msg) { err.style.display = 'none'; err.textContent = ''; return; }
+  err.textContent = '⚠️ ' + msg;
+  err.style.display = 'block';
+}
+
+function renderDishPhotoThumb(dataUrl) {
+  const container = document.getElementById('foodThumbs');
+  container.innerHTML =
+    '<div class="photo-thumb-wrap"><img class="photo-thumb" src="' + dataUrl + '"/>' +
+    '<button type="button" class="photo-thumb-remove" onclick="removeDishPhoto()" aria-label="Remove photo">✕</button></div>';
+}
+
+window.removeDishPhoto = function() {
+  window._uploadedPhotoDataUrl = null;
+  const container = document.getElementById('foodThumbs');
+  if (container) container.innerHTML = '';
+  const input = document.getElementById('dishPhotoInput');
+  if (input) input.value = '';
+  dishPhotoError(null);
+};
+
+window.handleDishPhotoUpload = async function(input) {
+  const file = input.files[0];
+  if (!file) return;
+  dishPhotoError(null);
+  const err = cndValidatePhoto(file);
+  if (err) { dishPhotoError(err); input.value = ''; return; }
+
+  const container = document.getElementById('foodThumbs');
+  container.innerHTML = '<div style="font-size:0.78rem;color:var(--muted);margin-top:6px;">⏳ Processing photo…</div>';
+  try {
+    const dataUrl = await cndProcessPhoto(file, 1000, 0.82);
+    window._uploadedPhotoDataUrl = dataUrl;
+    renderDishPhotoThumb(dataUrl);
+  } catch (e) {
+    dishPhotoError(e.message || 'Could not process that photo. Please try a different file.');
+    container.innerHTML = '';
+    input.value = '';
+  }
+};
 
 /* ── Step navigation ── */
 let currentStep = 1;

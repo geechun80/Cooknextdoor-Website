@@ -185,7 +185,10 @@
   <!-- Hero -->
   <div class="cook-hero">
     <div class="cook-hero-inner">
-      <div class="cook-avatar" id="prof-avatar">👨‍🍳</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;">
+        <div class="cook-avatar" id="prof-avatar">👨‍🍳</div>
+        <button type="button" id="prof-remove-photo-btn" onclick="removeCookAvatar()" style="display:none;background:none;border:none;color:rgba(255,255,255,0.45);font-family:'Poppins',sans-serif;font-size:0.68rem;text-decoration:underline;cursor:pointer;padding:0;">Remove photo</button>
+      </div>
       <div class="cook-hero-info">
         <div class="cook-name" id="prof-name">–</div>
         <div class="cook-location">📍 <span id="prof-neighborhood">–</span> · <span data-i18n="profile.within1km">within 1 km pickup</span></div>
@@ -310,7 +313,21 @@
     <input type="text" id="edit-portions" data-i18n-ph="profile.editPortionsPh" placeholder="e.g. 2 portions" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.9rem;padding:10px 14px;box-sizing:border-box;margin-bottom:14px;"/>
 
     <label data-i18n="profile.editPriceLabel" style="display:block;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.55);margin-bottom:5px;">Price per portion</label>
-    <input type="text" id="edit-price" data-i18n-ph="profile.editPricePh" placeholder="e.g. $4" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.9rem;padding:10px 14px;box-sizing:border-box;margin-bottom:22px;"/>
+    <input type="text" id="edit-price" data-i18n-ph="profile.editPricePh" placeholder="e.g. $4" style="width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.18);border-radius:10px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.9rem;padding:10px 14px;box-sizing:border-box;margin-bottom:14px;"/>
+
+    <label style="display:block;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.55);margin-bottom:5px;">Dish photo</label>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <div id="edit-dish-photo-preview" style="width:64px;height:64px;border-radius:12px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;overflow:hidden;">🍽️</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="display:inline-block;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);color:#fff;font-family:'Poppins',sans-serif;font-weight:600;font-size:0.76rem;padding:7px 12px;border-radius:100px;cursor:pointer;width:fit-content;">
+          📷 Change photo
+          <input type="file" id="edit-dish-photo-input" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="handleEditDishPhoto(this)"/>
+        </label>
+        <button type="button" id="edit-dish-photo-remove" onclick="removeEditDishPhoto()" style="display:none;background:none;border:none;color:rgba(255,255,255,0.45);font-family:'Poppins',sans-serif;font-size:0.72rem;text-decoration:underline;cursor:pointer;padding:0;width:fit-content;">Remove photo</button>
+      </div>
+    </div>
+    <div style="font-size:0.7rem;color:rgba(255,255,255,0.35);margin-bottom:6px;">JPG, PNG or WEBP · Max 5 MB</div>
+    <div id="edit-dish-photo-error" style="display:none;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#FCA5A5;font-size:0.76rem;border-radius:10px;padding:8px 12px;margin-bottom:14px;"></div>
 
     <button id="edit-save-btn" data-i18n="profile.saveChanges" onclick="saveEditDish()" style="width:100%;background:#E3EF26;color:#06231D;font-family:'Poppins',sans-serif;font-weight:800;font-size:0.95rem;padding:14px;border:none;border-radius:14px;cursor:pointer;">Save changes</button>
   </div>
@@ -360,7 +377,7 @@
 <!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, getDoc, updateDoc, collection, query, where, orderBy, getDocs, addDoc, serverTimestamp }
+  import { getFirestore, doc, getDoc, updateDoc, deleteField, collection, query, where, orderBy, getDocs, addDoc, serverTimestamp }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getAuth, onAuthStateChanged }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -486,6 +503,8 @@
         avatarEl.addEventListener('click', () => inp.click());
         inp.addEventListener('change', () => changeCookAvatar(inp, user.uid));
       }
+      const removeBtn = document.getElementById('prof-remove-photo-btn');
+      if (removeBtn) removeBtn.style.display = data.profilePhotoUrl ? 'block' : 'none';
     }
 
     // Downscale an image file to a compact JPEG data-URL. This project has no
@@ -511,11 +530,40 @@
     }
     window._cndDownscale = cndDownscalePhoto;
 
+    const CND_PHOTO_MAX_BYTES = 5 * 1024 * 1024; // 5 MB
+    const CND_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+    function cndValidatePhoto(file) {
+      if (!CND_PHOTO_TYPES.includes(file.type)) {
+        return 'Unsupported file type — please upload a JPG, PNG, or WEBP photo.';
+      }
+      if (file.size > CND_PHOTO_MAX_BYTES) {
+        return 'That photo is ' + (file.size / (1024 * 1024)).toFixed(1) + ' MB — please upload a photo under 5 MB.';
+      }
+      return null;
+    }
+    // Expose to code outside renderProfile's scope (e.g. the dish-edit modal handlers below)
+    window.cndValidatePhoto = cndValidatePhoto;
+    window.cndDownscalePhoto = cndDownscalePhoto;
+
+    // Re-attaches the camera badge + hidden file input to a freshly-replaced avatar element.
+    function reattachAvatarEditable(avatarEl, cookUid) {
+      const newBadge = document.createElement('div');
+      newBadge.style.cssText = 'position:absolute;bottom:2px;right:2px;background:#E3EF26;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;border:2px solid #fff;pointer-events:none;';
+      newBadge.textContent = '📷';
+      avatarEl.appendChild(newBadge);
+      const newInp = document.createElement('input');
+      newInp.type = 'file'; newInp.accept = 'image/jpeg,image/png,image/webp'; newInp.style.display = 'none'; newInp.id = 'avatar-file-input';
+      avatarEl.appendChild(newInp);
+      newInp.addEventListener('change', () => changeCookAvatar(newInp, cookUid));
+    }
+
     async function changeCookAvatar(input, cookUid) {
       const file = input.files[0];
       if (!file) return;
       const avatarEl = document.getElementById('prof-avatar');
       const badge = avatarEl?.querySelector('div');
+      const err = cndValidatePhoto(file);
+      if (err) { alert(err); input.value = ''; return; }
       if (badge) badge.textContent = '⏳';
       try {
         const url = await cndDownscalePhoto(file, 384, 0.82);
@@ -528,22 +576,37 @@
             avatarEl.innerHTML = '';
             avatarEl.appendChild(img);
           }
-          // Re-add badge
-          const newBadge = document.createElement('div');
-          newBadge.style.cssText = 'position:absolute;bottom:2px;right:2px;background:#E3EF26;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;border:2px solid #fff;pointer-events:none;';
-          newBadge.textContent = '📷';
-          avatarEl.appendChild(newBadge);
-          const newInp = document.createElement('input');
-          newInp.type = 'file'; newInp.accept = 'image/*'; newInp.style.display = 'none'; newInp.id = 'avatar-file-input';
-          avatarEl.appendChild(newInp);
-          newInp.addEventListener('change', () => changeCookAvatar(newInp, cookUid));
+          reattachAvatarEditable(avatarEl, cookUid);
         }
+        const removeBtn = document.getElementById('prof-remove-photo-btn');
+        if (removeBtn) removeBtn.style.display = 'block';
       } catch (e) {
         console.error('Avatar upload error:', e);
         if (badge) badge.textContent = '📷';
-        alert('Photo upload failed. Please try again.');
+        alert(e.message || 'Photo upload failed. Please try again.');
       }
     }
+
+    window.removeCookAvatar = async function(evt) {
+      if (evt) evt.stopPropagation();
+      if (!confirm('Remove your profile photo? It will revert to the default icon.')) return;
+      const removeBtn = document.getElementById('prof-remove-photo-btn');
+      const avatarEl = document.getElementById('prof-avatar');
+      const cookUid = uid;
+      try {
+        await updateDoc(doc(db, 'cooks', cookUid), { profilePhotoUrl: deleteField() });
+        if (avatarEl) {
+          avatarEl.innerHTML = '👨‍🍳';
+          avatarEl.style.position = 'relative';
+          reattachAvatarEditable(avatarEl, cookUid);
+        }
+        if (removeBtn) removeBtn.style.display = 'none';
+        toast('✅ Profile photo removed.');
+      } catch (e) {
+        console.error('Avatar remove error:', e);
+        toast('❌ Could not remove photo — try again.');
+      }
+    };
 
     onAuthStateChanged(auth, user => {
       if (user && user.uid === uid) {
@@ -703,9 +766,10 @@
             ${_t('profile.reserveWABtn', '💬 Reserve via WhatsApp')}</a>`;
         }
 
-        const imgHtml = dish.imageUrl
-          ? `<img style="width:90px;height:90px;border-radius:14px;object-fit:cover;flex-shrink:0;" src="${escHtml(dish.imageUrl)}" alt="${escHtml(dish.dishName)}" onerror="this.style.display='none'"/>`
-          : `<div style="width:90px;height:90px;border-radius:14px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;">🍽️</div>`;
+        const imgInner = dish.imageUrl
+          ? `<img style="width:100%;height:100%;object-fit:cover;" src="${escHtml(dish.imageUrl)}" alt="${escHtml(dish.dishName)}" onerror="this.style.display='none'"/>`
+          : `🍽️`;
+        const imgHtml = `<div id="dish-photo-${dishId}" style="width:90px;height:90px;border-radius:14px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;overflow:hidden;">${imgInner}</div>`;
 
         const row = document.createElement('div');
         row.id = 'dish-row-' + dishId;
@@ -936,6 +1000,9 @@
     }
   };
 
+  // undefined = photo unchanged, null = photo removed, string = new photo data-URL
+  window._editDishPhotoUrl = undefined;
+
   window.openEditDish = function(dishId) {
     const dish = (window._dishMap || {})[dishId];
     if (!dish) return;
@@ -945,11 +1012,56 @@
     document.getElementById('edit-pickup-time').value = dish.pickupTime || '';
     document.getElementById('edit-portions').value    = dish.portions || '';
     document.getElementById('edit-price').value       = dish.price || '';
+
+    window._editDishPhotoUrl = undefined;
+    document.getElementById('edit-dish-photo-input').value = '';
+    document.getElementById('edit-dish-photo-error').style.display = 'none';
+    const preview    = document.getElementById('edit-dish-photo-preview');
+    const removeBtn  = document.getElementById('edit-dish-photo-remove');
+    if (dish.imageUrl) {
+      preview.innerHTML = '<img src="' + dish.imageUrl + '" style="width:100%;height:100%;object-fit:cover;"/>';
+      removeBtn.style.display = 'block';
+    } else {
+      preview.innerHTML = '🍽️';
+      removeBtn.style.display = 'none';
+    }
+
     document.getElementById('edit-dish-modal').style.display = 'flex';
   };
 
   window.closeEditDish = function() {
     document.getElementById('edit-dish-modal').style.display = 'none';
+  };
+
+  window.handleEditDishPhoto = async function(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const errEl = document.getElementById('edit-dish-photo-error');
+    errEl.style.display = 'none';
+    const err = cndValidatePhoto(file);
+    if (err) { errEl.textContent = '⚠️ ' + err; errEl.style.display = 'block'; input.value = ''; return; }
+
+    const preview = document.getElementById('edit-dish-photo-preview');
+    preview.innerHTML = '⏳';
+    try {
+      const url = await cndDownscalePhoto(file, 1000, 0.82);
+      window._editDishPhotoUrl = url;
+      preview.innerHTML = '<img src="' + url + '" style="width:100%;height:100%;object-fit:cover;"/>';
+      document.getElementById('edit-dish-photo-remove').style.display = 'block';
+    } catch (e) {
+      errEl.textContent = '⚠️ ' + (e.message || 'Could not read that photo — please try a different file.');
+      errEl.style.display = 'block';
+      preview.innerHTML = '🍽️';
+      input.value = '';
+    }
+  };
+
+  window.removeEditDishPhoto = function() {
+    window._editDishPhotoUrl = null;
+    document.getElementById('edit-dish-photo-preview').innerHTML = '🍽️';
+    document.getElementById('edit-dish-photo-remove').style.display = 'none';
+    document.getElementById('edit-dish-photo-input').value = '';
+    document.getElementById('edit-dish-photo-error').style.display = 'none';
   };
 
   window.saveEditDish = async function() {
@@ -963,12 +1075,25 @@
     const _t = (k, fb) => (window.CND_i18n && window.CND_i18n.t ? window.CND_i18n.t(k) : fb);
     saveBtn.textContent = _t('profile.saving', 'Saving…'); saveBtn.disabled = true;
     try {
-      await updateDoc(doc(db, 'dishes', dishId), {
-        pickupDate: newDate, pickupTime: newTime, portions: newPort, price: newPrice
-      });
+      const updates = { pickupDate: newDate, pickupTime: newTime, portions: newPort, price: newPrice };
+      let newImageUrl; // undefined = unchanged
+      if (window._editDishPhotoUrl === null) { updates.imageUrl = deleteField(); newImageUrl = null; }
+      else if (typeof window._editDishPhotoUrl === 'string') { updates.imageUrl = window._editDishPhotoUrl; newImageUrl = window._editDishPhotoUrl; }
+
+      await updateDoc(doc(db, 'dishes', dishId), updates);
       // Update local cache so re-opening the modal shows fresh values
       if (window._dishMap && window._dishMap[dishId]) {
         Object.assign(window._dishMap[dishId], { pickupDate: newDate, pickupTime: newTime, portions: newPort, price: newPrice });
+        if (newImageUrl !== undefined) window._dishMap[dishId].imageUrl = newImageUrl || undefined;
+      }
+      // Refresh the photo in the DOM immediately, if it changed
+      if (newImageUrl !== undefined) {
+        const photoEl = document.getElementById('dish-photo-' + dishId);
+        if (photoEl) {
+          photoEl.innerHTML = newImageUrl
+            ? '<img src="' + newImageUrl + '" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\'"/>'
+            : '🍽️';
+        }
       }
       // Refresh the card DOM immediately
       const dateStr    = fmtDate(newDate);

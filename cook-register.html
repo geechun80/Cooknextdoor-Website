@@ -110,7 +110,11 @@
     .photo-upload__title{font-family:'Poppins',sans-serif;font-weight:700;font-size:0.88rem;color:var(--dark);margin-bottom:3px;}
     .photo-upload__sub{font-size:0.75rem;color:var(--muted);}
     .photo-previews{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
-    .photo-thumb{width:72px;height:72px;border-radius:10px;object-fit:cover;border:2px solid var(--green);}
+    .photo-thumb{width:72px;height:72px;border-radius:10px;object-fit:cover;border:2px solid var(--green);display:block;}
+    .photo-thumb-wrap{position:relative;display:inline-block;}
+    .photo-thumb-remove{position:absolute;top:-7px;right:-7px;width:22px;height:22px;border-radius:50%;background:#EF4444;color:#fff;border:2px solid #fff;font-size:0.7rem;line-height:1;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;}
+    .photo-thumb-remove:hover{background:#DC2626;}
+    .photo-error{display:none;background:#FDECEA;border:1px solid #F5C6CB;color:#991B1B;font-size:0.8rem;border-radius:10px;padding:10px 14px;margin-top:10px;}
 
     /* Days available (legacy chips — kept for safety) */
     .days-grid{display:flex;gap:8px;flex-wrap:wrap;}
@@ -598,22 +602,24 @@
     <div class="form-group">
       <label>Your chef / profile photo</label>
       <label class="photo-upload">
-        <input type="file" accept="image/*" onchange="uploadChefPhoto(this)"/>
+        <input type="file" accept="image/jpeg,image/png,image/webp" id="chefPhotoInput" onchange="uploadChefPhoto(this)"/>
         <div class="photo-upload__icon">🤳</div>
         <div class="photo-upload__title">Upload your photo</div>
-        <div class="photo-upload__sub">Smiling face works best · JPG or PNG · Max 5 MB</div>
+        <div class="photo-upload__sub">Smiling face works best · JPG, PNG or WEBP · Max 5 MB · Recommended 1200 × 1200 px</div>
       </label>
+      <div class="photo-error" id="chefPhotoError"></div>
       <div class="photo-previews" id="chefThumbs"></div>
     </div>
 
     <div class="form-group">
       <label>Food photos <span class="opt">add up to 5 photos of your dishes</span></label>
       <label class="photo-upload">
-        <input type="file" accept="image/*" multiple onchange="addThumb(this,'foodThumbs')"/>
+        <input type="file" accept="image/jpeg,image/png,image/webp" multiple onchange="addFoodThumbs(this)"/>
         <div class="photo-upload__icon">🍽️</div>
         <div class="photo-upload__title">Upload food photos</div>
-        <div class="photo-upload__sub">Natural light photos are best · JPG or PNG · Max 5 MB each</div>
+        <div class="photo-upload__sub">Natural light photos are best · JPG, PNG or WEBP · Max 5 MB each · Recommended 1200 × 1200 px</div>
       </label>
+      <div class="photo-error" id="foodPhotoError"></div>
       <div class="photo-previews" id="foodThumbs"></div>
     </div>
 
@@ -779,25 +785,55 @@
     });
   }
 
+  const CND_PHOTO_MAX_BYTES = 5 * 1024 * 1024; // 5 MB
+  const CND_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+  function cndValidatePhoto(file) {
+    if (!CND_PHOTO_TYPES.includes(file.type)) {
+      return 'Unsupported file type — please upload a JPG, PNG, or WEBP photo.';
+    }
+    if (file.size > CND_PHOTO_MAX_BYTES) {
+      return 'That photo is ' + (file.size / (1024 * 1024)).toFixed(1) + ' MB — please upload a photo under 5 MB.';
+    }
+    return null;
+  }
+  function cndPhotoError(elId, msg) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    if (!msg) { el.style.display = 'none'; el.textContent = ''; return; }
+    el.textContent = '⚠️ ' + msg;
+    el.style.display = 'block';
+  }
+  // Expose to the non-module <script> block below (module scope doesn't leak to window by default)
+  window.cndValidatePhoto = cndValidatePhoto;
+  window.cndDownscalePhoto = cndDownscalePhoto;
+  window.cndPhotoError = cndPhotoError;
+
   window._chefPhotoUrl = null;
+  window.removeChefPhoto = function() {
+    window._chefPhotoUrl = null;
+    document.getElementById('chefThumbs').innerHTML = '';
+    document.getElementById('chefPhotoInput').value = '';
+    cndPhotoError('chefPhotoError', null);
+  };
   window.uploadChefPhoto = async function(input) {
-    addThumb(input, 'chefThumbs');
     const file = input.files[0];
     if (!file) return;
-    const status = document.createElement('div');
-    status.id = 'chef-upload-status';
-    status.style.cssText = 'font-size:0.75rem;color:#666;margin-top:6px;';
-    status.textContent = '⏳ Processing photo…';
-    const existing = document.getElementById('chef-upload-status');
-    if (existing) existing.remove();
-    document.getElementById('chefThumbs').after(status);
+    cndPhotoError('chefPhotoError', null);
+    const err = cndValidatePhoto(file);
+    if (err) { cndPhotoError('chefPhotoError', err); input.value = ''; return; }
+
+    const thumbs = document.getElementById('chefThumbs');
+    thumbs.innerHTML = '<div style="font-size:0.75rem;color:#666;">⏳ Processing photo…</div>';
     try {
       window._chefPhotoUrl = await cndDownscalePhoto(file, 384, 0.82);
-      status.textContent = '✓ Photo ready';
-      status.style.color = '#076653';
+      thumbs.innerHTML =
+        '<div class="photo-thumb-wrap"><img class="photo-thumb" src="' + window._chefPhotoUrl + '"/>' +
+        '<button type="button" class="photo-thumb-remove" onclick="removeChefPhoto()" aria-label="Remove photo">✕</button></div>';
     } catch(e) {
       console.warn('Chef photo processing:', e.message);
-      status.textContent = 'Could not read photo — profile will save without it';
+      cndPhotoError('chefPhotoError', e.message || 'Could not read that photo — please try a different file.');
+      thumbs.innerHTML = '';
+      input.value = '';
     }
   };
 
@@ -1532,19 +1568,48 @@
     }
   }
 
-function addThumb(input, containerId) {
-    const container = document.getElementById(containerId);
-    Array.from(input.files).forEach(file => {
-      const reader = new FileReader();
-      reader.onload = e => {
-        const img = document.createElement('img');
-        img.src = e.target.result;
-        img.className = 'photo-thumb';
-        container.appendChild(img);
-      };
-      reader.readAsDataURL(file);
-    });
+window._foodPhotos = []; // [{ id, dataUrl }]
+
+function renderFoodThumbs() {
+  const container = document.getElementById('foodThumbs');
+  container.innerHTML = window._foodPhotos.map(p =>
+    '<div class="photo-thumb-wrap"><img class="photo-thumb" src="' + p.dataUrl + '"/>' +
+    '<button type="button" class="photo-thumb-remove" onclick="removeFoodThumb(' + p.id + ')" aria-label="Remove photo">✕</button></div>'
+  ).join('');
+}
+
+window.removeFoodThumb = function(id) {
+  window._foodPhotos = window._foodPhotos.filter(p => p.id !== id);
+  renderFoodThumbs();
+};
+
+let _foodPhotoSeq = 0;
+window.addFoodThumbs = async function(input) {
+  cndPhotoError('foodPhotoError', null);
+  const files = Array.from(input.files);
+  const remaining = 5 - window._foodPhotos.length;
+  if (remaining <= 0) {
+    cndPhotoError('foodPhotoError', 'You can add up to 5 food photos.');
+    input.value = '';
+    return;
   }
+  const toProcess = files.slice(0, remaining);
+  if (files.length > remaining) {
+    cndPhotoError('foodPhotoError', 'Only ' + remaining + ' more photo' + (remaining === 1 ? '' : 's') + ' can be added (max 5 total).');
+  }
+  for (const file of toProcess) {
+    const err = cndValidatePhoto(file);
+    if (err) { cndPhotoError('foodPhotoError', err); continue; }
+    try {
+      const dataUrl = await cndDownscalePhoto(file, 1000, 0.82);
+      window._foodPhotos.push({ id: ++_foodPhotoSeq, dataUrl });
+      renderFoodThumbs();
+    } catch (e) {
+      cndPhotoError('foodPhotoError', e.message || 'Could not read that photo — please try a different file.');
+    }
+  }
+  input.value = '';
+};
 
   function playVideo(el) {
     el.innerHTML = '<iframe width="100%" height="100%" src="https://www.youtube.com/embed/QD4JWVQBfgI?autoplay=1" frameborder="0" allow="autoplay;encrypted-media" allowfullscreen style="position:absolute;inset:0;border-radius:16px;"></iframe>';
