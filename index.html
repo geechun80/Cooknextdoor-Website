@@ -2436,7 +2436,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import {
     initializeFirestore, persistentLocalCache, getFirestore,
-    collection, query, orderBy, limit, onSnapshot,
+    collection, query, where, orderBy, limit, onSnapshot,
     addDoc, serverTimestamp, getDocs
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -2638,7 +2638,7 @@
   function loadDishes() {
     const grid  = document.getElementById('food-grid');
     const empty = document.getElementById('food-empty');
-    const q     = query(collection(db, 'dishes'), orderBy('createdAt', 'desc'), limit(12));
+    const q     = query(collection(db, 'dishes'), where('isActive', '==', true), orderBy('createdAt', 'desc'), limit(12));
     onSnapshot(q, (snap) => {
       grid.innerHTML = '';
       if (snap.empty) {
@@ -2703,7 +2703,7 @@
   }
   async function loadLeaderboard() {
     try {
-      const snap = await getDocs(query(collection(db, 'dishes'), orderBy('createdAt', 'desc'), limit(200)));
+      const snap = await getDocs(query(collection(db, 'dishes'), where('isActive', '==', true), orderBy('createdAt', 'desc'), limit(200)));
       const cooks = {};
       snap.forEach(doc => {
         const d = doc.data();
