@@ -1,8 +1,63 @@
 {
-  "lastUpdated": "2026-08-16T13:41:07.575Z",
+  "lastUpdated": "2026-08-18T01:59:47.873Z",
   "totalArticles": 60,
-  "newThisRun": 8,
+  "newThisRun": 5,
   "articles": [
+    {
+      "id": "the-private-home-dining-spots-singapore-foodies-are-obsessed",
+      "title": "The private home dining spots Singapore foodies are obsessed with - Time Out Worldwide",
+      "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxPV3AwTDdOekg4VWpTUmRFTVFxN2RpMkNwQmMyZ2MxczBtME5mUXpMeVh3WUVIS2h3YkhsS3cwVm54YTY2N1JzMVFyTkdsSmhIVTJhWTdLa0E4cTNRMXZ0cXBLTmxuU2wyX01INDBYU1NuaVo5ZWx4UEFhME9RdV95bGdJUDJuMjJJNjAwdGFLX0o4Q05ZM3hKdUNxTjZNbDFDWnI2bW5CSjQ1c3lo?oc=5",
+      "source": "Time Out Worldwide",
+      "publishedAt": "2026-03-23T07:00:00.000Z",
+      "summary": "<a href=\"https://news.google.com/rss/articles/CBMirAFBVV95cUxPV3AwTDdOekg4VWpTUmRFTVFxN2RpMkNwQmMyZ2MxczBtME5mUXpMeVh3WUVIS2h3YkhsS3cwVm54YTY2N1JzMVFyTkdsSmhIVTJhWTdLa0E4cTNRMXZ0cXBLTmxuU2wyX01INDBYU1NuaVo5ZWx4UEFhME9RdV",
+      "category": "business",
+      "region": "SG",
+      "postedToFB": false
+    },
+    {
+      "id": "how-banana-pudding-became-a-singapore-food-trend-the-straits",
+      "title": "How banana pudding became a Singapore food trend - The Straits Times",
+      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPUmN5MGxpdWp1UU53eWxfQkRmSzlBSVFBUXRFbmszWnJuT0t5SzdjZ2JvV1NhMkJ1b1V3REs2YWtDMURsQlVhX2d2aU5DQnhDcmtkd2J5UHpVVnpNa2lWcVlKTUx2OHlqVFhpQUFvTVdNOFBvTnRyMXZ4cW1aRTc2RUdfaVVzU3Y3bzU1RHJGMVM?oc=5",
+      "source": "The Straits Times",
+      "publishedAt": "2025-10-25T07:00:00.000Z",
+      "summary": "<a href=\"https://news.google.com/rss/articles/CBMikAFBVV95cUxPUmN5MGxpdWp1UU53eWxfQkRmSzlBSVFBUXRFbmszWnJuT0t5SzdjZ2JvV1NhMkJ1b1V3REs2YWtDMURsQlVhX2d2aU5DQnhDcmtkd2J5UHpVVnpNa2lWcVlKTUx2OHlqVFhpQUFvTVdNOFBvTnRyMXZ4cW1aRT",
+      "category": "business",
+      "region": "SG",
+      "postedToFB": false
+    },
+    {
+      "id": "6-years-after-retrenchment-selling-fab-cinnamon-rolls-from-h",
+      "title": "6 Years After Retrenchment & Selling Fab Cinnamon Rolls From Home, Baker Opens Shop In East Coast - 8days.sg",
+      "url": "https://news.google.com/rss/articles/CBMizgFBVV95cUxPUWdRLVc1bTdTY2VZQTRDZVRhcjdaZFpSWkUtb29DNFYyQll6SmdRSk9OZ0l1NmtJcXN0dW56NDBDQWdEcjhDaVRaaGU3ajAzeExRcFpEWFZHOXFKbW9tLXNNSTBHTUY2M2hWSDdlZGxPN3NfRFRYUzd2YzdXOTdIQWpzekl4MXZnMkRHX1F3RzdLd0NQdlJXOUU0Q2c1a0pUNTRRV2RwNDJiX05aUGVJWEd5RGZPZzJUcldpcVNFZ3BnX3NRNEowbTh2TDdJQQ?oc=5",
+      "source": "8days.sg",
+      "publishedAt": "2025-04-11T07:00:00.000Z",
+      "summary": "<a href=\"https://news.google.com/rss/articles/CBMizgFBVV95cUxPUWdRLVc1bTdTY2VZQTRDZVRhcjdaZFpSWkUtb29DNFYyQll6SmdRSk9OZ0l1NmtJcXN0dW56NDBDQWdEcjhDaVRaaGU3ajAzeExRcFpEWFZHOXFKbW9tLXNNSTBHTUY2M2hWSDdlZGxPN3NfRFRYUzd2YzdXOT",
+      "category": "business",
+      "region": "SG",
+      "postedToFB": false
+    },
+    {
+      "id": "10-home-bakers-in-singapore-for-customised-birthday-cakes-wi",
+      "title": "10 Home Bakers In Singapore For Customised Birthday Cakes With One-Of-A-Kind Designs - TheSmartLocal",
+      "url": "https://news.google.com/rss/articles/CBMiVkFVX3lxTE9na3h1WFF5SG1NRXVQaGRvZWNKUk5GM0tJZTZWU1dqRFQtVUNWRGpZZXptMTVnVjhlMEdzQkk0ZkFGc1E5MllNbVFicFFEd2pNcUJ0ak9R0gFbQVVfeXFMTkd3ZEJrNlNKUHdEWWtqbGJTbHVDaXRzQ0xkZFd1NXdNRWNnMlcwelRaYzAzVWRuNnk2MHVLNWRBeFIzYzI3clE2dFB2a2lESi1IV2d3ZnRBQVlGZw?oc=5",
+      "source": "TheSmartLocal",
+      "publishedAt": "2019-05-26T07:00:00.000Z",
+      "summary": "<a href=\"https://news.google.com/rss/articles/CBMiVkFVX3lxTE9na3h1WFF5SG1NRXVQaGRvZWNKUk5GM0tJZTZWU1dqRFQtVUNWRGpZZXptMTVnVjhlMEdzQkk0ZkFGc1E5MllNbVFicFFEd2pNcUJ0ak9R0gFbQVVfeXFMTkd3ZEJrNlNKUHdEWWtqbGJTbHVDaXRzQ0xkZFd1NX",
+      "category": "business",
+      "region": "SG",
+      "postedToFB": false
+    },
+    {
+      "id": "food-banks-exemplify-spirit-of-caring-sharing-the-star",
+      "title": "Food banks exemplify spirit of caring, sharing - The Star",
+      "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxNblNwcG12cHdsVVF5Z0dvN3BGVEpQUVhoUVRSZHk5NkdmaXhDYXJvaWtGRVFhVmJTVERVWWFWRkxOTlF1Rm5NdVpubkpCa3RiOE1pVHJubmJ4N2ZrdXd3WnZQeGRXbndISks0bHl5YzR0ZWMtcno3bjMtalBSeEFDVGtuREVZSjAyY1V2MlBORVYxbDN0clBKZDl3ODYzWGJGU3c?oc=5",
+      "source": "The Star",
+      "publishedAt": "2025-10-11T07:00:00.000Z",
+      "summary": "<a href=\"https://news.google.com/rss/articles/CBMiogFBVV95cUxNblNwcG12cHdsVVF5Z0dvN3BGVEpQUVhoUVRSZHk5NkdmaXhDYXJvaWtGRVFhVmJTVERVWWFWRkxOTlF1Rm5NdVpubkpCa3RiOE1pVHJubmJ4N2ZrdXd3WnZQeGRXbndISks0bHl5YzR0ZWMtcno3bjMtalBSeE",
+      "category": "charity",
+      "region": "MY",
+      "postedToFB": false
+    },
     {
       "id": "new-grading-system-fairer-as-it-rewards-consistent-food-safe",
       "title": "New grading system fairer as it rewards consistent food safety practices, say F&B operators - The Straits Times",
@@ -604,61 +659,6 @@
       "source": "CNA",
       "publishedAt": "2021-08-18T07:00:00.000Z",
       "summary": "<a href=\"https://news.google.com/rss/articles/CBMipAFBVV95cUxNN0JpWVoybGZ4UXNvUGVDb1hJbEI0TWlaenhYeFA4cVVwekxsMm1Yd0Jwb2xhZ2M1MlYteVk0bHl0QVV4NjJSeEpZRUhOWUlaNUZZSWl5VC11YkhnZnRRcVN5a2J2b2k3eUZxQ3RnVVNXMjJRSDJZOUJVZ2VRdj",
-      "category": "business",
-      "region": "SG",
-      "postedToFB": false
-    },
-    {
-      "id": "why-home-based-f-b-operators-such-as-private-dining-and-home",
-      "title": "Why Home-Based F&B Operators Such As Private Dining and Home Cafes Should Be Registered As A Business - DollarsAndSense.sg",
-      "url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxPY1hRQjIzUWlsTmhmajhNWm9fZ1prTUhZc0Znb0xmeE9tN3RCRE5FaXVZY01Zc1lQQnFVaE91OXJUbVRONWloZ25SNGdod1dzamhqYTd4eDhVMDd4S285V3FRdFJ0a1QzSVRBYjlDSkFPWGFmajRtb01lOUhyMnRnN1JHVUxzVzVQU3lrYzdGZGdiejBUV2xLZWhzUDZhVURYUkZzQjk0Z1E2WXhZcUtzcnoxdzVwSFlUY3FqZFNrR2RsaXNTa2FWRmxHSk92QlQ4ZGtr?oc=5",
-      "source": "DollarsAndSense.sg",
-      "publishedAt": "2025-08-22T07:00:00.000Z",
-      "summary": "<a href=\"https://news.google.com/rss/articles/CBMi0wFBVV95cUxPY1hRQjIzUWlsTmhmajhNWm9fZ1prTUhZc0Znb0xmeE9tN3RCRE5FaXVZY01Zc1lQQnFVaE91OXJUbVRONWloZ25SNGdod1dzamhqYTd4eDhVMDd4S285V3FRdFJ0a1QzSVRBYjlDSkFPWGFmajRtb01lOUhyMn",
-      "category": "business",
-      "region": "SG",
-      "postedToFB": false
-    },
-    {
-      "id": "too-busy-to-cook-these-15-home-caterers-in-klang-valley-can-",
-      "title": "Too Busy To Cook? These 15 Home Caterers In Klang Valley Can Deliver Fresh Meals Every Day - says.com",
-      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5pTjFkOGhlMDJaQkpZWVlqUGF3cTNGWEpfV3ljN201Q0ZMWHJjSzZDU1IyclZ1ZmQxZW94dkpfOGhGMnlGaS1tSlNPQ3hld29DQkREQXdmdXU4LWZ2TnVnbU5uWHBsU0l4c3gtaXRB?oc=5",
-      "source": "says.com",
-      "publishedAt": "2021-06-11T07:00:00.000Z",
-      "summary": "<a href=\"https://news.google.com/rss/articles/CBMibkFVX3lxTE5pTjFkOGhlMDJaQkpZWVlqUGF3cTNGWEpfV3ljN201Q0ZMWHJjSzZDU1IyclZ1ZmQxZW94dkpfOGhGMnlGaS1tSlNPQ3hld29DQkREQXdmdXU4LWZ2TnVnbU5uWHBsU0l4c3gtaXRB?oc=5\" target=\"_blank\"",
-      "category": "business",
-      "region": "MY",
-      "postedToFB": false
-    },
-    {
-      "id": "food-truck-fridays-return-this-week-to-maple-ridge-maple-rid",
-      "title": "Food Truck Fridays return this week to Maple Ridge - Maple Ridge News",
-      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPVXNKRV8zanlsQlpkS2R0MUVQSUlfQU5sNnpFejQxRGZKekM0bVliQjNwNVgxSjNGX3JFXzl3TTF2WnhwcFZ2WExLeVZSVi1HWXVjM3VYbGNJbXp1MkUwSHd1Um4tM2RyeXNWYUtiTGZtMnREN2NpcGFHQ1NXdVMzWXIxN2M0ZUNIRUFnUl9PRlVKYzQ?oc=5",
-      "source": "Maple Ridge News",
-      "publishedAt": "2026-06-09T18:47:34.000Z",
-      "summary": "<a href=\"https://news.google.com/rss/articles/CBMikwFBVV95cUxPVXNKRV8zanlsQlpkS2R0MUVQSUlfQU5sNnpFejQxRGZKekM0bVliQjNwNVgxSjNGX3JFXzl3TTF2WnhwcFZ2WExLeVZSVi1HWXVjM3VYbGNJbXp1MkUwSHd1Um4tM2RyeXNWYUtiTGZtMnREN2NpcGFHQ1NXdV",
-      "category": "charity",
-      "region": "MY",
-      "postedToFB": false
-    },
-    {
-      "id": "-feels-like-cheating-the-system-home-based-food-businesses-s",
-      "title": "‘Feels like cheating the system’: Home-based food businesses stir debate among restaurant owners - The Straits Times",
-      "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxQVUhIR2hmZU1JZjRaYnkzbllQMUdTSUNtUUI1dFVaTDR2d2FCQlhHNE1IQldicjEyZXNIQWY1RWttcEJOWVE3amplc3h2WWxISEtIeV9mVUxXYmZKUGFqSWV3U0I2QjNOcUNDdXI5MDc0OXE2c19xSnA5MGxhUER6eVJ0a0k4YWdPbXpHalFIaUVDNVAwZHVNekYtS1NLOWpXVU1EZkFraW02Wll6T1hIX2pSMzVsOUZBclU1S1QxcWNUbzZoQmlkMWNrdzE?oc=5",
-      "source": "The Straits Times",
-      "publishedAt": "2025-06-16T07:00:00.000Z",
-      "summary": "<a href=\"https://news.google.com/rss/articles/CBMizAFBVV95cUxQVUhIR2hmZU1JZjRaYnkzbllQMUdTSUNtUUI1dFVaTDR2d2FCQlhHNE1IQldicjEyZXNIQWY1RWttcEJOWVE3amplc3h2WWxISEtIeV9mVUxXYmZKUGFqSWV3U0I2QjNOcUNDdXI5MDc0OXE2c19xSnA5MGxhUE",
-      "category": "business",
-      "region": "SG",
-      "postedToFB": false
-    },
-    {
-      "id": "unfair-if-home-based-diners-who-could-earn-1mil-annually-exe",
-      "title": "Unfair If Home-Based Diners Who Could Earn $1Mil Annually Exempt From Govt Regulations, Says Ex-Restaurateur - 8days",
-      "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxQd21LSFR1cHhJbEE0alNFaXluSmtOaHVPNFVVNDdPNV9kVExhYWJwend3X2JRek9CcmptemkxS3Boc2FiUVotOXJuM2tKX3lCQl9jSGFjUDFRd2hMNkYwODIwTU5lbHh1cGRyVndnejJlTURkaFZyU1NuVlN2eWYteEtqMUlEYUNtWkR1bWw2aG9PNWM2TGNSWTlHLUxUMWdLdzN5cnJaVnpfeV9KMWJrY1hqLUZWUV9XU1VSVlNiaGM4UldnUk0zSGJ6TmRhREpHVFZ6RA?oc=5",
-      "source": "8days",
-      "publishedAt": "2025-07-17T07:00:00.000Z",
-      "summary": "<a href=\"https://news.google.com/rss/articles/CBMi1AFBVV95cUxQd21LSFR1cHhJbEE0alNFaXluSmtOaHVPNFVVNDdPNV9kVExhYWJwend3X2JRek9CcmptemkxS3Boc2FiUVotOXJuM2tKX3lCQl9jSGFjUDFRd2hMNkYwODIwTU5lbHh1cGRyVndnejJlTURkaFZyU1NuVlN2eW",
       "category": "business",
       "region": "SG",
       "postedToFB": false
