@@ -1,8 +1,41 @@
 {
-  "lastUpdated": "2026-11-20T01:37:46.386Z",
+  "lastUpdated": "2026-11-22T01:00:17.184Z",
   "totalArticles": 60,
-  "newThisRun": 4,
+  "newThisRun": 3,
   "articles": [
+    {
+      "id": "home-based-food-businesses-allowed-to-operate-during-ramadha",
+      "title": "Home-based food businesses allowed to operate during Ramadhan - The Malaysian Reserve",
+      "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQYl93bkFTOS1QbHBTWkRFMmFoMXRhNmxka21jdlllVnVWLVJOWnBLM3Z1enMyeDBEc25rZWRoRmw3dnpKc3l5a1RFWkk2QlFzQVl5ZWhfX3RvUVZ5QjAtZFNxYlowcnJCWW1EU3Z3N1ZTYk0tb1FQODNEaFJkMFJVdDN3LWUwbVB1LUlCalgtWXl0d3BQQ2FyM0pZc1hMVUpUMXdtR0JEYk8?oc=5",
+      "source": "The Malaysian Reserve",
+      "publishedAt": "2020-05-04T07:00:00.000Z",
+      "summary": "<a href=\"https://news.google.com/rss/articles/CBMiqAFBVV95cUxQYl93bkFTOS1QbHBTWkRFMmFoMXRhNmxka21jdlllVnVWLVJOWnBLM3Z1enMyeDBEc25rZWRoRmw3dnpKc3l5a1RFWkk2QlFzQVl5ZWhfX3RvUVZ5QjAtZFNxYlowcnJCWW1EU3Z3N1ZTYk0tb1FQODNEaFJkMF",
+      "category": "business",
+      "region": "MY",
+      "postedToFB": false
+    },
+    {
+      "id": "nutritious-groceries-and-meals-how-communities-are-coming-to",
+      "title": "Nutritious groceries and meals: How communities are coming together to feed families in need - The Straits Times",
+      "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNaVcwd0JWWERaY01uVUhZa1Vqclk2S2Y2SF9uZ0c3RUhnemZjcHlkYmthQlhJZzU1c3JnaVBiX0x6b3hJQnh2MHJ2YTAycjlKRkFzVW1qVXZkRmU4Zlhnem81Q1JoQmptV0thUUVSMVpZVFZkd1E2N3p6Ym1VU0NQU054TTBMcXR4bDlUYkllcXZ0aWFJaWpyYXVjaFpOaUd2RlFPSmFZbUZYUDFzS0JJcDBjUXRoT3BCQzZpb0RzNVZ5eUZfNzB2Mi1ORmE?oc=5",
+      "source": "The Straits Times",
+      "publishedAt": "2025-10-29T07:00:00.000Z",
+      "summary": "<a href=\"https://news.google.com/rss/articles/CBMizAFBVV95cUxNaVcwd0JWWERaY01uVUhZa1Vqclk2S2Y2SF9uZ0c3RUhnemZjcHlkYmthQlhJZzU1c3JnaVBiX0x6b3hJQnh2MHJ2YTAycjlKRkFzVW1qVXZkRmU4Zlhnem81Q1JoQmptV0thUUVSMVpZVFZkd1E2N3p6Ym1VU0",
+      "category": "charity",
+      "region": "SG",
+      "postedToFB": false
+    },
+    {
+      "id": "how-a-shah-alam-soup-kitchen-serves-up-to-3-000-meals-a-week",
+      "title": "How a Shah Alam soup kitchen serves up to 3,000 meals a week - Free Malaysia Today",
+      "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPSnk4Zm9YMkJUbXh3WXVfUHplSGZKUzBnSm5fcENyc0RQRmxvT2F3X1ZpYlpaUEtiTG1zUm5Bdl9fcHhWZk5GSFFyNkFyX2JlejRxZ3VMYXJSTmN1VGMwa1kzYWZlaURqY2xWYXUtZWNneFlUN005Y2t3UmRUVkdtMHV0ZjFtSEdweWhtdDZwQUpZT0pjQVhKWUFkV0VlZzV5VF9mdjBLMGZSS2pmZ3hSNmdYRzdvTkdtd3VXb3dR?oc=5",
+      "source": "Free Malaysia Today",
+      "publishedAt": "2025-04-19T07:00:00.000Z",
+      "summary": "<a href=\"https://news.google.com/rss/articles/CBMivgFBVV95cUxPSnk4Zm9YMkJUbXh3WXVfUHplSGZKUzBnSm5fcENyc0RQRmxvT2F3X1ZpYlpaUEtiTG1zUm5Bdl9fcHhWZk5GSFFyNkFyX2JlejRxZ3VMYXJSTmN1VGMwa1kzYWZlaURqY2xWYXUtZWNneFlUN005Y2t3UmRUVk",
+      "category": "charity",
+      "region": "MY",
+      "postedToFB": false
+    },
     {
       "id": "s-pore-home-baker-hangs-food-on-her-door-for-customer-to-col",
       "title": "S'pore home baker hangs food on her door for customer to collect, later finds it half-eaten at stairwell - Mothership",
@@ -627,39 +660,6 @@
       "publishedAt": "2025-07-23T07:00:00.000Z",
       "summary": "<a href=\"https://news.google.com/rss/articles/CBMi-wFBVV95cUxNemF2XzhMVk51b21sbGxkaXh1VTRtbWdzWjAwT3pHMXNueWNTRk5zSGN3R0RQbzA4cnBsM1h3OWRxUTU0MXdKNW5VX1NaczAyanI3N0cwRHZBbjQ2VDJyeEJxZHlMdE9yT1RoYUROWE11a3NNSndfOEVBdGlsYn",
       "category": "charity",
-      "region": "SG",
-      "postedToFB": false
-    },
-    {
-      "id": "chef-imelda-s-recipe-for-turning-skills-into-opportunity-fre",
-      "title": "Chef Imelda’s recipe for turning skills into opportunity - Free Malaysia Today",
-      "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxNWkFUb2cyMjVtdFJ4Y092Q2tGZ2RxQTl0LWgtZkFoSHNpWm1GUnJkbHRvNjROeEtveURuWmFoTVJEZ2lGaEdEVE5HWmotQ25XZmlYcmljMVY3R2RQT0NlQlExQ2FqMFVMcXh1aVktemNEbVlsbHVXYS1LR2pJb0pjSXVhRVBwZE9ycG1uRVhYamJLejVlN1M2aXVibUlJNEtjaWt3NGNZMER0ZVVfcWc3SzFJMUVGbTFn?oc=5",
-      "source": "Free Malaysia Today",
-      "publishedAt": "2026-08-12T07:00:00.000Z",
-      "summary": "<a href=\"https://news.google.com/rss/articles/CBMiuAFBVV95cUxNWkFUb2cyMjVtdFJ4Y092Q2tGZ2RxQTl0LWgtZkFoSHNpWm1GUnJkbHRvNjROeEtveURuWmFoTVJEZ2lGaEdEVE5HWmotQ25XZmlYcmljMVY3R2RQT0NlQlExQ2FqMFVMcXh1aVktemNEbVlsbHVXYS1LR2pJb0",
-      "category": "business",
-      "region": "MY",
-      "postedToFB": false
-    },
-    {
-      "id": "food-business-ideas-16-ways-to-be-the-boss-2026-shopify",
-      "title": "Food Business Ideas: 16 Ways To Be the Boss (2026) - Shopify",
-      "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5QY09YS2xUOGYzQmtWS1RRcG1XdjRlR3ZWWEx0b2t0V21qcEE0b3VjVEZRRGZROVV0ZDJNQngtSm5fNDU4TTlIOXZiMGt2SHpKLVZScVBub1Y5MmpTeHRMQg?oc=5",
-      "source": "Shopify",
-      "publishedAt": "2026-07-29T07:00:00.000Z",
-      "summary": "<a href=\"https://news.google.com/rss/articles/CBMiYEFVX3lxTE5QY09YS2xUOGYzQmtWS1RRcG1XdjRlR3ZWWEx0b2t0V21qcEE0b3VjVEZRRGZROVV0ZDJNQngtSm5fNDU4TTlIOXZiMGt2SHpKLVZScVBub1Y5MmpTeHRMQg?oc=5\" target=\"_blank\">Food Business Ide",
-      "category": "business",
-      "region": "MY",
-      "postedToFB": false
-    },
-    {
-      "id": "butter-tgt-popular-home-baker-opens-first-brick-and-mortar-s",
-      "title": "Butter Tgt: Popular home-baker opens first brick-and-mortar store at Duxton - HungryGoWhere",
-      "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE13a0hOem9Ga1FFQ05oekhGRFVtTFI0eUJlT1M5S0ZpdDNod2FhZXRXT0NOTXdieDRMUzFnbExQWUtkSzVOZTBRU0pDbmJIVmNnSFJxSjk2WWZ5bDA?oc=5",
-      "source": "HungryGoWhere",
-      "publishedAt": "2024-07-04T07:00:00.000Z",
-      "summary": "<a href=\"https://news.google.com/rss/articles/CBMiW0FVX3lxTE13a0hOem9Ga1FFQ05oekhGRFVtTFI0eUJlT1M5S0ZpdDNod2FhZXRXT0NOTXdieDRMUzFnbExQWUtkSzVOZTBRU0pDbmJIVmNnSFJxSjk2WWZ5bDA?oc=5\" target=\"_blank\">Butter Tgt: Popular home",
-      "category": "business",
       "region": "SG",
       "postedToFB": false
     }
