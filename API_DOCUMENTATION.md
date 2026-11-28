@@ -51,7 +51,7 @@ Creates a Firebase Auth user and a `users/{uid}` document. No auth.
 }
 ```
 - Required: `email`, `password`, `name`.
-- `phone` defaults to `""`. `userType` defaults to `"buyer"`. The intended values are `"buyer"`, `"cook"` and `"both"`, but the server doesn't check them.
+- `phone` defaults to `""`. `userType` defaults to `"buyer"` and must be `"buyer"`, `"cook"` or `"both"`.
 
 **What gets stored** in `users/{uid}`: `email`, `name`, `phone`, `userType`, `profilePhoto: ""`, `location: {latitude: null, longitude: null, address: "", block: "", postal: ""}`, `rating: 0`, `reviewCount: 0`, `bio: ""`, `verified: false`, `createdAt`, `updatedAt`, `preferences: {allowNotifications: true, favoriteCategories: [], maxDistance: 1000}`. The password goes to Firebase Auth only; it's never stored in Firestore.
 
@@ -66,7 +66,12 @@ Creates a Firebase Auth user and a `users/{uid}` document. No auth.
 
 **Errors:**
 - `400 {"error": "Missing required fields"}`
-- `400 {"error": "<Firebase Auth message>"}` for **any** other failure (email already in use, weak password, invalid email, and so on). The server passes Firebase's own message through; there's no fixed message of its own.
+- `400 {"error": "userType must be one of: buyer, cook, both"}`
+- `400 {"error": "Email already exists"}`
+- `400 {"error": "Invalid email address"}`
+- `400 {"error": "Password must be at least 6 characters"}`
+- `400 {"error": "Invalid name"}`
+- `500 {"error": "Internal server error"}` for any other failure (the details are logged on the server)
 
 ---
 
@@ -191,11 +196,11 @@ Creates a new cook profile in `cooks/{autoId}` that belongs to the signed-in use
   "prepTimeMinutes": 30
 }
 ```
-- Required: `businessName`, `location`. `location.latitude` and `location.longitude` must be numbers for the cook to show up in nearby search.
+- Required: `businessName`, and `location` with numeric `latitude` and `longitude`.
+- **One cook profile per user.** If the user already has one, you get `409` with its `cookId`.
 - Defaults: `description: ""`, `cuisineTypes: []`, `averagePrice: 0`, `operatingHours: {}`, `maxOrdersPerDay: 10`, `prepTimeMinutes: 30`.
 - The server also stores `userId`, `rating: 0`, `reviewCount: 0`, `isActive: true`, `verificationStatus: "pending"`, `verificationDocuments: []`, `bankDetails: {accountHolder: "", bankCode: "", accountNumber: "", verified: false}`, `totalOrdersFulfilled: 0`, `foodSafetyScore: 0`, `createdAt` and `updatedAt`.
-- **There's no duplicate check.** Each call creates another cook profile for the same user. Endpoints that look up "the user's cook profile" use whichever one Firestore returns first.
-- **No endpoint ever sets `verificationStatus` to `"verified"`.** It has to be changed directly in Firestore. Until it is, the cook won't appear in `GET /api/cooks/nearby`.
+- New cooks start as `"pending"` and don't appear in `GET /api/cooks/nearby` until an admin verifies them with `PUT /api/cooks/:cookId/verification`.
 
 **Response:**
 ```json
@@ -206,7 +211,28 @@ Creates a new cook profile in `cooks/{autoId}` that belongs to the signed-in use
 }
 ```
 
-**Errors:** `400 {"error": "Missing required fields"}`
+**Errors:**
+- `400 {"error": "Missing required fields"}`
+- `400 {"error": "location.latitude and location.longitude must be valid numbers"}`
+- `409 {"error": "You already have a cook profile", "cookId": "cook123"}`
+
+---
+
+### `PUT /api/cooks/:cookId/verification` ⭐ Protected (admin only)
+Sets a cook's verification status. Only `"verified"` cooks appear in nearby search.
+
+**Request:**
+```json
+{ "verificationStatus": "verified" }
+```
+`verificationStatus` must be `"pending"`, `"verified"` or `"rejected"`. The server also stores `verificationUpdatedAt` and `verificationUpdatedBy` (the admin's uid).
+
+**Response:**
+```json
+{ "success": true, "message": "Cook verified" }
+```
+
+**Errors:** `403 {"error": "Admin only"}`, `400` for a bad value, `404 {"error": "Cook not found"}`
 
 ---
 
@@ -248,13 +274,13 @@ Finds active, **verified** cooks near a point. No auth. (In the code this route 
 **Query parameters:**
 - `latitude` (required)
 - `longitude` (required)
-- `radiusMeters` (optional, default `1000`). **No upper limit is enforced**, so a caller can pass any radius, even though the product rule is 1km.
+- `radiusMeters` (optional, default `1000`). **Capped at 1000** (the 1km product rule): a larger or invalid value is treated as 1000.
 
 **How the search works:** it's a square bounding box, not a circle: latitude ± `radiusMeters / 111000` and longitude ± `radiusMeters / (111000 × cos(latitude))`, filtered to `isActive == true` and `verificationStatus == "verified"`. It needs a Firestore composite index (see Firestore Indexes).
 
 **Response:** `{"count": <n>, "cooks": [<cook documents with cookId, without bankDetails and verificationDocuments>]}`
 
-**Errors:** `400 {"error": "Missing latitude/longitude"}`
+**Errors:** `400 {"error": "Missing latitude/longitude"}`, `400 {"error": "Invalid latitude/longitude"}`
 
 ---
 
@@ -289,10 +315,10 @@ Creates a listing in `listings/{autoId}` for the signed-in user's cook profile.
   "pickupInstructions": "Press door bell at gate. 5th floor"
 }
 ```
-- **Nothing is validated.** Send `dishName`, `price`, `totalPortions`, `pickupTime` and `location` yourself: a missing `price` or `totalPortions` is stored as `NaN`, and a missing `location` keeps the listing out of nearby search.
+- **Required:** `dishName` (text), `price` (a number, 0 or more), `totalPortions` (a whole number, at least 1), `pickupTime` (an object), and `location` with numeric `latitude` and `longitude`.
 - `images` are stored as given. The project has no Cloud Storage bucket, so images are sent as compact data-URLs (or other URLs).
 - Defaults: `description: ""`, `cuisine: ""`, `category: "main"`, `portionSize: "3-5 servings"`, `images: []`, `ingredients: []`, `dietary: []`, `pickupInstructions: ""`.
-- The server also stores `cookId`, `portionsAvailable` (= `totalPortions`), `rating: 0`, `reviewCount: 0`, `isActive: true`, `status: "available"`, `createdAt`, `updatedAt` and `expiresAt` (now + 7 days). **`expiresAt` isn't used anywhere**: listings don't expire or hide automatically.
+- The server also stores `cookId`, `portionsAvailable` (= `totalPortions`), `rating: 0`, `reviewCount: 0`, `isActive: true`, `status: "available"`, `createdAt`, `updatedAt` and `expiresAt` (now + 7 days). `expiresAt` is for information only: listings don't expire or hide automatically. A cook hides one with `isActive: false`.
 
 **Response:**
 ```json
@@ -303,7 +329,9 @@ Creates a listing in `listings/{autoId}` for the signed-in user's cook profile.
 }
 ```
 
-**Errors:** `400 {"error": "User is not a registered cook"}` if the user has no cook profile.
+**Errors:**
+- `400` naming the missing or invalid field, for example `{"error": "price must be a number of 0 or more"}`
+- `400 {"error": "User is not a registered cook"}` if the user has no cook profile
 
 ---
 
@@ -312,8 +340,8 @@ Lists active listings (`isActive == true`), newest first. No auth.
 
 **Query parameters:**
 - `cuisine` (optional): exact match.
-- `status` (optional, default `"available"`): exact match. Values the code uses are `"available"` and `"sold_out"`; a cook can also set others, such as `"limited"`. Passing an empty value (`?status=`) turns the status filter off.
-- `limit` (optional, default `20`): **no maximum is enforced.**
+- `status` (optional, default `"available"`): exact match. Listing statuses are `"available"`, `"limited"` and `"sold_out"`. Passing an empty value (`?status=`) turns the status filter off.
+- `limit` (optional, default `20`, between 1 and **100**; larger values are treated as 100).
 - `offset` (optional, default `0`).
 
 **Example:**
@@ -331,13 +359,13 @@ Finds listings near a point, newest first. No auth.
 **Query parameters:**
 - `latitude` (required)
 - `longitude` (required)
-- `radiusMeters` (optional, default `1000`). **No upper limit is enforced.**
+- `radiusMeters` (optional, default `1000`, **capped at 1000**).
 
 Uses the same square bounding box as nearby cooks, filtered to `status == "available"` and `isActive == true`. It needs a Firestore composite index.
 
 **Response:** `{"count": <n>, "listings": [<full listing documents with listingId>]}`
 
-**Errors:** `400 {"error": "Missing latitude/longitude"}`
+**Errors:** `400 {"error": "Missing latitude/longitude"}`, `400 {"error": "Invalid latitude/longitude"}`
 
 ---
 
@@ -359,14 +387,17 @@ Updates a listing. Only the owner can do this: the caller's first cook profile m
   "isActive": true
 }
 ```
-Only these three fields can change. Values aren't validated.
+Only these three fields can change:
+- `portionsAvailable`: a whole number, 0 or more
+- `status`: `"available"`, `"limited"` or `"sold_out"`
+- `isActive`: `true` or `false`
 
 **Response:**
 ```json
 { "success": true, "message": "Listing updated" }
 ```
 
-**Errors:** `404 {"error": "Listing not found"}`, `403 {"error": "Unauthorized"}`
+**Errors:** `400` for an invalid value, `404 {"error": "Listing not found"}`, `403 {"error": "Unauthorized"}`
 
 ---
 
@@ -380,7 +411,6 @@ Creates an order in `orders/{autoId}` and takes the portions off the listing.
 **Request:**
 ```json
 {
-  "cookId": "cook123",
   "listingId": "listing123",
   "quantity": 2,
   "paymentMethod": "paynow",
@@ -388,14 +418,15 @@ Creates an order in `orders/{autoId}` and takes the portions off the listing.
   "specialRequests": ["no onions", "extra spice"]
 }
 ```
-- `paymentMethod`: the intended values are `"paynow"`, `"paylah"` and `"cash"`. **They aren't validated.**
-- `cookId` is stored **as sent**; it isn't checked against the listing's `cookId`.
-- `quantity` isn't validated: a zero or negative number is accepted. The only check is `portionsAvailable < quantity`.
-- The listing's status and `isActive` aren't checked, so a sold-out or hidden listing can still be ordered while portions remain.
+- `listingId`: required.
+- `quantity`: required, a whole number of at least 1.
+- `paymentMethod`: required, `"paynow"`, `"paylah"` or `"cash"`.
+- `cookId` is **not** needed: the order always uses the listing's cook. A `cookId` in the request is ignored.
+- The listing must be active and not `"sold_out"`, with enough portions left.
 
-**What gets stored:** `buyerId`, `cookId`, `listingId`, `dishName`, `quantity`, `unitPrice` (the listing's price), `totalPrice` (= `unitPrice × quantity`, no fees), `paymentMethod`, `paymentStatus: "pending"`, `paymentProof: ""`, `orderStatus: "pending"`, `pickupLocation` (the listing's location), `pickupTime`, `buyerNotes`, `cookResponse: ""`, `specialRequests`, `timeline: {createdAt}`.
+**What gets stored:** `buyerId`, `cookId` (from the listing), `listingId`, `dishName`, `quantity`, `unitPrice` (the listing's price), `totalPrice` (= `unitPrice × quantity`, no fees), `paymentMethod`, `paymentStatus: "pending"`, `paymentProof: ""`, `orderStatus: "pending"`, `pickupLocation` (the listing's location), `pickupTime`, `buyerNotes`, `cookResponse: ""`, `specialRequests`, `timeline: {createdAt}`.
 
-**Side effect:** the listing's `portionsAvailable` goes down by `quantity`, and its `status` becomes `"sold_out"` when it reaches exactly 0. This isn't done in a transaction, so two orders placed at the same moment can oversell.
+**Side effect:** in the same transaction, the listing's `portionsAvailable` goes down by `quantity`, and its `status` becomes `"sold_out"` when it reaches 0. Two orders placed at the same moment can't oversell.
 
 **Response:**
 ```json
@@ -406,14 +437,18 @@ Creates an order in `orders/{autoId}` and takes the portions off the listing.
 }
 ```
 
-**Errors:** `404 {"error": "Listing not found"}`, `400 {"error": "Not enough portions available"}`
+**Errors:**
+- `400` for an invalid `listingId`, `quantity` or `paymentMethod`
+- `404 {"error": "Listing not found"}`
+- `400 {"error": "Listing is not available"}` (inactive or sold out)
+- `400 {"error": "Not enough portions available"}`
 
 ---
 
 ### `GET /api/orders/:orderId` ⭐ Protected
 Returns the whole order document.
 
-**Who can read it:** the buyer, the cook (the owner of the cook profile in the order's `cookId`), or an admin. Because `cookId` is taken from the order request without being checked (see `POST /api/orders`), "the cook" means whichever cook profile the buyer sent.
+**Who can read it:** the buyer, the cook (the owner of the listing's cook profile), or an admin.
 
 **Response:**
 ```json
@@ -479,27 +514,48 @@ Updates an order. Same access rule as `GET /api/orders/:orderId`: buyer, cook or
 }
 ```
 
-**`orderStatus` values the product uses:**
+**`orderStatus` values:**
 - `pending`: buyer placed the order
 - `confirmed`: cook confirmed and is preparing
 - `ready`: ready for pickup
 - `picked_up`: buyer collected it
 - `completed`: order fulfilled
-- `cancelled`: cancelled
+- `cancelled`: cancelled by the buyer
 - `expired`: not picked up in time
 
-**What the code actually enforces:**
-- **None of the values are validated.** Any string is accepted for `orderStatus` and `paymentStatus`, from whoever passes the access check, so a buyer can set their own `paymentStatus` to `"confirmed"`. No status order or role rules are enforced.
-- Setting `confirmed`, `ready`, `picked_up` or `completed` records `timeline.confirmedAt`, `readyAt`, `pickedUpAt` or `completedAt`. `cancelled` and `expired` record no timeline entry.
-- Cancelling or expiring an order does **not** give the portions back to the listing.
-- `paymentProof` is stored as a plain string on the order.
+**Who may change the status, and from which status:**
+
+| New `orderStatus` | Who | Allowed from |
+|---|---|---|
+| `confirmed` | cook | `pending` |
+| `ready` | cook | `pending`, `confirmed` |
+| `picked_up` | cook | `confirmed`, `ready` |
+| `completed` | cook | `ready`, `picked_up` |
+| `expired` | cook | `pending`, `confirmed`, `ready` |
+| `cancelled` | buyer | `pending`, `confirmed` |
+
+Admins may set any valid status from any status.
+
+**Payment (paid directly between buyer and cook):**
+- `paymentStatus` values: `pending`, `paid`, `confirmed`.
+- The **buyer** may set `paid` ("I've paid") and upload `paymentProof` (a data-URL or link, under about 900 KB).
+- Only the **cook** may set `confirmed` ("I received it"). Admins may set any value.
+
+**What happens:**
+- Each status change records a timestamp: `timeline.confirmedAt`, `readyAt`, `pickedUpAt`, `completedAt`, `cancelledAt` or `expiredAt`. Existing timeline entries are kept.
+- **Cancelling or expiring** an order gives its portions back to the listing in the same transaction. A `sold_out` listing becomes `available` again. Portions are returned only once, even if the order is later changed between `cancelled` and `expired`.
 
 **Response:**
 ```json
 { "success": true, "message": "Order updated" }
 ```
 
-**Errors:** `404 {"error": "Order not found"}`, `403 {"error": "Unauthorized"}`
+**Errors:**
+- `400` for an unknown `orderStatus` or `paymentStatus`, or a `paymentProof` that's too large
+- `403 {"error": "Unauthorized"}` if you're not the buyer, the cook or an admin
+- `403` if your role can't make that change, for example `{"error": "You can't set orderStatus to \"confirmed\""}`
+- `409` if the order's current status doesn't allow it, for example `{"error": "Order is \"pending\" and can't be changed to \"completed\""}`
+- `404 {"error": "Order not found"}`
 
 ---
 
@@ -520,11 +576,14 @@ Submits a review of a cook or a dish. **Only the order's buyer can review**; any
   "tags": ["fresh", "tasty", "friendly"]
 }
 ```
-- `targetType`: `"cook"` (then `targetId` is a cookId) or `"dish"` (then `targetId` is a listingId).
-- **Not checked:** the rating range (intended 1–5), whether the order is completed, whether this order was already reviewed, and whether `targetId` belongs to the order.
-- Stored in `reviews/{autoId}`: `orderId`, `reviewerId`, `targetId`, `targetType`, `rating` (as an integer), `title`, `text`, `photos: []`, `tags`, `helpful: 0`, `reportCount: 0`, `isVerified: true`, `createdAt`, `updatedAt`.
+- `targetType`: `"cook"` reviews the order's cook; `"dish"` reviews the order's listing.
+- `targetId` is optional. The target is always the order's own cook or listing, and a `targetId` that doesn't match gets `400`.
+- `rating`: a whole number from 1 to 5 (`"4"` as text is accepted).
+- **The order must be collected first:** its `orderStatus` must be `picked_up` or `completed`.
+- **One review per order per target type.** A second one gets `409`.
+- Stored in `reviews/{orderId}_{targetType}`: `orderId`, `reviewerId`, `targetId`, `targetType`, `rating`, `title`, `text`, `photos: []`, `tags`, `helpful: 0`, `reportCount: 0`, `isVerified: true`, `createdAt`, `updatedAt`.
 
-**Side effect:** recomputes `rating` (rounded to 1 decimal) and `reviewCount` on the target's `cooks` or `listings` document. Errors in this step are logged, not returned. **Known bug:** the newest rating is counted twice in the average, and a `rating` sent as a string corrupts it. See Known Issues.
+**Side effect:** recomputes `rating` (the average of all the target's verified reviews, rounded to 1 decimal) and `reviewCount` on the target's `cooks` or `listings` document. Errors in this step are logged, not returned.
 
 **Response:**
 ```json
@@ -535,7 +594,12 @@ Submits a review of a cook or a dish. **Only the order's buyer can review**; any
 }
 ```
 
-**Errors:** `404 {"error": "Order not found"}`, `403 {"error": "Only buyer can review"}`
+**Errors:**
+- `400` for a missing `orderId`, a bad `targetType` or `rating`, or a `targetId` that doesn't match the order
+- `404 {"error": "Order not found"}`
+- `403 {"error": "Only buyer can review"}`
+- `409 {"error": "You can review an order once it has been picked up"}`
+- `409 {"error": "You have already reviewed this order"}`
 
 ---
 
@@ -641,7 +705,7 @@ Sends a message to the Kopi assistant. **Public: no auth.** Each call is a paid 
 - `400 {"error": "Message too long (max 2000 characters)"}`
 - `429 {"error": "Too many messages. Please try again later."}`, with a `Retry-After` header in seconds
 - `500 {"error": "AI service not configured"}`: `ANTHROPIC_API_KEY` isn't set
-- Anthropic errors come back with Anthropic's HTTP status and `{"error": "<Anthropic message>"}`
+- `502 {"error": "The assistant is unavailable right now. Please try again later."}` if the Anthropic API fails. Anthropic's own message is logged on the server, and only returned when `NODE_ENV=development`.
 
 ---
 
@@ -653,12 +717,16 @@ Every error body has an `error` field, but the shape and detail differ by source
 |--------|--------|------|
 | Missing token | `401` | `{"error": "Missing token"}` |
 | Invalid token | `401` | `{"error": "Invalid token", "details": "<Firebase message>"}`, in every environment |
-| Validation | `400` | `{"error": "<message>"}` |
-| Permission | `403` | `{"error": "Unauthorized"}` or `{"error": "Only buyer can review"}` |
+| Validation | `400` | `{"error": "<what's wrong>"}` |
+| Malformed JSON body | `400` | `{"error": "Invalid JSON body"}` |
+| Body over 50 MB | `413` | `{"error": "Request body too large"}` |
+| Permission | `403` | `{"error": "Unauthorized"}`, `{"error": "Admin only"}`, `{"error": "Only buyer can review"}` or a message naming the change your role can't make |
+| Browser origin not allowed (CORS) | `403` | `{"error": "Origin not allowed"}` |
 | Not found | `404` | `{"error": "<Thing> not found"}` |
+| Conflict with current state | `409` | for example a duplicate cook profile or review, or an order status change that isn't allowed from the current status |
 | Chat rate limit | `429` | `{"error": "Too many messages. Please try again later."}` |
-| Failure inside a route | `500` | `{"error": "<raw error message>"}`. Internal messages (Firestore, SDK) are returned in production too. |
-| Unhandled error (incl. CORS rejection) | `500` | `{"error": "Internal server error", "message": "<detail>"}`. `message` is only filled in when `NODE_ENV=development`. |
+| Chat AI failure | `502` | `{"error": "The assistant is unavailable right now. Please try again later."}` |
+| Any other server error | `500` | `{"error": "Internal server error"}`. The full error is logged on the server (`pm2 logs cooknextdoor-backend`). With `NODE_ENV=development`, `error` holds the real message instead, for example Firestore's "The query requires an index" link. |
 
 ---
 
@@ -759,13 +827,12 @@ curl -X POST http://localhost:3001/api/orders \
 ```
 API_PORT=3001                         # optional, default 3001
 NEXT_PUBLIC_FIREBASE_PROJECT_ID       # Firebase project ID
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET   # passed to Firebase init; no endpoint uses Storage
 META_PAGE_ACCESS_TOKEN                # Instagram feed (optional; feed returns 503 without it)
 INSTAGRAM_ACCOUNT_ID                  # Instagram feed (optional)
 ANTHROPIC_API_KEY                     # Kopi chatbot (optional; chat returns 500 without it)
-NODE_ENV                              # "development" adds error detail to unhandled-error responses
+NODE_ENV                              # "development" returns real error messages instead of "Internal server error"
 ```
-The server doesn't read `NEXT_PUBLIC_FIREBASE_API_KEY` or `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` (frontend values) or `FIREBASE_SERVICE_ACCOUNT_KEY`.
+The server doesn't read `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` or `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` (frontend values), or `FIREBASE_SERVICE_ACCOUNT_KEY`.
 
 ### Firebase rules
 Firestore security rules are set in the Firebase Console (see `FIRESTORE_SCHEMA.md`). They don't apply to this server (see Security Note 6).
@@ -779,7 +846,7 @@ http://localhost:8080
 http://127.0.0.1:8080
 http://localhost:3000
 ```
-Requests with no `Origin` header (curl, mobile apps, Postman) are allowed. A blocked origin gets `500 {"error": "Internal server error"}`, not a 403.
+Requests with no `Origin` header (curl, mobile apps, Postman) are allowed. A blocked origin gets `403 {"error": "Origin not allowed"}`.
 
 ### Startup log
 On start the server prints a link to `/api/docs`. **That route doesn't exist.** These docs live in this file only.
@@ -790,13 +857,10 @@ On start the server prints a link to `/api/docs`. **That route doesn't exist.** 
 
 Places where the code doesn't do what the product intends. Each is described above where it applies.
 
-1. **The search radius isn't capped at 1km.**
-2. **Order status and payment status aren't validated** (a buyer can mark their own payment confirmed), and cancelling doesn't give portions back.
-3. **Order creation** doesn't validate quantity, cook ID, payment method or listing status, and doesn't use a transaction. Because the cook ID isn't checked, a buyer can attach the wrong cook to an order, and that cook can then read and update it.
-4. **Review averages count the newest rating twice.** A string `rating` corrupts the average, and there are no duplicate, range or completed-order checks.
-5. **Listings aren't validated**, `limit` has no cap, and `expiresAt` is never used.
-6. **No endpoint verifies cooks**, so nearby cooks is empty until `verificationStatus` is changed in Firestore. One user can register several cook profiles.
-7. **Internal error messages are returned to clients** in production.
-8. **The startup log advertises `/api/docs`**, which doesn't exist.
+1. **The startup log advertises `/api/docs`**, which doesn't exist.
+2. **`PUT /api/users/:userId` can't clear a field**: empty values are skipped.
+3. **Only the chat endpoint is rate-limited.**
 
-Fixed on 2026-11-28: the unreachable `GET /api/cooks/nearby`; the public user profile exposing email, phone and address; the public cook endpoints returning `bankDetails`; cooks being locked out of their own orders; and the chat endpoint having no rate limit or input checks and never saving its log.
+Fixed on 2026-11-28:
+- **High:** the unreachable `GET /api/cooks/nearby`; the public user profile exposing email, phone and address; the public cook endpoints returning `bankDetails`; cooks being locked out of their own orders; the chat endpoint having no rate limit or input checks and never saving its log.
+- **Medium:** the 1km radius cap; order status and payment role rules, with portions returned on cancel or expire; order validation and the oversell transaction; the review double-count and review checks; listing validation and the `limit` cap; one cook profile per user and the admin verification endpoint; internal error messages no longer sent to clients; clear register errors; CORS rejections returning 403.

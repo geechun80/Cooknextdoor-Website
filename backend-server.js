@@ -43,15 +43,62 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Initialize Firebase Admin SDK
+// (No Cloud Storage: the project is on the Spark plan with no bucket; images are data-URLs in Firestore.)
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
 });
 
 const db = admin.firestore();
-const storage = admin.storage().bucket();
 const auth = admin.auth();
+const serverTimestamp = () => admin.firestore.FieldValue.serverTimestamp();
+
+// ============================================================================
+// SHARED HELPERS
+// ============================================================================
+
+const IS_DEV = process.env.NODE_ENV === 'development';
+
+// An error with an HTTP status, thrown inside handlers/transactions and turned into a response.
+class HttpError extends Error {
+  constructor(status, message) {
+    super(message);
+    this.status = status;
+  }
+}
+
+// Send an error response. HttpErrors keep their status and message; anything else is a 500
+// whose internal detail is logged and only returned in development.
+function sendError(res, error, context = 'Server error') {
+  if (error instanceof HttpError) {
+    return res.status(error.status).json({ error: error.message });
+  }
+  console.error(`${context}:`, error);
+  return res.status(500).json({ error: IS_DEV ? error.message : 'Internal server error' });
+}
+
+// Product rule: search radius is at most 1km.
+const MAX_RADIUS_METERS = 1000;
+
+function parseRadius(value) {
+  const r = Number(value);
+  return Number.isFinite(r) && r > 0 ? Math.min(r, MAX_RADIUS_METERS) : MAX_RADIUS_METERS;
+}
+
+function isValidLatLng(lat, lng) {
+  return Number.isFinite(lat) && Number.isFinite(lng) &&
+    lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+}
+
+function hasLatLng(location) {
+  return !!location && typeof location === 'object' &&
+    isValidLatLng(location.latitude, location.longitude);
+}
+
+// Firestore auto-IDs are letters and digits; reject anything that could form a path.
+function isValidId(id) {
+  return typeof id === 'string' && /^[A-Za-z0-9_-]{1,128}$/.test(id);
+}
 
 // ============================================================================
 // AUTHENTICATION MIDDLEWARE
@@ -138,6 +185,16 @@ app.get('/api/instagram/recent', async (req, res) => {
 // AUTHENTICATION ROUTES
 // ============================================================================
 
+const USER_TYPES = ['buyer', 'cook', 'both'];
+
+// Firebase Auth error codes shown to the client as a clear 400; anything else is a 500.
+const REGISTER_ERRORS = {
+  'auth/email-already-exists': 'Email already exists',
+  'auth/invalid-email': 'Invalid email address',
+  'auth/invalid-password': 'Password must be at least 6 characters',
+  'auth/invalid-display-name': 'Invalid name'
+};
+
 // Register new user
 app.post('/api/auth/register', async (req, res) => {
   try {
@@ -146,6 +203,9 @@ app.post('/api/auth/register', async (req, res) => {
     // Validate input
     if (!email || !password || !name) {
       return res.status(400).json({ error: 'Missing required fields' });
+    }
+    if (userType !== undefined && !USER_TYPES.includes(userType)) {
+      return res.status(400).json({ error: `userType must be one of: ${USER_TYPES.join(', ')}` });
     }
 
     // Create Firebase Auth user
@@ -173,8 +233,8 @@ app.post('/api/auth/register', async (req, res) => {
       reviewCount: 0,
       bio: '',
       verified: false,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
       preferences: {
         allowNotifications: true,
         favoriteCategories: [],
@@ -188,8 +248,11 @@ app.post('/api/auth/register', async (req, res) => {
       message: 'User registered successfully'
     });
   } catch (error) {
-    console.error('Registration error:', error);
-    res.status(400).json({ error: error.message });
+    const known = REGISTER_ERRORS[error.code];
+    if (known) {
+      return res.status(400).json({ error: known });
+    }
+    sendError(res, error, 'Registration error');
   }
 });
 
@@ -207,7 +270,7 @@ app.get('/api/auth/profile', verifyToken, async (req, res) => {
       ...userDoc.data()
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error);
   }
 });
 
@@ -225,7 +288,7 @@ app.put('/api/users/:userId', verifyToken, async (req, res) => {
     const { name, phone, bio, location, preferences } = req.body;
 
     const updateData = {
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      updatedAt: serverTimestamp()
     };
 
     if (name) updateData.name = name;
@@ -238,7 +301,7 @@ app.put('/api/users/:userId', verifyToken, async (req, res) => {
 
     res.json({ success: true, message: 'Profile updated' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error);
   }
 });
 
@@ -263,7 +326,7 @@ app.get('/api/users/:userId', async (req, res) => {
       verified: !!verified
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error);
   }
 });
 
@@ -288,6 +351,18 @@ app.post('/api/cooks/register', verifyToken, async (req, res) => {
     // Validate
     if (!businessName || !location) {
       return res.status(400).json({ error: 'Missing required fields' });
+    }
+    if (!hasLatLng(location)) {
+      return res.status(400).json({ error: 'location.latitude and location.longitude must be valid numbers' });
+    }
+
+    // One cook profile per user
+    const existing = await db.collection('cooks').where('userId', '==', req.userId).limit(1).get();
+    if (!existing.empty) {
+      return res.status(409).json({
+        error: 'You already have a cook profile',
+        cookId: existing.docs[0].id
+      });
     }
 
     // Create cook profile
@@ -315,8 +390,8 @@ app.post('/api/cooks/register', verifyToken, async (req, res) => {
       prepTimeMinutes: prepTimeMinutes || 30,
       totalOrdersFulfilled: 0,
       foodSafetyScore: 0,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
     });
 
     res.json({
@@ -325,7 +400,43 @@ app.post('/api/cooks/register', verifyToken, async (req, res) => {
       message: 'Cook profile created. Pending verification.'
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error, 'Cook registration error');
+  }
+});
+
+// Set a cook's verification status (admin only).
+// Only "verified" cooks appear in GET /api/cooks/nearby.
+const VERIFICATION_STATUSES = ['pending', 'verified', 'rejected'];
+
+app.put('/api/cooks/:cookId/verification', verifyToken, async (req, res) => {
+  try {
+    if (!req.user.admin) {
+      return res.status(403).json({ error: 'Admin only' });
+    }
+
+    const { verificationStatus } = req.body;
+    if (!VERIFICATION_STATUSES.includes(verificationStatus)) {
+      return res.status(400).json({
+        error: `verificationStatus must be one of: ${VERIFICATION_STATUSES.join(', ')}`
+      });
+    }
+
+    const cookRef = db.collection('cooks').doc(req.params.cookId);
+    const cookDoc = await cookRef.get();
+    if (!cookDoc.exists) {
+      return res.status(404).json({ error: 'Cook not found' });
+    }
+
+    await cookRef.update({
+      verificationStatus,
+      verificationUpdatedAt: serverTimestamp(),
+      verificationUpdatedBy: req.userId,
+      updatedAt: serverTimestamp()
+    });
+
+    res.json({ success: true, message: `Cook ${verificationStatus}` });
+  } catch (error) {
+    sendError(res, error, 'Cook verification error');
   }
 });
 
@@ -339,7 +450,7 @@ function publicCookData(data) {
 // NOTE: must stay ABOVE '/api/cooks/:cookId', or Express treats "nearby" as a cookId.
 app.get('/api/cooks/nearby', async (req, res) => {
   try {
-    const { latitude, longitude, radiusMeters = 1000 } = req.query;
+    const { latitude, longitude } = req.query;
 
     if (!latitude || !longitude) {
       return res.status(400).json({ error: 'Missing latitude/longitude' });
@@ -347,6 +458,10 @@ app.get('/api/cooks/nearby', async (req, res) => {
 
     const lat = parseFloat(latitude);
     const lng = parseFloat(longitude);
+    if (!isValidLatLng(lat, lng)) {
+      return res.status(400).json({ error: 'Invalid latitude/longitude' });
+    }
+    const radiusMeters = parseRadius(req.query.radiusMeters); // capped at 1km
 
     // Approximate bounds for 1km radius
     const latDelta = radiusMeters / 111000;
@@ -369,7 +484,7 @@ app.get('/api/cooks/nearby', async (req, res) => {
 
     res.json({ count: results.length, cooks: results });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error);
   }
 });
 
@@ -387,7 +502,7 @@ app.get('/api/cooks/:cookId', async (req, res) => {
       ...publicCookData(cookDoc.data())
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error);
   }
 });
 
@@ -414,6 +529,25 @@ app.post('/api/listings', verifyToken, async (req, res) => {
       pickupInstructions
     } = req.body;
 
+    // Validate required fields (Firestore also rejects undefined values, which used to surface as a 500)
+    const priceNum = Number(price);
+    const portionsNum = Number(totalPortions);
+    if (typeof dishName !== 'string' || dishName.trim().length === 0) {
+      return res.status(400).json({ error: 'dishName is required' });
+    }
+    if (!Number.isFinite(priceNum) || priceNum < 0) {
+      return res.status(400).json({ error: 'price must be a number of 0 or more' });
+    }
+    if (!Number.isInteger(portionsNum) || portionsNum < 1) {
+      return res.status(400).json({ error: 'totalPortions must be a whole number of at least 1' });
+    }
+    if (!pickupTime || typeof pickupTime !== 'object') {
+      return res.status(400).json({ error: 'pickupTime is required' });
+    }
+    if (!hasLatLng(location)) {
+      return res.status(400).json({ error: 'location.latitude and location.longitude must be valid numbers' });
+    }
+
     // Get cook profile for this user
     const cookQuery = await db
       .collection('cooks')
@@ -431,14 +565,14 @@ app.post('/api/listings', verifyToken, async (req, res) => {
     const listingRef = db.collection('listings').doc();
     await listingRef.set({
       cookId,
-      dishName,
+      dishName: dishName.trim(),
       description: description || '',
       cuisine: cuisine || '',
       category: category || 'main',
-      price: parseFloat(price),
+      price: priceNum,
       portionSize: portionSize || '3-5 servings',
-      totalPortions: parseInt(totalPortions),
-      portionsAvailable: parseInt(totalPortions),
+      totalPortions: portionsNum,
+      portionsAvailable: portionsNum,
       images: images || [],
       ingredients: ingredients || [],
       dietary: dietary || [],
@@ -449,8 +583,8 @@ app.post('/api/listings', verifyToken, async (req, res) => {
       reviewCount: 0,
       isActive: true,
       status: 'available',
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
       expiresAt: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000) // 7 days
     });
 
@@ -460,14 +594,19 @@ app.post('/api/listings', verifyToken, async (req, res) => {
       message: 'Listing created successfully'
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error);
   }
 });
+
+const MAX_LISTINGS_LIMIT = 100;
+const LISTING_STATUSES = ['available', 'limited', 'sold_out'];
 
 // Get all active listings (with filters)
 app.get('/api/listings', async (req, res) => {
   try {
-    const { cuisine, status = 'available', limit = 20, offset = 0 } = req.query;
+    const { cuisine, status = 'available' } = req.query;
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 20, 1), MAX_LISTINGS_LIMIT);
+    const offset = Math.max(parseInt(req.query.offset, 10) || 0, 0);
 
     let query = db.collection('listings');
 
@@ -477,8 +616,8 @@ app.get('/api/listings', async (req, res) => {
     const listings = await query
       .where('isActive', '==', true)
       .orderBy('createdAt', 'desc')
-      .limit(parseInt(limit))
-      .offset(parseInt(offset))
+      .limit(limit)
+      .offset(offset)
       .get();
 
     const results = listings.docs.map(doc => ({
@@ -488,14 +627,14 @@ app.get('/api/listings', async (req, res) => {
 
     res.json({ count: results.length, listings: results });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error);
   }
 });
 
 // Get nearby listings (1km radius)
 app.get('/api/listings/nearby', async (req, res) => {
   try {
-    const { latitude, longitude, radiusMeters = 1000 } = req.query;
+    const { latitude, longitude } = req.query;
 
     if (!latitude || !longitude) {
       return res.status(400).json({ error: 'Missing latitude/longitude' });
@@ -503,6 +642,10 @@ app.get('/api/listings/nearby', async (req, res) => {
 
     const lat = parseFloat(latitude);
     const lng = parseFloat(longitude);
+    if (!isValidLatLng(lat, lng)) {
+      return res.status(400).json({ error: 'Invalid latitude/longitude' });
+    }
+    const radiusMeters = parseRadius(req.query.radiusMeters); // capped at 1km
 
     // Approximate bounds for 1km radius
     const latDelta = radiusMeters / 111000;
@@ -526,7 +669,7 @@ app.get('/api/listings/nearby', async (req, res) => {
 
     res.json({ count: results.length, listings: results });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error);
   }
 });
 
@@ -544,7 +687,7 @@ app.get('/api/listings/:listingId', async (req, res) => {
       ...listingDoc.data()
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error);
   }
 });
 
@@ -569,17 +712,32 @@ app.put('/api/listings/:listingId', verifyToken, async (req, res) => {
     }
 
     const { portionsAvailable, status, isActive } = req.body;
-    const updateData = { updatedAt: admin.firestore.FieldValue.serverTimestamp() };
+    const updateData = { updatedAt: serverTimestamp() };
 
-    if (portionsAvailable !== undefined) updateData.portionsAvailable = portionsAvailable;
-    if (status) updateData.status = status;
-    if (isActive !== undefined) updateData.isActive = isActive;
+    if (portionsAvailable !== undefined) {
+      if (!Number.isInteger(portionsAvailable) || portionsAvailable < 0) {
+        return res.status(400).json({ error: 'portionsAvailable must be a whole number of 0 or more' });
+      }
+      updateData.portionsAvailable = portionsAvailable;
+    }
+    if (status !== undefined) {
+      if (!LISTING_STATUSES.includes(status)) {
+        return res.status(400).json({ error: `status must be one of: ${LISTING_STATUSES.join(', ')}` });
+      }
+      updateData.status = status;
+    }
+    if (isActive !== undefined) {
+      if (typeof isActive !== 'boolean') {
+        return res.status(400).json({ error: 'isActive must be true or false' });
+      }
+      updateData.isActive = isActive;
+    }
 
     await db.collection('listings').doc(req.params.listingId).update(updateData);
 
     res.json({ success: true, message: 'Listing updated' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error);
   }
 });
 
@@ -587,59 +745,74 @@ app.put('/api/listings/:listingId', verifyToken, async (req, res) => {
 // ORDERS (TRACKING ONLY)
 // ============================================================================
 
+// Payment is direct between buyer and cook; these are just the recorded methods.
+const PAYMENT_METHODS = ['paynow', 'paylah', 'cash'];
+
 // Create order
 app.post('/api/orders', verifyToken, async (req, res) => {
   try {
-    const {
-      cookId,
-      listingId,
-      quantity,
-      paymentMethod,
-      buyerNotes,
-      specialRequests
-    } = req.body;
+    // cookId from the request is ignored: the order always uses the listing's cook.
+    const { listingId, paymentMethod, buyerNotes, specialRequests } = req.body;
+    const quantity = Number(req.body.quantity);
 
-    // Get listing details
-    const listingDoc = await db.collection('listings').doc(listingId).get();
-    if (!listingDoc.exists) {
-      return res.status(404).json({ error: 'Listing not found' });
+    if (!isValidId(listingId)) {
+      return res.status(400).json({ error: 'listingId is required' });
+    }
+    if (!Number.isInteger(quantity) || quantity < 1) {
+      return res.status(400).json({ error: 'quantity must be a whole number of at least 1' });
+    }
+    if (!PAYMENT_METHODS.includes(paymentMethod)) {
+      return res.status(400).json({ error: `paymentMethod must be one of: ${PAYMENT_METHODS.join(', ')}` });
     }
 
-    const listing = listingDoc.data();
-
-    if (listing.portionsAvailable < quantity) {
-      return res.status(400).json({ error: 'Not enough portions available' });
-    }
-
-    // Create order
+    const listingRef = db.collection('listings').doc(listingId);
     const orderRef = db.collection('orders').doc();
-    await orderRef.set({
-      buyerId: req.userId,
-      cookId,
-      listingId,
-      dishName: listing.dishName,
-      quantity: parseInt(quantity),
-      unitPrice: listing.price,
-      totalPrice: listing.price * quantity,
-      paymentMethod,
-      paymentStatus: 'pending',
-      paymentProof: '',
-      orderStatus: 'pending',
-      pickupLocation: listing.location,
-      pickupTime: listing.pickupTime,
-      buyerNotes: buyerNotes || '',
-      cookResponse: '',
-      specialRequests: specialRequests || [],
-      timeline: {
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
-      }
-    });
 
-    // Update listing portions
-    await db.collection('listings').doc(listingId).update({
-      portionsAvailable: listing.portionsAvailable - quantity,
-      status: listing.portionsAvailable - quantity === 0 ? 'sold_out' : listing.status,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    // Read the listing and take the portions in one transaction, so two orders can't oversell.
+    await db.runTransaction(async tx => {
+      const listingDoc = await tx.get(listingRef);
+      if (!listingDoc.exists) {
+        throw new HttpError(404, 'Listing not found');
+      }
+
+      const listing = listingDoc.data();
+      if (!listing.isActive || listing.status === 'sold_out') {
+        throw new HttpError(400, 'Listing is not available');
+      }
+      const available = Number(listing.portionsAvailable) || 0;
+      if (available < quantity) {
+        throw new HttpError(400, 'Not enough portions available');
+      }
+
+      const remaining = available - quantity;
+
+      tx.set(orderRef, {
+        buyerId: req.userId,
+        cookId: listing.cookId,
+        listingId,
+        dishName: listing.dishName,
+        quantity,
+        unitPrice: listing.price,
+        totalPrice: listing.price * quantity, // zero commission: no fees added
+        paymentMethod,
+        paymentStatus: 'pending',
+        paymentProof: '',
+        orderStatus: 'pending',
+        pickupLocation: listing.location || null,
+        pickupTime: listing.pickupTime || null,
+        buyerNotes: typeof buyerNotes === 'string' ? buyerNotes : '',
+        cookResponse: '',
+        specialRequests: Array.isArray(specialRequests) ? specialRequests : [],
+        timeline: {
+          createdAt: serverTimestamp()
+        }
+      });
+
+      tx.update(listingRef, {
+        portionsAvailable: remaining,
+        status: remaining === 0 ? 'sold_out' : listing.status,
+        updatedAt: serverTimestamp()
+      });
     });
 
     res.json({
@@ -648,7 +821,7 @@ app.post('/api/orders', verifyToken, async (req, res) => {
       message: 'Order created. Payment pending.'
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error, 'Create order error');
   }
 });
 
@@ -686,7 +859,7 @@ app.get('/api/orders/:orderId', verifyToken, async (req, res) => {
       ...order
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error);
   }
 });
 
@@ -710,7 +883,7 @@ app.get('/api/users/:userId/orders', verifyToken, async (req, res) => {
 
     res.json({ count: results.length, orders: results });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error);
   }
 });
 
@@ -740,52 +913,143 @@ app.get('/api/cooks/:cookId/orders', verifyToken, async (req, res) => {
 
     res.json({ count: results.length, orders: results });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error);
   }
 });
+
+// Order status rules.
+// Key = new status, value = the statuses it may be changed FROM, per role. Admins may set any valid value.
+const ORDER_STATUSES = ['pending', 'confirmed', 'ready', 'picked_up', 'completed', 'cancelled', 'expired'];
+const COOK_TRANSITIONS = {
+  confirmed: ['pending'],
+  ready: ['pending', 'confirmed'],
+  picked_up: ['confirmed', 'ready'],
+  completed: ['ready', 'picked_up'],
+  expired: ['pending', 'confirmed', 'ready']
+};
+const BUYER_TRANSITIONS = {
+  cancelled: ['pending', 'confirmed']
+};
+const TIMELINE_KEYS = {
+  confirmed: 'confirmedAt',
+  ready: 'readyAt',
+  picked_up: 'pickedUpAt',
+  completed: 'completedAt',
+  cancelled: 'cancelledAt',
+  expired: 'expiredAt'
+};
+// Cancelled/expired orders give their portions back to the listing.
+const RELEASED_STATUSES = ['cancelled', 'expired'];
+// Buyer says "I paid" (paid); only the cook confirms receiving it (confirmed).
+const PAYMENT_STATUSES = ['pending', 'paid', 'confirmed'];
+const MAX_PAYMENT_PROOF_CHARS = 900000; // keeps the order under Firestore's 1 MB document limit
 
 // Update order status
 app.put('/api/orders/:orderId', verifyToken, async (req, res) => {
   try {
     const { orderStatus, paymentStatus, paymentProof } = req.body;
-    const orderDoc = await db.collection('orders').doc(req.params.orderId).get();
+    const orderRef = db.collection('orders').doc(req.params.orderId);
+    const orderDoc = await orderRef.get();
 
     if (!orderDoc.exists) {
       return res.status(404).json({ error: 'Order not found' });
     }
 
     const order = orderDoc.data();
+    const isAdmin = !!req.user.admin;
+    const isBuyer = req.userId === order.buyerId;
+    const isCook = await isOrderCook(order, req.userId);
 
     // Verify access (buyer, cook, or admin)
-    if (!(await canAccessOrder(order, req))) {
+    if (!isAdmin && !isBuyer && !isCook) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    const updateData = { updatedAt: admin.firestore.FieldValue.serverTimestamp() };
+    const updateData = { updatedAt: serverTimestamp() };
+    const currentStatus = order.orderStatus || 'pending';
 
-    if (orderStatus) {
+    if (orderStatus !== undefined) {
+      if (!ORDER_STATUSES.includes(orderStatus)) {
+        return res.status(400).json({ error: `orderStatus must be one of: ${ORDER_STATUSES.join(', ')}` });
+      }
+      if (!isAdmin) {
+        const allowedFrom = [
+          isCook && COOK_TRANSITIONS[orderStatus],
+          isBuyer && BUYER_TRANSITIONS[orderStatus]
+        ].filter(Boolean);
+        if (allowedFrom.length === 0) {
+          return res.status(403).json({ error: `You can't set orderStatus to "${orderStatus}"` });
+        }
+        if (!allowedFrom.some(from => from.includes(currentStatus))) {
+          return res.status(409).json({
+            error: `Order is "${currentStatus}" and can't be changed to "${orderStatus}"`
+          });
+        }
+      }
       updateData.orderStatus = orderStatus;
-      updateData.timeline = order.timeline || {};
-      
-      if (orderStatus === 'confirmed') {
-        updateData.timeline.confirmedAt = admin.firestore.FieldValue.serverTimestamp();
-      } else if (orderStatus === 'ready') {
-        updateData.timeline.readyAt = admin.firestore.FieldValue.serverTimestamp();
-      } else if (orderStatus === 'picked_up') {
-        updateData.timeline.pickedUpAt = admin.firestore.FieldValue.serverTimestamp();
-      } else if (orderStatus === 'completed') {
-        updateData.timeline.completedAt = admin.firestore.FieldValue.serverTimestamp();
+      if (TIMELINE_KEYS[orderStatus]) {
+        updateData[`timeline.${TIMELINE_KEYS[orderStatus]}`] = serverTimestamp();
       }
     }
 
-    if (paymentStatus) updateData.paymentStatus = paymentStatus;
-    if (paymentProof) updateData.paymentProof = paymentProof;
+    if (paymentStatus !== undefined) {
+      if (!PAYMENT_STATUSES.includes(paymentStatus)) {
+        return res.status(400).json({ error: `paymentStatus must be one of: ${PAYMENT_STATUSES.join(', ')}` });
+      }
+      const allowed = isAdmin ||
+        (isBuyer && paymentStatus === 'paid') ||
+        (isCook && paymentStatus === 'confirmed');
+      if (!allowed) {
+        return res.status(403).json({
+          error: 'The buyer can set paymentStatus to "paid"; only the cook can set it to "confirmed"'
+        });
+      }
+      updateData.paymentStatus = paymentStatus;
+    }
 
-    await db.collection('orders').doc(req.params.orderId).update(updateData);
+    // lib/api-client.js confirmPayment() always sends paymentProof: '' — ignore an empty value from the cook.
+    if (paymentProof !== undefined && !(paymentProof === '' && !isBuyer && !isAdmin)) {
+      if (!isAdmin && !isBuyer) {
+        return res.status(403).json({ error: 'Only the buyer can upload payment proof' });
+      }
+      if (typeof paymentProof !== 'string' || paymentProof.length > MAX_PAYMENT_PROOF_CHARS) {
+        return res.status(400).json({ error: 'paymentProof must be text (a data-URL or link) under about 900 KB' });
+      }
+      updateData.paymentProof = paymentProof;
+    }
+
+    const releasesPortions = RELEASED_STATUSES.includes(orderStatus) &&
+      !RELEASED_STATUSES.includes(currentStatus);
+
+    if (releasesPortions && order.listingId) {
+      // Cancel/expire and give the portions back in one transaction, so they're returned only once.
+      await db.runTransaction(async tx => {
+        const listingRef = db.collection('listings').doc(order.listingId);
+        const freshOrder = await tx.get(orderRef);
+        const listingDoc = await tx.get(listingRef);
+
+        if (RELEASED_STATUSES.includes(freshOrder.data().orderStatus)) {
+          throw new HttpError(409, 'Order is already cancelled or expired');
+        }
+
+        if (listingDoc.exists) {
+          const listing = listingDoc.data();
+          const portions = (Number(listing.portionsAvailable) || 0) + (Number(order.quantity) || 0);
+          tx.update(listingRef, {
+            portionsAvailable: portions,
+            status: listing.status === 'sold_out' && portions > 0 ? 'available' : listing.status,
+            updatedAt: serverTimestamp()
+          });
+        }
+        tx.update(orderRef, updateData);
+      });
+    } else {
+      await orderRef.update(updateData);
+    }
 
     res.json({ success: true, message: 'Order updated' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error, 'Update order error');
   }
 });
 
@@ -793,10 +1057,25 @@ app.put('/api/orders/:orderId', verifyToken, async (req, res) => {
 // REVIEWS
 // ============================================================================
 
+// targetType -> collection whose rating/reviewCount the review updates
+const REVIEW_TARGETS = { cook: 'cooks', dish: 'listings' };
+const REVIEWABLE_ORDER_STATUSES = ['picked_up', 'completed'];
+
 // Submit review
 app.post('/api/reviews', verifyToken, async (req, res) => {
   try {
-    const { orderId, targetId, targetType, rating, title, text, tags } = req.body;
+    const { orderId, targetType, title, text, tags } = req.body;
+    const rating = Number(req.body.rating);
+
+    if (!isValidId(orderId)) {
+      return res.status(400).json({ error: 'orderId is required' });
+    }
+    if (!Object.hasOwn(REVIEW_TARGETS, targetType)) {
+      return res.status(400).json({ error: 'targetType must be "cook" or "dish"' });
+    }
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+      return res.status(400).json({ error: 'rating must be a whole number from 1 to 5' });
+    }
 
     // Verify order exists and user participated
     const orderDoc = await db.collection('orders').doc(orderId).get();
@@ -808,32 +1087,44 @@ app.post('/api/reviews', verifyToken, async (req, res) => {
     if (req.userId !== order.buyerId) {
       return res.status(403).json({ error: 'Only buyer can review' });
     }
+    if (!REVIEWABLE_ORDER_STATUSES.includes(order.orderStatus)) {
+      return res.status(409).json({ error: 'You can review an order once it has been picked up' });
+    }
 
-    // Create review
-    const reviewRef = db.collection('reviews').doc();
-    await reviewRef.set({
-      orderId,
-      reviewerId: req.userId,
-      targetId,
-      targetType,
-      rating: parseInt(rating),
-      title: title || '',
-      text: text || '',
-      photos: [],
-      tags: tags || [],
-      helpful: 0,
-      reportCount: 0,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      isVerified: true
-    });
+    // The target is always the order's own cook or dish. A targetId that doesn't match is rejected.
+    const expectedTargetId = targetType === 'cook' ? order.cookId : order.listingId;
+    if (req.body.targetId !== undefined && req.body.targetId !== expectedTargetId) {
+      return res.status(400).json({ error: 'targetId does not match this order' });
+    }
+
+    // One review per order per target type: a fixed document ID + create() fails if it already exists.
+    const reviewRef = db.collection('reviews').doc(`${orderId}_${targetType}`);
+    try {
+      await reviewRef.create({
+        orderId,
+        reviewerId: req.userId,
+        targetId: expectedTargetId,
+        targetType,
+        rating,
+        title: typeof title === 'string' ? title : '',
+        text: typeof text === 'string' ? text : '',
+        photos: [],
+        tags: Array.isArray(tags) ? tags : [],
+        helpful: 0,
+        reportCount: 0,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        isVerified: true
+      });
+    } catch (error) {
+      if (error.code === 6) { // ALREADY_EXISTS
+        return res.status(409).json({ error: 'You have already reviewed this order' });
+      }
+      throw error;
+    }
 
     // Update target rating (cook or dish)
-    if (targetType === 'cook') {
-      await updateCookRating(targetId, rating);
-    } else if (targetType === 'dish') {
-      await updateDishRating(targetId, rating);
-    }
+    await updateTargetRating(REVIEW_TARGETS[targetType], expectedTargetId, targetType);
 
     res.json({
       success: true,
@@ -841,7 +1132,7 @@ app.post('/api/reviews', verifyToken, async (req, res) => {
       message: 'Review submitted'
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error, 'Submit review error');
   }
 });
 
@@ -869,7 +1160,7 @@ app.get('/api/reviews', async (req, res) => {
 
     res.json({ count: results.length, reviews: results });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    sendError(res, error);
   }
 });
 
@@ -877,61 +1168,31 @@ app.get('/api/reviews', async (req, res) => {
 // HELPER FUNCTIONS
 // ============================================================================
 
-async function updateCookRating(cookId, newRating) {
+// Recompute a cook's or dish's average rating from its saved reviews.
+// Called after the new review is saved, so the query already includes it (count it once).
+async function updateTargetRating(collectionName, targetId, targetType) {
   try {
     const reviews = await db
       .collection('reviews')
-      .where('targetId', '==', cookId)
-      .where('targetType', '==', 'cook')
+      .where('targetId', '==', targetId)
+      .where('targetType', '==', targetType)
       .where('isVerified', '==', true)
       .get();
 
-    let totalRating = newRating;
-    let count = 1;
+    const ratings = reviews.docs
+      .map(doc => Number(doc.data().rating))
+      .filter(r => Number.isFinite(r));
+    const avgRating = ratings.length
+      ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length
+      : 0;
 
-    reviews.docs.forEach(doc => {
-      totalRating += doc.data().rating;
-      count++;
-    });
-
-    const avgRating = totalRating / count;
-
-    await db.collection('cooks').doc(cookId).update({
+    await db.collection(collectionName).doc(targetId).update({
       rating: Math.round(avgRating * 10) / 10,
-      reviewCount: count - 1,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      reviewCount: ratings.length,
+      updatedAt: serverTimestamp()
     });
   } catch (error) {
-    console.error('Error updating cook rating:', error);
-  }
-}
-
-async function updateDishRating(listingId, newRating) {
-  try {
-    const reviews = await db
-      .collection('reviews')
-      .where('targetId', '==', listingId)
-      .where('targetType', '==', 'dish')
-      .where('isVerified', '==', true)
-      .get();
-
-    let totalRating = newRating;
-    let count = 1;
-
-    reviews.docs.forEach(doc => {
-      totalRating += doc.data().rating;
-      count++;
-    });
-
-    const avgRating = totalRating / count;
-
-    await db.collection('listings').doc(listingId).update({
-      rating: Math.round(avgRating * 10) / 10,
-      reviewCount: count - 1,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
-    });
-  } catch (error) {
-    console.error('Error updating dish rating:', error);
+    console.error(`Error updating ${targetType} rating:`, error);
   }
 }
 
@@ -1051,8 +1312,11 @@ If user asks technical questions outside your scope → suggest they check the h
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
       const errorMsg = error?.error?.message || `API error: ${response.status}`;
-      console.error('Anthropic API error:', errorMsg);
-      return res.status(response.status).json({ error: errorMsg });
+      console.error('Anthropic API error:', response.status, errorMsg);
+      // Don't pass Anthropic's own message (billing, keys, limits) to the public
+      return res.status(502).json({
+        error: IS_DEV ? errorMsg : 'The assistant is unavailable right now. Please try again later.'
+      });
     }
 
     const data = await response.json();
@@ -1064,7 +1328,7 @@ If user asks technical questions outside your scope → suggest they check the h
       await db.collection('chat_messages').doc().set({
         userMessage: message,
         assistantMessage: assistantMessage,
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
+        createdAt: serverTimestamp()
       });
     } catch (dbError) {
       console.error('Error saving chat history:', dbError);
@@ -1076,10 +1340,7 @@ If user asks technical questions outside your scope → suggest they check the h
       message: assistantMessage
     });
   } catch (error) {
-    console.error('Chat error:', error);
-    res.status(500).json({
-      error: error instanceof Error ? error.message : 'Chat failed'
-    });
+    sendError(res, error, 'Chat error');
   }
 });
 
@@ -1088,10 +1349,18 @@ If user asks technical questions outside your scope → suggest they check the h
 // ============================================================================
 
 app.use((err, req, res, next) => {
+  // Browser origin not on the CORS allowlist
+  if (err && typeof err.message === 'string' && err.message.startsWith('Not allowed by CORS')) {
+    return res.status(403).json({ error: 'Origin not allowed' });
+  }
+  // Malformed JSON body or body too large (from express.json)
+  if (err && (err.type === 'entity.parse.failed' || err.type === 'entity.too.large')) {
+    return res.status(err.status || 400).json({ error: err.type === 'entity.too.large' ? 'Request body too large' : 'Invalid JSON body' });
+  }
   console.error('Unhandled error:', err);
   res.status(500).json({
     error: 'Internal server error',
-    message: process.env.NODE_ENV === 'development' ? err.message : undefined
+    message: IS_DEV ? err.message : undefined
   });
 });
 
