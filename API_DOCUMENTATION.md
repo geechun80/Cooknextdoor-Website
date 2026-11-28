@@ -16,7 +16,7 @@ Authorization: Bearer <Firebase ID Token>
 "Admin" below means a Firebase token carrying the custom claim `admin: true`.
 
 **General behaviour:**
-- Request bodies can be JSON or URL-encoded, up to **2 MB**. A Firestore document can't exceed 1 MB anyway, so keep images as compact data-URLs.
+- Request bodies can be JSON or URL-encoded, up to **2 MB** in the app. In production, nginx's default `client_max_body_size` (1 MB) applies first and answers larger requests with its own HTML `413` page. A Firestore document can't exceed 1 MB anyway, so keep images as compact data-URLs.
 - Every `/api` route except `/api/health` is rate-limited per IP (see Rate Limiting).
 - Firestore timestamps (`createdAt`, `updatedAt`, `timeline.*`) come back as Firestore Timestamp objects, which serialize as `{"_seconds": 1775817000, "_nanoseconds": 0}`, not ISO strings. Only `/api/health` returns an ISO string.
 - Most read endpoints return the **whole Firestore document** plus its ID. The examples below show the full stored shape.
