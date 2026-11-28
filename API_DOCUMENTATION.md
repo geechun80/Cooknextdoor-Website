@@ -16,7 +16,8 @@ Authorization: Bearer <Firebase ID Token>
 "Admin" below means a Firebase token carrying the custom claim `admin: true`.
 
 **General behaviour:**
-- Request bodies can be JSON or URL-encoded, up to **50 MB**.
+- Request bodies can be JSON or URL-encoded, up to **2 MB**. A Firestore document can't exceed 1 MB anyway, so keep images as compact data-URLs.
+- Every `/api` route except `/api/health` is rate-limited per IP (see Rate Limiting).
 - Firestore timestamps (`createdAt`, `updatedAt`, `timeline.*`) come back as Firestore Timestamp objects, which serialize as `{"_seconds": 1775817000, "_nanoseconds": 0}`, not ISO strings. Only `/api/health` returns an ISO string.
 - Most read endpoints return the **whole Firestore document** plus its ID. The examples below show the full stored shape.
 - Routes have no version prefix (no `/v1`).
@@ -158,14 +159,16 @@ Updates a profile. Allowed for the user themself or an admin; anyone else gets `
 }
 ```
 - Only these five fields can be changed. Other fields (`userType`, `verified`, `email` and so on) are ignored.
-- Empty values (`""`, `null`) are **skipped**, so you can't clear `bio` or `phone` this way.
+- Only the fields you send are changed. A field you send is saved even when empty, so `"phone": ""` or `"bio": ""` clears it.
+- `name` must be non-empty text and is trimmed. `phone` and `bio` must be text. `location` and `preferences` must be objects.
 - `location` and `preferences` **replace** the whole stored object; they aren't merged.
-- If the user document doesn't exist, the update fails with `500`.
 
 **Response:**
 ```json
 { "success": true, "message": "Profile updated" }
 ```
+
+**Errors:** `400` for an invalid field, `403 {"error": "Unauthorized"}`, `404 {"error": "User not found"}` if there's no `users/{userId}` document
 
 ---
 
@@ -719,12 +722,13 @@ Every error body has an `error` field, but the shape and detail differ by source
 | Invalid token | `401` | `{"error": "Invalid token", "details": "<Firebase message>"}`, in every environment |
 | Validation | `400` | `{"error": "<what's wrong>"}` |
 | Malformed JSON body | `400` | `{"error": "Invalid JSON body"}` |
-| Body over 50 MB | `413` | `{"error": "Request body too large"}` |
+| Body over 2 MB | `413` | `{"error": "Request body too large"}` |
 | Permission | `403` | `{"error": "Unauthorized"}`, `{"error": "Admin only"}`, `{"error": "Only buyer can review"}` or a message naming the change your role can't make |
 | Browser origin not allowed (CORS) | `403` | `{"error": "Origin not allowed"}` |
 | Not found | `404` | `{"error": "<Thing> not found"}` |
 | Conflict with current state | `409` | for example a duplicate cook profile or review, or an order status change that isn't allowed from the current status |
-| Chat rate limit | `429` | `{"error": "Too many messages. Please try again later."}` |
+| General rate limit | `429` | `{"error": "Too many requests. Please slow down and try again shortly."}`, with `Retry-After` |
+| Chat rate limit | `429` | `{"error": "Too many messages. Please try again later."}`, with `Retry-After` |
 | Chat AI failure | `502` | `{"error": "The assistant is unavailable right now. Please try again later."}` |
 | Any other server error | `500` | `{"error": "Internal server error"}`. The full error is logged on the server (`pm2 logs cooknextdoor-backend`). With `NODE_ENV=development`, `error` holds the real message instead, for example Firestore's "The query requires an index" link. |
 
@@ -812,8 +816,11 @@ curl -X POST http://localhost:3001/api/orders \
 
 ## 📊 Rate Limiting
 
-- **`POST /api/chat/message`:** 20 messages per 10 minutes per IP, kept in memory, returns `429` with `Retry-After`.
-- **All other endpoints:** no rate limiting yet. Recommended: 100 requests/minute per user and 1000 requests/minute per IP, with clients backing off on 429.
+- **All `/api` routes except `/api/health`:** 300 requests per minute per IP.
+- **`POST /api/chat/message`:** additionally 20 messages per 10 minutes per IP.
+- Both return `429` with a `Retry-After` header (in seconds) and keep CORS headers, so browsers can read the error.
+- The counters live in memory, so they reset when the server restarts. Behind nginx the client IP comes from `X-Forwarded-For`, which is trusted only from the local proxy.
+- Clients should wait for `Retry-After` before retrying.
 
 ---
 
@@ -848,19 +855,16 @@ http://localhost:3000
 ```
 Requests with no `Origin` header (curl, mobile apps, Postman) are allowed. A blocked origin gets `403 {"error": "Origin not allowed"}`.
 
-### Startup log
-On start the server prints a link to `/api/docs`. **That route doesn't exist.** These docs live in this file only.
+### Docs
+There's no `/api/docs` route. These docs live in this file only, and the startup log points here.
 
 ---
 
 ## ⚠️ Known Issues
 
-Places where the code doesn't do what the product intends. Each is described above where it applies.
-
-1. **The startup log advertises `/api/docs`**, which doesn't exist.
-2. **`PUT /api/users/:userId` can't clear a field**: empty values are skipped.
-3. **Only the chat endpoint is rate-limited.**
+None known as of 2026-11-28. If you find the code doing something this document doesn't describe, add it here.
 
 Fixed on 2026-11-28:
 - **High:** the unreachable `GET /api/cooks/nearby`; the public user profile exposing email, phone and address; the public cook endpoints returning `bankDetails`; cooks being locked out of their own orders; the chat endpoint having no rate limit or input checks and never saving its log.
 - **Medium:** the 1km radius cap; order status and payment role rules, with portions returned on cancel or expire; order validation and the oversell transaction; the review double-count and review checks; listing validation and the `limit` cap; one cook profile per user and the admin verification endpoint; internal error messages no longer sent to clients; clear register errors; CORS rejections returning 403.
+- **Low:** profile fields can be cleared, with type checks and a 404 for a missing user; a general rate limit on all routes; the request body cap lowered from 50 MB to 2 MB; the startup log no longer advertises the non-existent `/api/docs`.

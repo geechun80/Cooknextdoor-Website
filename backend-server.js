@@ -22,6 +22,35 @@ const PORT = process.env.API_PORT || 3001;
 // so req.ip is the real client IP (used by the chat rate limit) and can't be spoofed by direct callers.
 app.set('trust proxy', 'loopback');
 
+// Simple in-memory, per-IP sliding-window rate limiter. Resets on server restart;
+// good enough for a single PM2 process (no extra dependency).
+function createRateLimiter({ limit, windowMs, message }) {
+  const hits = new Map(); // ip -> [timestamps]
+
+  // Drop stale entries so the map doesn't grow forever
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, times] of hits) {
+      if (!times.some(t => now - t < windowMs)) hits.delete(key);
+    }
+  }, windowMs).unref();
+
+  return function rateLimit(req, res, next) {
+    const now = Date.now();
+    const key = req.ip || 'unknown';
+    const times = (hits.get(key) || []).filter(t => now - t < windowMs);
+    if (times.length >= limit) {
+      hits.set(key, times);
+      res.set('Retry-After', String(Math.ceil((windowMs - (now - times[0])) / 1000)));
+      return res.status(429).json({ error: message });
+    }
+    times.push(now);
+    hits.set(key, times);
+    next();
+  };
+}
+
+
 // Middleware — restrict CORS to known origins in production
 const allowedOrigins = [
   'https://cooknextdoor.org',
@@ -39,8 +68,18 @@ app.use(cors({
   },
   credentials: true,
 }));
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// General limit for every /api route except the health check (generous: the site barely uses this API).
+// Runs after CORS so a 429 still carries CORS headers and the browser can read it.
+const apiRateLimit = createRateLimiter({
+  limit: 300,
+  windowMs: 60 * 1000,
+  message: 'Too many requests. Please slow down and try again shortly.'
+});
+app.use('/api', (req, res, next) => (req.path === '/health' ? next() : apiRateLimit(req, res, next)));
+// 2 MB is plenty: a Firestore document can't exceed 1 MB anyway (images are compact data-URLs).
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ limit: '2mb', extended: true }));
 
 // Initialize Firebase Admin SDK
 // (No Cloud Storage: the project is on the Spark plan with no bucket; images are data-URLs in Firestore.)
@@ -286,21 +325,42 @@ app.put('/api/users/:userId', verifyToken, async (req, res) => {
     }
 
     const { name, phone, bio, location, preferences } = req.body;
+    const isPlainObject = v => !!v && typeof v === 'object' && !Array.isArray(v);
+
+    // A field that is sent is saved, even if empty (so phone and bio can be cleared). name can't be blank.
+    if (name !== undefined && (typeof name !== 'string' || name.trim().length === 0)) {
+      return res.status(400).json({ error: 'name must be non-empty text' });
+    }
+    if (phone !== undefined && typeof phone !== 'string') {
+      return res.status(400).json({ error: 'phone must be text' });
+    }
+    if (bio !== undefined && typeof bio !== 'string') {
+      return res.status(400).json({ error: 'bio must be text' });
+    }
+    if (location !== undefined && !isPlainObject(location)) {
+      return res.status(400).json({ error: 'location must be an object' });
+    }
+    if (preferences !== undefined && !isPlainObject(preferences)) {
+      return res.status(400).json({ error: 'preferences must be an object' });
+    }
 
     const updateData = {
       updatedAt: serverTimestamp()
     };
 
-    if (name) updateData.name = name;
-    if (phone) updateData.phone = phone;
-    if (bio) updateData.bio = bio;
-    if (location) updateData.location = location;
-    if (preferences) updateData.preferences = preferences;
+    if (name !== undefined) updateData.name = name.trim();
+    if (phone !== undefined) updateData.phone = phone;
+    if (bio !== undefined) updateData.bio = bio;
+    if (location !== undefined) updateData.location = location;
+    if (preferences !== undefined) updateData.preferences = preferences;
 
     await db.collection('users').doc(req.params.userId).update(updateData);
 
     res.json({ success: true, message: 'Profile updated' });
   } catch (error) {
+    if (error.code === 5) { // NOT_FOUND: no users/{userId} document
+      return res.status(404).json({ error: 'User not found' });
+    }
     sendError(res, error);
   }
 });
@@ -1200,34 +1260,13 @@ async function updateTargetRating(collectionName, targetId, targetType) {
 // CHATBOT / AI ASSISTANT
 // ============================================================================
 
-// Simple in-memory per-IP rate limit for the public, paid chat endpoint.
-// Resets on server restart; good enough for a single PM2 process.
-const CHAT_RATE_LIMIT = 20;                    // messages per window per IP
-const CHAT_RATE_WINDOW_MS = 10 * 60 * 1000;    // 10 minutes
-const CHAT_MAX_CHARS = 2000;                   // per message / history item
-const chatHits = new Map();                    // ip -> [timestamps]
-
-function chatRateLimit(req, res, next) {
-  const now = Date.now();
-  const key = req.ip || 'unknown';
-  const hits = (chatHits.get(key) || []).filter(t => now - t < CHAT_RATE_WINDOW_MS);
-  if (hits.length >= CHAT_RATE_LIMIT) {
-    chatHits.set(key, hits);
-    res.set('Retry-After', String(Math.ceil((CHAT_RATE_WINDOW_MS - (now - hits[0])) / 1000)));
-    return res.status(429).json({ error: 'Too many messages. Please try again later.' });
-  }
-  hits.push(now);
-  chatHits.set(key, hits);
-  next();
-}
-
-// Drop stale entries so the map doesn't grow forever
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, hits] of chatHits) {
-    if (!hits.some(t => now - t < CHAT_RATE_WINDOW_MS)) chatHits.delete(key);
-  }
-}, CHAT_RATE_WINDOW_MS).unref();
+// Tighter per-IP limit for the public, paid chat endpoint (on top of the general API limit).
+const CHAT_MAX_CHARS = 2000; // per message / history item
+const chatRateLimit = createRateLimiter({
+  limit: 20,
+  windowMs: 10 * 60 * 1000, // 20 messages per 10 minutes
+  message: 'Too many messages. Please try again later.'
+});
 
 // POST /api/chat/message - Send message to Claude AI (public endpoint — no auth required, rate-limited)
 app.post('/api/chat/message', chatRateLimit, async (req, res) => {
@@ -1370,7 +1409,7 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   console.log(`🚀 CookNextDoor Backend running on http://localhost:${PORT}`);
-  console.log(`📚 API Documentation: http://localhost:${PORT}/api/docs`);
+  console.log('📚 API Documentation: API_DOCUMENTATION.md in the repo');
   console.log(`💚 Health check: http://localhost:${PORT}/api/health`);
 });
 
