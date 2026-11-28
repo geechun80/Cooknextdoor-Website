@@ -18,6 +18,10 @@ dotenv.config({ path: '.env.local' });
 const app = express();
 const PORT = process.env.API_PORT || 3001;
 
+// Behind nginx on the same host: trust X-Forwarded-For only from loopback,
+// so req.ip is the real client IP (used by the chat rate limit) and can't be spoofed by direct callers.
+app.set('trust proxy', 'loopback');
+
 // Middleware — restrict CORS to known origins in production
 const allowedOrigins = [
   'https://cooknextdoor.org',
@@ -247,9 +251,16 @@ app.get('/api/users/:userId', async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    // Public view: never expose email, phone, address/location or preferences
+    const { name, profilePhoto, rating, reviewCount, bio, verified } = userDoc.data();
     res.json({
       userId: req.params.userId,
-      ...userDoc.data()
+      name: name || '',
+      profilePhoto: profilePhoto || '',
+      rating: rating || 0,
+      reviewCount: reviewCount || 0,
+      bio: bio || '',
+      verified: !!verified
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -318,25 +329,14 @@ app.post('/api/cooks/register', verifyToken, async (req, res) => {
   }
 });
 
-// Get cook profile
-app.get('/api/cooks/:cookId', async (req, res) => {
-  try {
-    const cookDoc = await db.collection('cooks').doc(req.params.cookId).get();
-    
-    if (!cookDoc.exists) {
-      return res.status(404).json({ error: 'Cook not found' });
-    }
-
-    res.json({
-      cookId: req.params.cookId,
-      ...cookDoc.data()
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// Fields of a cook document that must never be sent by public endpoints
+function publicCookData(data) {
+  const { bankDetails, verificationDocuments, ...rest } = data;
+  return rest;
+}
 
 // Get nearby active cooks (1km radius)
+// NOTE: must stay ABOVE '/api/cooks/:cookId', or Express treats "nearby" as a cookId.
 app.get('/api/cooks/nearby', async (req, res) => {
   try {
     const { latitude, longitude, radiusMeters = 1000 } = req.query;
@@ -364,10 +364,28 @@ app.get('/api/cooks/nearby', async (req, res) => {
 
     const results = cooks.docs.map(doc => ({
       cookId: doc.id,
-      ...doc.data()
+      ...publicCookData(doc.data())
     }));
 
     res.json({ count: results.length, cooks: results });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get cook profile (public)
+app.get('/api/cooks/:cookId', async (req, res) => {
+  try {
+    const cookDoc = await db.collection('cooks').doc(req.params.cookId).get();
+
+    if (!cookDoc.exists) {
+      return res.status(404).json({ error: 'Cook not found' });
+    }
+
+    res.json({
+      cookId: req.params.cookId,
+      ...publicCookData(cookDoc.data())
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -634,6 +652,19 @@ app.post('/api/orders', verifyToken, async (req, res) => {
   }
 });
 
+// order.cookId is a cooks-collection document ID, not a user uid.
+// Resolve the cook profile and compare its owner's uid with the caller.
+async function isOrderCook(order, uid) {
+  if (!order.cookId) return false;
+  const cookDoc = await db.collection('cooks').doc(order.cookId).get();
+  return cookDoc.exists && cookDoc.data().userId === uid;
+}
+
+async function canAccessOrder(order, req) {
+  if (req.userId === order.buyerId || req.user.admin) return true;
+  return isOrderCook(order, req.userId);
+}
+
 // Get order details
 app.get('/api/orders/:orderId', verifyToken, async (req, res) => {
   try {
@@ -646,7 +677,7 @@ app.get('/api/orders/:orderId', verifyToken, async (req, res) => {
     const order = orderDoc.data();
 
     // Verify access (buyer, cook, or admin)
-    if (req.userId !== order.buyerId && req.userId !== order.cookId && !req.user.admin) {
+    if (!(await canAccessOrder(order, req))) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
@@ -725,8 +756,8 @@ app.put('/api/orders/:orderId', verifyToken, async (req, res) => {
 
     const order = orderDoc.data();
 
-    // Verify access
-    if (req.userId !== order.cookId && req.userId !== order.buyerId && !req.user.admin) {
+    // Verify access (buyer, cook, or admin)
+    if (!(await canAccessOrder(order, req))) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
@@ -908,13 +939,46 @@ async function updateDishRating(listingId, newRating) {
 // CHATBOT / AI ASSISTANT
 // ============================================================================
 
-// POST /api/chat/message - Send message to Claude AI (public endpoint — no auth required)
-app.post('/api/chat/message', async (req, res) => {
-  try {
-    const { message, history = [] } = req.body;
+// Simple in-memory per-IP rate limit for the public, paid chat endpoint.
+// Resets on server restart; good enough for a single PM2 process.
+const CHAT_RATE_LIMIT = 20;                    // messages per window per IP
+const CHAT_RATE_WINDOW_MS = 10 * 60 * 1000;    // 10 minutes
+const CHAT_MAX_CHARS = 2000;                   // per message / history item
+const chatHits = new Map();                    // ip -> [timestamps]
 
-    if (!message || message.trim().length === 0) {
+function chatRateLimit(req, res, next) {
+  const now = Date.now();
+  const key = req.ip || 'unknown';
+  const hits = (chatHits.get(key) || []).filter(t => now - t < CHAT_RATE_WINDOW_MS);
+  if (hits.length >= CHAT_RATE_LIMIT) {
+    chatHits.set(key, hits);
+    res.set('Retry-After', String(Math.ceil((CHAT_RATE_WINDOW_MS - (now - hits[0])) / 1000)));
+    return res.status(429).json({ error: 'Too many messages. Please try again later.' });
+  }
+  hits.push(now);
+  chatHits.set(key, hits);
+  next();
+}
+
+// Drop stale entries so the map doesn't grow forever
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, hits] of chatHits) {
+    if (!hits.some(t => now - t < CHAT_RATE_WINDOW_MS)) chatHits.delete(key);
+  }
+}, CHAT_RATE_WINDOW_MS).unref();
+
+// POST /api/chat/message - Send message to Claude AI (public endpoint — no auth required, rate-limited)
+app.post('/api/chat/message', chatRateLimit, async (req, res) => {
+  try {
+    const { message } = req.body;
+    const history = Array.isArray(req.body.history) ? req.body.history : [];
+
+    if (typeof message !== 'string' || message.trim().length === 0) {
       return res.status(400).json({ error: 'Message cannot be empty' });
+    }
+    if (message.length > CHAT_MAX_CHARS) {
+      return res.status(400).json({ error: `Message too long (max ${CHAT_MAX_CHARS} characters)` });
     }
 
     const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
@@ -922,12 +986,14 @@ app.post('/api/chat/message', async (req, res) => {
       return res.status(500).json({ error: 'AI service not configured' });
     }
 
-    // Build conversation history (keep last 20 messages)
+    // Build conversation history (keep last 20 valid messages; only user/assistant roles)
     const conversationHistory = history
+      .filter(msg => msg && (msg.role === 'user' || msg.role === 'assistant') &&
+        typeof msg.content === 'string' && msg.content.trim().length > 0)
       .slice(-20)
       .map(msg => ({
         role: msg.role,
-        content: msg.content
+        content: msg.content.slice(0, CHAT_MAX_CHARS)
       }));
 
     // Add current user message
@@ -992,10 +1058,10 @@ If user asks technical questions outside your scope → suggest they check the h
     const data = await response.json();
     const assistantMessage = data?.content?.[0]?.text || "Sorry, couldn't process that lah! Try again? 🙏";
 
-    // Save chat to Firestore for conversation history (optional)
+    // Save chat to Firestore for conversation history (optional).
+    // No userId: this route is unauthenticated, and an undefined field makes Firestore reject the write.
     try {
       await db.collection('chat_messages').doc().set({
-        userId: req.userId,
         userMessage: message,
         assistantMessage: assistantMessage,
         createdAt: admin.firestore.FieldValue.serverTimestamp()
